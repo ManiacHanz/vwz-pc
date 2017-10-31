@@ -1,0 +1,29 @@
+
+
+//单行省略
+.ellipsis{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+//宽高
+.wh(@width, @height) {
+	width: @width;
+	height: @height;
+}
+.whtl(@width, @height) {
+	width: @width;
+	height: @height;
+	text-align: center;
+	line-height: @height;
+}
+
+//按钮移入事件
+.btnHover(@background:#00aeee) {
+	transition: all 0.3s;
+	&:hover {
+		background: @background;
+		color: #ffffff;
+	}
+}

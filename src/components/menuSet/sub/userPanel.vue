@@ -1,0 +1,166 @@
+<template>
+	<div class="user-panel" :class="mobileColorStyle">
+		<section class="top">
+			<img :src="mobileUserCfg.top">
+		</section>
+		<ul class="ctr-list">
+			<li v-for="(item, index) in mobileUserCfg.userlist" :key="index"
+			:class="[mobileActive==='userlist'+index?'active':'']"
+			@click.left="setUpModule(item.link,'userlist'+index)">
+				<img :src="item.icon">
+				<span>{{item.title}}</span>
+			</li>
+		</ul>
+	</div>
+</template>
+
+<script>
+
+import { mapState, mapMutations } from 'vuex'
+
+// 模拟手机用户配置数据 
+import { mobileUserCfg } from '../../../../static/data/mobileUserCfg.js'
+
+export default {
+
+  name: 'userPanel',
+
+  data () {
+    return {
+    	mobileUserCfg:'',
+    }
+  },
+  computed: {
+  	...mapState([
+  			'mobileColorStyle','mobileActive'
+  		]),
+  },
+  mounted () {
+  	this.mobileUserCfg = mobileUserCfg
+  },
+  methods: {
+  	...mapMutations([
+  			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG'
+  		]),
+  	setUpModule (link, dom) {
+  		// 改变激活状态
+  		this.SET_MOBILE_ACTIVE(dom)
+  		//配置右边表单
+  		let domIndex = dom.substring(8)
+  		let option = {
+	      formFor:'userlist',    //配置表单选项的唯一标识，负责配置唯一的数据
+				formTitle: '二级菜单配置',		//表单标题
+				formSubTitle: '',
+				removeMenu: true,		//删除按钮
+				addMenu: true,		//添加按钮
+				inputList:[
+					{
+						type:'setName',
+						key:dom, 
+						value: this.mobileUserCfg.userlist[domIndex].title,
+					},
+					{
+						type:'setIcon',
+						key:dom,
+						value: this.mobileUserCfg.userlist[domIndex].icon,
+					},
+					{
+						type:'setLink', 
+						key:dom, 
+						value: this.mobileUserCfg.userlist[domIndex].link,
+					},
+				],		//输入框列表   依次为 菜单名称 菜单图标  页面地址 标题  摘要
+				pickFromLib: true,
+  		}
+  		this.UPDATE_FORMCFG(option)
+  	},
+  }
+}
+</script>
+
+<style lang="less" scoped>
+@import '../../../style/variety.less';
+
+
+.user-panel {
+	height: 448px;
+	overflow: hidden;
+}
+.top {
+	height: 90px;
+	position: relative;
+	overflow: hidden;
+	// cursor:pointer;
+	// &.active {
+	// 	border: 1px solid @lightBlue;
+	// }
+	&.active:after {
+		content: '';
+		width: 100%;
+		height: 100%;
+		border: 1px solid @lightBlue;
+		box-sizing: border-box;
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+	img {
+		width: 100%;
+		height: 100%;
+	}
+}
+.ctr-list {
+	li {
+		height: 46px;
+		line-height: 46px;
+		border: 1px solid transparent;
+		border-bottom: 1px solid @borderGrey;
+		background: url('/static/img/arrow.png') no-repeat;
+		background-position: 95% center;
+		background-size: 8px;
+		padding-left: 10px;
+		cursor: pointer;
+		position: relative;
+		&.active:after {
+			content: '';
+			width: 100%;
+			height: 100%;
+			border: 1px solid @lightBlue;
+			box-sizing: border-box;
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+	}
+	img {
+		width: 30px;
+		height: 30px;
+		margin-right: 16px;
+	  vertical-align: middle;
+	}
+}
+.dark {
+	.ctr-list{
+		color: @dark_lightFont;
+		li {
+			background: url('/static/img/arrow_dark.png') no-repeat;
+			background-position: 95% center;
+			background-size: 8px;
+			background-color: @dark_back;
+			border-bottom-color: @dark_border;
+			&.active:after {
+				border-color: @dark_lightFont;
+			}
+		}
+	}
+}
+.green {
+	.ctr-list{
+		li.active:after {
+				border-color: @green_font;
+		}
+	}
+}
+</style>
