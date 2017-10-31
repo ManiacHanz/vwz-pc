@@ -39,7 +39,7 @@
 						<div class="input-title">
 							菜单图标
 						</div>
-						<div>
+						<div @click="_setIcon">
 							上传图标
 						</div>
 					</div>
@@ -48,7 +48,7 @@
 							背景图片
 						</div>
 						<div>
-							<div class="btn">上传图片</div>
+							<div class="btn" @click="_setBack">上传图片</div>
 							<p>背景图建议尺寸672*324</p>
 						</div>
 						
@@ -104,7 +104,7 @@
 				
 			</section>
 		</div>
-		<div class="submit">保存并发布</div>
+		<div class="submit" @click="_submit">保存并发布</div>
 	</div>
 	
 </template>
@@ -187,6 +187,35 @@ export default {
   			}
   		}
   	},
+  	//上传图片 上传图标
+  	_setIcon () {
+			this.OPEN_MODAL()
+			let that = this
+			if(this.formCfg.formFor.substring(0,5) == 'temp_') {
+				let modalOption = {
+					modalFor: 'plateIcon',				//模态框用来做什么  参考modal.vue
+					title: '请选择以下图标',					//模态框的标题
+					onSuccess: function(_this){		//选择图标的路径
+						alert(_this.plateIconList[_this.selectedIcon])
+					}
+				}
+				this.SET_MODALCFG(modalOption)
+			}
+			else if (this.formCfg.formFor == 'userlist') {
+				let modalOption = {
+					modalFor: 'userIcon',				//模态框用来做什么  参考modal.vue
+					title: '请选择以下图标',					//模态框的标题
+					onSuccess: function(_this){		//选择图标的路径
+						alert(_this.userIconList[_this.selectedIcon])
+					}
+				}
+				this.SET_MODALCFG(modalOption)
+			}
+  	},
+		_setBack () {
+
+		},
+  	// 从素材库
   	_pickFromLib () {
 			this.OPEN_MODAL()
 			let that = this
@@ -194,11 +223,23 @@ export default {
 				modalFor: 'pickArticle',				//模态框用来做什么  参考modal.vue
 				title: '选择文章',					//模态框的标题
 				onSuccess: function(_this){		//点击确认的逻辑
-					
-					setTimeout(alert(_this.articlePicked),3000)
+					that.linkValue = _this.articlePicked
 				}
 			}
 			this.SET_MODALCFG(modalOption)
+  	},
+  	//保存并发布
+  	_submit () {
+  		if(this.formCfg.formFor == '') {
+  			return
+  		}
+  		switch(this.formCfg.formFor) {
+  			case 'introduce': 
+  				//linkValue  nameValue  summaryValue  titleValue
+  				// 发送请求完成后保存  拼凑数据
+  				
+  				break;
+  		}
   	}
   }
 }

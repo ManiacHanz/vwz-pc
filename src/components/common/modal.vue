@@ -27,11 +27,18 @@
 						<p>删除后“banner配置”下的配置内容将被删除</p>
 					</div>
 				</section>
+				<section class="del-article" v-if="modalCfg.modalFor==='delArticle'">
+					<div class="alert"></div>
+					<div class="tip">
+						<p>删除确认</p>
+						<p>确认删除后，文章内容将被删除！</p>
+					</div>
+				</section>
 				<section class="menu-icon" v-if="modalCfg.modalFor==='menuIcon'">
 					<div class="up">
 						<div>
 							<span>已选择的图标</span>
-							<img :src="menuIconList[mobileColorStyle][selectedIcon]"></img>
+							<img :src="menuIconList[selectedIcon]"></img>
 						</div>
 						<div>
 							<p class="upload-btn">上传本地图标</p>
@@ -40,7 +47,7 @@
 					</div>
 					<div class="down">
 						<ul>
-							<li v-for="(item, index) in menuIconList[mobileColorStyle]" @click="selectIcon(index)">
+							<li v-for="(item, index) in menuIconList" @click="selectIcon(index)">
 								<div class="mask" v-show="selectedIcon===index"></div>
 								<img :src="item">
 							</li>
@@ -205,15 +212,13 @@ export default {
   data () {
     return {
     	// 这里应该是去接口调到他的图标列表 再添加进来 用数组的concat方法
-    	menuIconList: {
-    			blue: ['/static/img/menuicon_01.png','/static/img/menuicon_02.png','/static/img/menuicon_03.png','/static/img/menuicon_04.png','/static/img/menuicon_05.png',
+    	menuIconList: 
+    			 ['/static/img/menuicon_01.png','/static/img/menuicon_02.png','/static/img/menuicon_03.png','/static/img/menuicon_04.png','/static/img/menuicon_05.png',
     			'/static/img/menuicon_01_dark.png','/static/img/menuicon_02_dark.png','/static/img/menuicon_03_dark.png','/static/img/menuicon_04_dark.png','/static/img/menuicon_05_dark.png',
     			'/static/img/menuicon_01_green.png','/static/img/menuicon_02_green.png','/static/img/menuicon_03_green.png','/static/img/menuicon_04_green.png','/static/img/menuicon_05_green.png'],
     		
-    			dark: ['/static/img/menuicon_01_dark.png','/static/img/menuicon_02_dark.png','/static/img/menuicon_03_dark.png','/static/img/menuicon_04_dark.png','/static/img/menuicon_05_dark.png'],
-    		
-    			green:['/static/img/menuicon_01_green.png','/static/img/menuicon_02_green.png','/static/img/menuicon_03_green.png','/static/img/menuicon_04_green.png','/static/img/menuicon_05_green.png'],
-    	},
+    			
+    	
     	plateIconList: ['/static/img/plate_icon_02.png','/static/img/plate_icon_03.png','/static/img/plate_icon_04.png','/static/img/plate_icon_05.png','/static/img/plate_icon_06.png'
     	],
     	userIconList: {
@@ -372,9 +377,9 @@ export default {
 	}
 }
 .body {
-	.confirm-submit, .confirm-login-out, .confirm-remove {
+	.confirm-submit, .confirm-login-out, .confirm-remove, .del-article {
 		height: 50px;
-		margin: 200px 0 0 200px;
+		margin: 200px 0 0 255px;
 		display: flex;
 		.alert {
 			width: 50px;

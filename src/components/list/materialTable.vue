@@ -15,9 +15,18 @@
           <div class="mask">预览文章</div>
         </div>
         <ul class="btns">
-          <li class="edit-btn" @click="goEdit(item.id)">编辑</li>
-          <li class="show-btn">已显示</li>
-          <li class="del-btn">删除</li>
+          <li class="edit-btn" @click="_goEdit(item.id)">
+            <span></span>
+            编辑
+          </li>
+          <li class="show-btn" :class="[item.display?'isShow':'']" @click="_toggleDisplay(item.id, index)">
+            <span></span>
+            {{item.display?'已显示':'已隐藏'}}
+          </li>
+          <li class="del-btn" @click="_delArticle(item.id, index)">
+            <span></span>
+            删除
+          </li>
         </ul>
       </li>
     </ul>
@@ -31,11 +40,17 @@ export default {
       
     }
   },
-  props:['listData'],
+  props:['listData','toggleDisplay','delArticle'],
   methods: {
     // 点击编辑 进路由 传入参数
-    goEdit(id) {
+    _goEdit(id) {
       this.$router.push( {name:'ArticleEdit', params:{id} } )
+    },
+    _toggleDisplay (id, index) {
+      this.toggleDisplay(id,index)
+    },
+    _delArticle (id, index) {
+      this.delArticle(id, index)
     }
   }
 }
@@ -122,6 +137,37 @@ export default {
     background: #f3f7fd;
     border-top: 1px solid #dddddd;
     cursor: pointer;
+    span {
+      display: inline-block;
+      vertical-align: middle;
+      width: 22px;
+      height: 20px;
+      background: url('/static/img/icon_1.png') no-repeat;
+    }
+  }
+  .table .btns .edit-btn span{
+    background-position: -62px -378px;
+  }
+  .table .btns .edit-btn:hover span{
+    background-position: -62px -422px;
+  }
+  .table .btns .show-btn span{
+    background-position: -369px -377px;
+  }
+  .table .btns .show-btn:hover span{
+    background-position: -369px -421px;
+  }
+  .table .btns .show-btn.isShow span{
+    background-position: -157px -377px;
+  }
+  .table .btns .show-btn.isShow:hover span{
+    background-position: -157px -421px;
+  }
+  .table .btns .del-btn span{
+    background-position: -264px -377px;
+  }
+  .table .btns .del-btn:hover span{
+    background-position: -264px -421px;
   }
   .table .btns li:not(:last-of-type) {
     border-right: 1px solid #dddddd;

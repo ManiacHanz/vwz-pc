@@ -7,7 +7,7 @@ export function materialArticleData(){
 			content:'这是一个只有二十个字的内容，多了就会省略多了就会省略',
 			author: 'abcdefg',
 			time:"2016-8-24",
-			isShow:true
+			display:0
 		},
 		{
 			id:2,
@@ -16,7 +16,7 @@ export function materialArticleData(){
 			content:'这是一个只有二十个字的内容，多了就会省略多了就会省略',
 			author: 'abcdefg',
 			time:"2016-8-24",
-			isShow:true
+			display:1
 		},
 		{
 			id:3,
@@ -25,7 +25,7 @@ export function materialArticleData(){
 			content:'这是一个只有二十个字的内容，多了就会省略多了就会省略',
 			author: 'abcdefg',
 			time:"2016-8-24",
-			isShow:true
+			display:1
 		},
 		{
 			id:123,
@@ -34,7 +34,7 @@ export function materialArticleData(){
 			content:'这是一个只有二十个字的内容，多了就会省略多了就会省略',
 			author: 'abcdefg',
 			time:"2016-8-24",
-			isShow:true
+			display:1
 		},
 		{
 			id:1234,
@@ -43,7 +43,7 @@ export function materialArticleData(){
 			content:'这是一个只有二十个字的内容，多了就会省略多了就会省略',
 			author: 'abcdefg',
 			time:"2016-8-24",
-			isShow:true
+			display:1
 		},
 		{
 			id:1235,
@@ -52,7 +52,7 @@ export function materialArticleData(){
 			content:'这是一个只有二十个字的内容，多了就会省略多了就会省略',
 			author: 'abcdefg',
 			time:"2016-8-24",
-			isShow:true
+			display:0
 		},
 		{
 			id:1236,
@@ -61,7 +61,7 @@ export function materialArticleData(){
 			content:'这是一个只有二十个字的内容，多了就会省略多了就会省略',
 			author: 'abcdefg',
 			time:"2016-8-24",
-			isShow:true
+			display:0
 		},
 		{
 			id:1237,
@@ -70,7 +70,7 @@ export function materialArticleData(){
 			content:'这是一个只有二十个字的内容，多了就会省略多了就会省略',
 			author: 'abcdefg',
 			time:"2016-8-24",
-			isShow:true
+			display:0
 		},
 		{
 			id:1238,
@@ -79,7 +79,7 @@ export function materialArticleData(){
 			content:'这是一个只有二十个字的内容，多了就会省略多了就会省略',
 			author: 'abcdefg',
 			time:"2016-8-24",
-			isShow:true
+			display:0
 		}
 	]
 } 

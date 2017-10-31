@@ -9,7 +9,7 @@
 				<div class="new-btn" @click="goEdit()">新建文章</div>
 			</div>
 			<div class="list">
-				<material-table :listData="listData"></material-table>	
+				<material-table :listData="listData" :toggleDisplay="_toggleDisplay" :delArticle="_delArticle"></material-table>	
 			</div>
 			<div class="page">
 				<pagination :getPageNum="getPageNum"></pagination>
@@ -20,6 +20,8 @@
 
 
 <script>
+import Vue from 'vue'
+import {mapState, mapMutations} from 'vuex'
 	//引入列表组件
 	import materialTable from '../../../components/list/materialTable.vue'
 	import Pagination from '../../../components/common/Pagination'
@@ -63,6 +65,9 @@
 			}
 		},
 		methods: {
+			...mapMutations([
+					'OPEN_MODAL','SET_MODALCFG'
+				]),
 			goEdit() {
 				this.$router.push('/artedit?id=123')
 			},
@@ -73,6 +78,26 @@
 			getListData () {
 
 			},
+			_toggleDisplay (id, index) {
+				//console.log(id, index)		//由子组件传回来的id 和 当前页listdata的 index  id用于传输后台数据 index改变前台展示
+				if (!this.listData[index].display) {
+					this.listData[index].display = 1
+				} else {
+					this.listData[index].display = 0
+				}
+			},
+			_delArticle (id, index) {
+				this.OPEN_MODAL()
+				let that = this
+				let modalOption = {
+					modalFor: 'delArticle',				//模态框用来做什么  参考modal.vue
+					title: '温馨提示',					//模态框的标题
+					onSuccess: function(){		//点击确认的逻辑
+						alert(id, index)
+					}
+				}
+				this.SET_MODALCFG(modalOption)
+			}
 			// 根据标签页切换
 			// toggleTabs(index,itemname,itemtype) {
 			// 	this.nowIndex = index

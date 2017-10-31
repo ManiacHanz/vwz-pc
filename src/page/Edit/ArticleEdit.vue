@@ -87,7 +87,9 @@ export default {
     ueditor: Ueditor
   },
   mounted() {
-    this.init()
+    this.$nextTick(() => {        //保证ueditor这些都加载结束
+      this.init()
+    })
   },
   methods: {
     init() {
