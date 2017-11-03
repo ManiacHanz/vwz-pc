@@ -86,6 +86,7 @@ export default {
   components: {
     ueditor: Ueditor
   },
+  
   mounted() {
     this.$nextTick(() => {        //保证ueditor这些都加载结束
       this.init()
@@ -116,7 +117,7 @@ export default {
   watch: {
     //监测参数的变化来发送请求
     params(val, oldval){
-      console.log(val, oldval)
+      // console.log(val, oldval)
     }
   },
   //如果是动态参数 /edit/:id就会触发这个
@@ -124,7 +125,7 @@ export default {
   //   console.log("before...")
   // }
   beforeRouteEnter(to, from ,next) {
-    console.log("before...")
+    // console.log("before...")
     next()
   }
 }

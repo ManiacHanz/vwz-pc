@@ -56,22 +56,26 @@ export const mobileHomeCfg = {
 		{
 			title: '走进西藏',
 			icon: '/static/img/menuicon_01.png',
-			type: 'home'
+			link: '',
+			default: 'home',
 		},
 		{
 			title: '',
 			icon: '',
-			type: ''
+			link: '',
+			default: '',
 		},
 		{
 			title: '新闻资讯',
 			icon: '',
-			type: 'list'
+			link: '',
+			default: 'list',
 		},
 		{
 			title: '服务中心',
 			icon: '',
-			type: 'user'
+			link: '',
+			default: 'user',
 		},
 	],
 }

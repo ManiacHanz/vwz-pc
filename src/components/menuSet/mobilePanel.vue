@@ -8,7 +8,7 @@
 			</transition>
 			<div class="menubtn">
 				<ul :class="menubtnStyle">
-					<li :class="[mobileActive==='menubtn'+index?'active':'', item.icon==''?mobileColorStyle: '']" v-for="(item, index) in mobileCfg.menuBtn" @click="switchPanel(item.type, index)">
+					<li :class="[mobileActive==='menubtn'+index?'active':'', item.icon==''?mobileColorStyle: '']" v-for="(item, index) in mobileCfg.menuBtn" @click="switchPanel(item.default,item.link, index)">
 						<div class="icon">
 							<img v-show="item.icon != ''" :src="item.icon"></img>
 						</div>
@@ -108,13 +108,18 @@ export default {
   	updateInputList (arr) {
 
   	},
-  	switchPanel (type, index) {
+  	switchPanel (_default, link, index) {
+  		/*
+  			默认的3个按钮是有_default值的，但是没有link值
+
+  		 */
+
   		//改变面板显示
-  		this.SET_SHOWPANEL(type)
+  		this.SET_SHOWPANEL(_default)
   		//改变激活对象
   		this.SET_MOBILE_ACTIVE('menubtn'+index)
   		//改变表格显示
-  		if (!!type) {
+  		if (!!_default) {
   			//如果有type就是默认的3个配置
   			this.UPDATE_FORMCFG({
 	  			formTitle: '主菜单配置',
