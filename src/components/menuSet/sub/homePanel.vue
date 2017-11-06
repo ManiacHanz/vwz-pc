@@ -3,7 +3,7 @@
 		<section class="banner swiper-container" :class="[mobileActive==='homebanner'?'active':'']" id="Swiper1"
 		@click.left="setUpModule('','homebanner')">
       <ul class="swiper-wrapper">
-          <li class="swiper-slide" v-for="(item, index) in mobileCfg.homebanner" :key="index" >
+          <li class="swiper-slide" v-for="(item, index) in homePanelList.banner" :key="index" >
         		<img :src="item.img">
         		<p>
         			<span>{{ item.title }}</span>
@@ -13,12 +13,12 @@
       <div class="swiper-pagination" id="SPagination_1"></div>
 		</section>
 		<section class="introduce" :class="[mobileActive==='introduce'?'active':'']" @click="setUpModule('','introduce')">
-			<p class="title">{{mobileCfg.intro.title}}</p>
-			<div class="content">{{mobileCfg.intro.content}}</div>
-			<div class="tem-name">{{mobileCfg.intro.tempName}}</div>
+			<p class="title">{{homePanelList.intro.title}}</p>
+			<div class="content">{{homePanelList.intro.content}}</div>
+			<div class="tem-name">{{homePanelList.intro.tempName}}</div>
 		</section>
 		<section class="plate">
-			<div v-for="(item, index) in mobileCfg.plates" :class="['temp_'+index,mobileActive==='temp_'+index?'active':'']" 
+			<div v-for="(item, index) in homePanelList.content" :class="['temp_'+index,mobileActive==='temp_'+index?'active':'']" 
 			@click="setUpModule('','temp_'+index)">
 				<img v-if="item.back" :src="item.back" class="background">
 				<p class="describe" v-if="item.describe">{{ item.describe }}</p>
@@ -34,9 +34,10 @@ import '../../../../static/plugin/swiper.min.css'
 import '../../../../static/plugin/swiper.min.js'
 
 import { mapState, mapMutations } from 'vuex'
+import {__getHomePanel} from 'service/getData.js'
 
 // 模拟手机首页配置数据 
-import { mobileHomeCfg } from '../../../../static/data/mobileHomeCfg.js'
+// import { mobileHomeCfg } from '../../../../static/data/mobileHomeCfg.js'
 export default {
 
   name: 'homePanel',
@@ -49,14 +50,18 @@ export default {
   },
   computed: {
   	...mapState([
-  			'mobileColorStyle','mobileActive'
+  			'mobileColorStyle','mobileActive','homePanelList'
   		]),
   },
   created () {
-
+  	__getHomePanel()
+  		.then( res => {
+  			// console.log(res.home.data)
+  			this.SAVE_HOMEPANELLIST(res.home.data)
+  		})
   	//这里假数据的更换
     // console.log(mobileHomeCfg)
-		this.mobileCfg = mobileHomeCfg
+		// this.mobileCfg = mobileHomeCfg
   },
   mounted () {
   	
@@ -72,20 +77,25 @@ export default {
   },
   methods: {
   	...mapMutations([
-  			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG'
+  			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG','SAVE_HOMEPANELLIST'
   		]),
   	setUpModule (link, dom) {
   		// 改变激活状态
   		this.SET_MOBILE_ACTIVE(dom)
   		// 配置轮播表单
   		if (dom === 'homebanner') {
+  			//图片数组
+  			let bannerPicArr = []
+  			for (let elem of this.homePanelList.banner) {
+  				bannerPicArr.push(elem.img)
+  			}
   			//标题数组
   			let bannerTitleArr = []
-  			for (let elem of this.mobileCfg.homebanner) {
+  			for (let elem of this.homePanelList.banner) {
   				bannerTitleArr.push(elem.title)
   			}
   			let bannerLinkArr = []
-  			for (let elem of this.mobileCfg.homebanner) {
+  			for (let elem of this.homePanelList.banner) {
   				bannerLinkArr.push(elem.link)
   			}
   			let option = {
@@ -98,7 +108,7 @@ export default {
 						{
 							type:'setMultiPicUploader',
 							key:'homebanner',
-							imglist:this.mobileCfg.homebanner,
+							imglist:bannerPicArr,
 						},
 						{
 							type:'setName',
@@ -127,22 +137,22 @@ export default {
 						{
 							type:'setTitle',
 							key:'introduce',
-							value: this.mobileCfg.intro.tempName,
+							value: this.homePanelList.intro.tempName,
 						},
 						{
 							type:'setName', 
 							key:'introduce', 
-							value: this.mobileCfg.intro.title,
+							value: this.homePanelList.intro.title,
 						},
 						{
 							type:'setSummary',
 							key: 'introduce',
-							value: this.mobileCfg.intro.content,
+							value: this.homePanelList.intro.content,
 						},
 						{
 							type:'setLink', 
 							key:'introduce', 
-							value: this.mobileCfg.intro.link,
+							value: this.homePanelList.intro.link,
 						},
 					],		//输入框列表   依次为 菜单名称 菜单图标  页面地址 标题  摘要
 					pickFromLib: true,
@@ -166,17 +176,17 @@ export default {
 	  					{
 								type:'setTitle',
 								key:dom,
-								value: this.mobileCfg.plates[(dom.substring(5))].tempName,
+								value: this.homePanelList.content[(dom.substring(5))].tempName,
 							},
 							{
 								type:'setIcon', 
 								key:dom, 
-								value: this.mobileCfg.plates[dom.substring(5)].icon,
+								value: this.homePanelList.content[dom.substring(5)].icon,
 							},
 							{
 								type:'setLink',
 								key: dom,
-								value: this.mobileCfg.plates[dom.substring(5)].link,
+								value: this.homePanelList.content[dom.substring(5)].link,
 							},
   					]
   				})
@@ -187,22 +197,22 @@ export default {
 	  					{
 								type:'setTitle',
 								key:dom,
-								value: this.mobileCfg.plates[(dom.substring(5))].tempName,
+								value: this.homePanelList.content[(dom.substring(5))].tempName,
 							},
 							{
 								type:'setName', 
 								key:dom, 
-								value: this.mobileCfg.plates[dom.substring(5)].describe,
+								value: this.homePanelList.content[dom.substring(5)].describe,
 							},
 							{
 								type:'setBack',
 								key:dom,
-								value: this.mobileCfg.plates[dom.substring(5)].back,
+								value: this.homePanelList.content[dom	.substring(5)].back,
 							},
 							{
 								type:'setLink',
 								key: dom,
-								value: this.mobileCfg.plates[dom.substring(5)].link,
+								value: this.homePanelList.content[dom.substring(5)].link,
 							},
   					]
   				})

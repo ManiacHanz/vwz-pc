@@ -27,7 +27,7 @@
 							页面地址
 						</div>
 						<div>
-							<input type="text" name="" maxlength="" v-model="linkValue">
+							<input type="text" name="" maxlength="" v-model="linkValue" @blur="_linkBlur">
 							<p class="alert"></p>
 							<div class="tip">
 								<div>输入第三方跳转网页</div>
@@ -58,7 +58,7 @@
 							标题
 						</div>
 						<div>
-							<input type="text" name="" maxlength="20" v-model="nameValue" :key="selectedIndex?selectedIndex:item.key">
+							<input type="text" name="" maxlength="20" v-model="nameValue" :key="selectedIndex?selectedIndex:item.key" @blur="_nameBlur">
 							<p class="alert"></p>
 							<div class="tip">输入字数不超过20个汉字</div>
 						</div>
@@ -78,11 +78,12 @@
 							<li v-if="item.imglist.length>0" v-for="(subItem, index) in item.imglist" @click="selectPic(index)"
 								:class="[index===selectedIndex?'active':'']">
 								<div class="mask" v-show="index!==selectedIndex"></div>
-								<img :src="subItem.img">
-								<a role="button" class="del"></a>
+								<img :src="subItem">
+								<a role="button" class="del" @click="_bannerDel(index)"></a>
 							</li>
 						</ul>
-						<div class="add" v-if="item.imglist.length<6"></div>
+						<div class="add" v-if="item.imglist.length<6" @click="_addClick"></div>
+						<input type="file" id="bannerAddBtn" @change="_bannerAdd" hidden="hidden">
 					</div>
 					<div class="list-pic-uploader" v-if="item.type==='setListPicUploader'">
 						<div class="left">缩略图</div>
@@ -111,6 +112,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
+import {u_viewPick} from 'config/mUtils'
 export default {
 
   name: 'setUpForm',
@@ -173,7 +175,7 @@ export default {
   },
   methods: {
   	...mapMutations([
-  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG'
+  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR'
   		]),
   	selectPic (index) {
   		this.selectedIndex = index
@@ -228,16 +230,85 @@ export default {
 			}
 			this.SET_MODALCFG(modalOption)
   	},
+  	//banner更改 
+  	_addClick () {
+  		document.querySelector('#bannerAddBtn').click()
+  	},
+  	_bannerAdd (e) {
+  		let that = this
+			let newFormCfg = Object.assign({},this.formCfg)
+  		u_viewPick(e.target, function(_this){
+  			//_this代表 new FileReader对象 that 代表vue组件
+  			newFormCfg.inputList[0].imglist.push(_this.result)
+  			newFormCfg.inputList[1].value.push('')
+  			newFormCfg.inputList[2].value.push('')
+  			that.UPDATE_FORMCFG(newFormCfg)
+  			that.selectedIndex = newFormCfg.inputList[0].imglist.length -1
+  		})
+  	},
+  	_bannerDel (index) {
+  		let that = this
+  		let newFormCfg = Object.assign({},this.formCfg)
+  		let modalOption = {
+  			modalFor: 'remove',
+  			title: '温馨提示',
+  			onSuccess: function() {
+  				newFormCfg.inputList[0].imglist.splice(index, 1)
+  				newFormCfg.inputList[1].value.splice(index, 1)
+					newFormCfg.inputList[2].value.splice(index, 1)
+  				that.UPDATE_FORMCFG(newFormCfg)
+  				that.selectedIndex = 0
+  			}
+  		}
+  		this.SET_MODALCFG(modalOption)
+  		this.OPEN_MODAL()
+  	},
+
+  	//输入框的失焦
+  	_nameBlur () {
+  		let that = this
+  		let newInputList = Object.assign({},this.formCfg.inputList)
+  		//banner标题
+  		if (this.formCfg.formFor ==='homebanner' || this.formCfg.formFor ==='listbanner') {
+  			newInputList[1].value[this.selectedIndex] = this.nameValue
+  			this.UPDATE_FORMCFG(newInputList)
+  		}
+  	},
+  	_linkBlur () {
+  		let that = this
+  		let newInputList = Object.assign({},this.formCfg.inputList)
+  		//banner标题
+  		if (this.formCfg.formFor ==='homebanner' || this.formCfg.formFor ==='listbanner') {
+  			newInputList[2].value[this.selectedIndex] = this.linkValue
+  			this.UPDATE_FORMCFG(newInputList)
+  		}
+  	},
   	//保存并发布
   	_submit () {
+			// 保存并发布就是转化成需要发送的数据 ，给模态框确认的时候只需要通过这个来判断发送给哪个接口 就行了
+
   		if(this.formCfg.formFor == '') {
   			return
   		}
   		switch(this.formCfg.formFor) {
-  			case 'introduce': 
+  			case 'homebanner': 
   				//linkValue  nameValue  summaryValue  titleValue
-  				// 发送请求完成后保存  拼凑数据
-  				
+  				let banner = new Array
+  				let temporaryObj = {
+  					title: '',
+  					img: '',
+  					link: '',
+  				}
+  				let inputlist = this.formCfg.inputList
+  				for(let i in inputlist) {
+  					banner.push(Object.assign({},temporaryObj, {
+  						title: inputlist[1].value[i],
+  						img:inputlist[0].imglist[i],
+  						link:inputlist[2].value[i],
+  					}))
+  				}
+
+  				console.log(banner)
   				break;
   		}
   	}

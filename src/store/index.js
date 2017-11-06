@@ -61,6 +61,10 @@ const state = {
 		onSuccess: function(){},    // 控制确定的作用
 	},
 	isShowNotification: false,		//是否展示发布成功的提示框
+	homePanelList: '',			//默认3个手机页面的数据存储和渲染
+	listPanelList: '',
+	userPanelList: '',
+	temporaryPanelList: '',     //临时手机面板的数据
 	test:'1',		//测试用
 }
 

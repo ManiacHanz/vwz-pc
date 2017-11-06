@@ -3,7 +3,7 @@
 		<div class="dialog">
 			<div class="head">
 				<div class="title">{{modalCfg.title}}</div>
-				<div class="close" @click="closeModal"></div>
+				<div class="close" @click="CLOSE_MODAL"></div>
 			</div>
 			<div class="body">
 				<section class="confirm-submit" v-if="modalCfg.modalFor==='submit'">
@@ -182,7 +182,7 @@
 				</button>
 				<div class="normal" v-else>
 					<div class="confirm" @click="confirm">确&nbsp;定</div>
-					<div class="cancel" @click="closeModal">取&nbsp;消</div>
+					<div class="cancel" @click="CLOSE_MODAL">取&nbsp;消</div>
 				</div>
 				
 			</div>
@@ -191,6 +191,9 @@
 </template>
 
 <script>
+
+import {u_viewPick} from 'config/mUtils'
+
 //引入数据组件
 	import { materialArticleData } from '../../../static/data/materialData.js'
 
@@ -274,7 +277,7 @@ export default {
   	selectIcon (index) {
   		this.selectedIcon = index
   	},
-  	closeModal () {
+  	CLOSE_MODAL () {
   		this.CLOSE_MODAL()
   	},
   	//LOGO修改
@@ -283,15 +286,22 @@ export default {
   	},
   	logoChange (e) {
   		const that = this
-  		let file = e.target.files[0]
-  		let reader = new FileReader()
-  		reader.readAsDataURL(file)
-  		reader.onloadend = function () {
+  		u_viewPick(e.target, function (_this) {
+  			//这里_this是封装的reader对象 that是这个vuecomponent所以要用
   			that.logoBack = Object.assign({}, that.logoBack, {
-  				backgroundImage: 'url('+this.result+')'
+  				backgroundImage: 'url('+_this.result+')'
   			})
-  			that.SET_LOGO(this.result)
-  		}
+  			that.SET_LOGO(_this.result)
+  		})
+  		// let file = e.target.files[0]
+  		// let reader = new FileReader()
+  		// reader.readAsDataURL(file)
+  		// reader.onloadend = function () {
+  		// 	that.logoBack = Object.assign({}, that.logoBack, {
+  		// 		backgroundImage: 'url('+this.result+')'
+  		// 	})
+  		// 	that.SET_LOGO(this.result)
+  		// }
   	},
   	// 头像的修改
   	avatarUpload () {
@@ -299,15 +309,13 @@ export default {
   	},
   	avatarChange (e) {
   		const that = this
-  		let file = e.target.files[0]
-  		let reader = new FileReader()
-  		reader.readAsDataURL(file)
-  		reader.onloadend = function () {
+  		u_viewPick(e.target, function (_this) {
+  			//这里_this是封装的reader对象 that是这个vuecomponent所以要用
   			that.avatarBack = Object.assign({}, that.avatarBack, {
-  				backgroundImage: 'url('+this.result+')'
+  				backgroundImage: 'url('+_this.result+')'
   			})
-  			that.SET_AVATAR(this.result)
-  		}
+  			that.SET_AVATAR(_this.result)
+  		})
   	},
   	// 剪贴板回调
   	onCopySuccess () {
@@ -324,6 +332,7 @@ export default {
 		//确认按钮
 		confirm() {
 			this.modalCfg.onSuccess(this)
+			// 这里后面不能放在这
 			this.CLOSE_MODAL()
 		}
   }
@@ -672,7 +681,6 @@ export default {
 				display: inline-block;
 				.ellipsis();
 				vertical-align: bottom;
-
 			}
 		}
 	}
@@ -685,7 +693,6 @@ export default {
 	position: absolute;
 	bottom: 0;
 	left: 0;
-	
 	.normal {
 		display: flex;
 		justify-content: center;

@@ -1,14 +1,14 @@
 <template>
-	<div class="mobile-panel">
+	<div class="mobile-panel" v-if="homePanelList">
 		<div class="mobile">
 			<transition name="panel-fade" mode="out-in">
 			<home-panel v-if="showPanel==='home'"></home-panel>
 			<list-panel v-else-if="showPanel==='list'"></list-panel>
 			<user-panel v-else-if="showPanel==='user'"></user-panel>
 			</transition>
-			<div class="menubtn">
+			<div class="menubtn" v-if="homePanelList.button">
 				<ul :class="menubtnStyle">
-					<li :class="[mobileActive==='menubtn'+index?'active':'', item.icon==''?mobileColorStyle: '']" v-for="(item, index) in mobileCfg.menuBtn" @click="switchPanel(item.default,item.link, index)">
+					<li :class="[mobileActive==='menubtn'+index?'active':'', item.icon==''?mobileColorStyle: '']" v-for="(item, index) in homePanelList.button" @click="switchPanel(item.default,item.link, index)">
 						<div class="icon">
 							<img v-show="item.icon != ''" :src="item.icon"></img>
 						</div>
@@ -30,6 +30,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
+import {__getHomePanel} from 'service/getData.js'
 
 //引入手机页面的3个模板页
 import homePanel from './sub/homePanel.vue'
@@ -57,19 +58,25 @@ export default {
   },
   computed: {
   	...mapState([
-  			'showPanel','mobileActive','mobileColorStyle'
+  			'showPanel','mobileActive','mobileColorStyle','homePanelList'
   		])
   },
   created () {
-
-  	//这里假数据的更换
-    // console.log(mobileHomeCfg)
-		this.mobileCfg = mobileHomeCfg
+  	__getHomePanel()
+  		.then( res => {
+  			// console.log(res.home.data)
+  			this.SAVE_HOMEPANELLIST(res.home.data)
+  		})
+  		.then( ()=> {
+				this.initMenuBtnType ()
+  		})
+  	
   },
   mounted () {
-  	
-    this.initMenuBtnType ()
-    
+  	//保证加载完成再渲染数据
+  	setTimeout( ()=>{
+   	 
+  	},20)
   },
   watch: {
   	// mobileColorStyle: function(newVal, oldVal) {
@@ -86,18 +93,18 @@ export default {
   },
   methods: {
   	...mapMutations([
-  			'SET_SHOWPANEL','SET_MOBILE_COLOR','UPDATE_FORMCFG','SET_MOBILE_ACTIVE'
+  			'SET_SHOWPANEL','SET_MOBILE_COLOR','UPDATE_FORMCFG','SET_MOBILE_ACTIVE','SAVE_HOMEPANELLIST'
   		]),
   	
   	//初始化菜单配置的样式 这里要通过数组的长度来判断  有3个按钮就传4位
   	initMenuBtnType () {
-  		// console.log('initMenuBtnType')
-  		if(this.mobileCfg.menuBtn.length==4){
+  		// console.log(this.homePanelList)
+  		if(this.homePanelList.button.length==4){
 	    	this.menubtnStyle = 'type1'
 	    }
-	    else if (this.mobileCfg.menuBtn.length==5) {
-	    	// console.log(this.mobileCfg.menuBtn[2].title=='')
-	    	if(this.mobileCfg.menuBtn[2].title=='') {
+	    else if (this.homePanelList.button.length==5) {
+	    	// console.log(this.homePanelList.button[2].title=='')
+	    	if(this.homePanelList.button[2].title=='') {
 					this.menubtnStyle = 'type2'
 	    	}
 	    	else {
@@ -119,6 +126,7 @@ export default {
   		//改变激活对象
   		this.SET_MOBILE_ACTIVE('menubtn'+index)
   		//改变表格显示
+  		/*
   		if (!!_default) {
   			//如果有type就是默认的3个配置
   			this.UPDATE_FORMCFG({
@@ -131,6 +139,7 @@ export default {
 	  		})
   		}
   		else {
+  			
   			//新建一个菜单
   			this.UPDATE_FORMCFG({
 	  			formTitle: '主菜单配置',
@@ -141,6 +150,7 @@ export default {
 	  			pickFromLib: false
 	  		})
   		}
+			*/
   		
   	}
   }

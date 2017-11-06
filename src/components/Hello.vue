@@ -2,7 +2,10 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     
-    {{this.test}}
+    <!-- {{this.test}} -->
+    <ul>
+      <li v-for="item in arr" @click="liClick(item)">{{item}}</li>
+    </ul>
   </div>
 </template>
 
@@ -13,32 +16,40 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
-      type:''
+      type:'',
+      arr:[1111,2222,3333,4444],
+      timer:'',
     }
   },
   computed: {
     ...mapState([
-        'test'
+      
       ])
   },
   mounted () {
-    this.type = this.test
-    setTimeout( () => {
-      this.TEST(2)
-      // console.log(this.test)
-    },5000)
+    // this.type = this.test
+    // setTimeout( () => {
+    //   this.TEST(2)
+    //   // console.log(this.test)
+    // },5000)
   },
   watch: {
-    test: function() {
-      // alert(this.test)
-    }
+    // test: function() {
+    //   // alert(this.test)
+    // }
   },
   methods: {
     ...mapMutations([
-        'TEST'
+        // 'TEST'
       ]),
     tttt(attribute) {
-      this.TEST(attribute)
+      // this.TEST(attribute)
+    },
+    liClick (item) {
+      clearTimeout(this.timer)
+      this.timer = setTimeout(()=>{
+        console.log(item)
+      },1000)
     }
   }
 }

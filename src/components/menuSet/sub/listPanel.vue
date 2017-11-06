@@ -3,7 +3,7 @@
 		<section class="banner swiper-container" :class="[mobileActive==='listbanner'?'active':'']" id="Swiper2"
 		@click.left="setUpModule('','listbanner')">
       <ul class="swiper-wrapper">
-          <li class="swiper-slide" v-for="(item, index) in mobileCfg.listbanner" :key="index">
+          <li class="swiper-slide" v-for="(item, index) in listPanelList.banner" :key="index">
         		<img :src="item.img">
         		<p>
         			<span>{{ item.title }}</span>
@@ -14,7 +14,7 @@
 		</section>
 		<section class="detail">
 			<ul >
-				<li v-for="(item, index) in mobileCfg.contentlist" :key="index" 
+				<li v-for="(item, index) in listPanelList.content" :key="index" 
 				:class="[mobileActive==='contentlist'+index?'active':'']"
 				@click.left="setUpModule(item.link,'contentlist'+index)">
 					<type-a v-if="item.type==='a'" :content="item" :colorStyle="mobileColorStyle"></type-a>
@@ -34,9 +34,10 @@ import typeB from '@/components/list/typeB'
 
 
 import { mapState, mapMutations } from 'vuex'
+import {__getListPanel} from 'service/getData.js'
 
 // 模拟手机首页配置数据 
-import { mobileListCfg } from '../../../../static/data/mobileListCfg.js'
+// import { mobileListCfg } from '../../../../static/data/mobileListCfg.js'
 
 export default {
 
@@ -52,14 +53,18 @@ export default {
   },
   computed: {
   	...mapState([
-  			'mobileColorStyle','mobileActive'
+  			'mobileColorStyle','mobileActive','listPanelList'
   		]),
   },
   created () {
-
+  	__getListPanel()
+  		.then( res => {
+  			// console.log(res.home.data)
+  			this.SAVE_LISTPANELLIST(res.list.data)
+  		})
   	//这里假数据的更换
     // console.log(mobileHomeCfg)
-		this.mobileCfg = mobileListCfg
+		// this.mobileCfg = mobileListCfg
   },
   mounted () {
 		// 初始化轮播 
@@ -74,20 +79,25 @@ export default {
   },
   methods: {
   	...mapMutations([
-  			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG'
+  			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG','SAVE_LISTPANELLIST'
   		]),
   	setUpModule (link, dom) {
   		// 改变激活状态
   		this.SET_MOBILE_ACTIVE(dom)
   		// 配置轮播表单
   		if (dom === 'listbanner') {
+  			//图片数组
+  			let bannerPicArr = []
+  			for (let elem of this.listPanelList.banner) {
+  				bannerPicArr.push(elem.img)
+  			}
   			//标题数组
   			let bannerTitleArr = []
-  			for (let elem of this.mobileCfg.listbanner) {
+  			for (let elem of this.listPanelList.banner) {
   				bannerTitleArr.push(elem.title)
   			}
   			let bannerLinkArr = []
-  			for (let elem of this.mobileCfg.listbanner) {
+  			for (let elem of this.listPanelList.banner) {
   				bannerLinkArr.push(elem.link)
   			}
   			let option = {
@@ -100,7 +110,7 @@ export default {
 						{
 							type:'setMultiPicUploader',
 							key:'listbanner',
-							imglist:this.mobileCfg.listbanner,
+							imglist:bannerPicArr,
 						},
 						{
 							type:'setName',
@@ -129,17 +139,17 @@ export default {
 						{
 							type:'setName',
 							key:dom, 
-							value: this.mobileCfg.contentlist[domIndex].title,
+							value: this.listPanelList.content[domIndex].title,
 						},
 						{
 							type:'setListPicUploader',
 							key:dom,
-							imglist: this.mobileCfg.contentlist[domIndex].imglist,
+							imglist: this.listPanelList.content[domIndex].imglist,
 						},
 						{
 							type:'setLink', 
 							key:dom, 
-							value: this.mobileCfg.contentlist[domIndex].link,
+							value: this.listPanelList.content[domIndex].link,
 						},
 					],		//输入框列表   依次为 菜单名称 菜单图标  页面地址 标题  摘要
 					pickFromLib: true,

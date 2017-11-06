@@ -1,10 +1,10 @@
 <template>
 	<div class="user-panel" :class="mobileColorStyle">
 		<section class="top">
-			<img :src="mobileUserCfg.top">
+			<img src="/static/img/aaaaa.jpg">
 		</section>
 		<ul class="ctr-list">
-			<li v-for="(item, index) in mobileUserCfg.userlist" :key="index"
+			<li v-for="(item, index) in userPanelList.content" :key="index"
 			:class="[mobileActive==='userlist'+index?'active':'']"
 			@click.left="setUpModule(item.link,'userlist'+index)">
 				<img :src="item.icon">
@@ -17,6 +17,7 @@
 <script>
 
 import { mapState, mapMutations } from 'vuex'
+import {__getUserPanel} from 'service/getData.js'
 
 // 模拟手机用户配置数据 
 import { mobileUserCfg } from '../../../../static/data/mobileUserCfg.js'
@@ -32,15 +33,25 @@ export default {
   },
   computed: {
   	...mapState([
-  			'mobileColorStyle','mobileActive'
+  			'mobileColorStyle','mobileActive','userPanelList'
   		]),
   },
+   created () {
+  	__getUserPanel()
+  		.then( res => {
+  			// console.log(res.home.data)
+  			this.SAVE_USERPANELLIST(res.user.data)
+  		})
+  	//这里假数据的更换
+    // console.log(mobileHomeCfg)
+		// this.mobileCfg = mobileListCfg
+  },
   mounted () {
-  	this.mobileUserCfg = mobileUserCfg
+
   },
   methods: {
   	...mapMutations([
-  			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG'
+  			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG','SAVE_USERPANELLIST'
   		]),
   	setUpModule (link, dom) {
   		// 改变激活状态
@@ -57,17 +68,17 @@ export default {
 					{
 						type:'setName',
 						key:dom, 
-						value: this.mobileUserCfg.userlist[domIndex].title,
+						value: this.userPanelList.content[domIndex].title,
 					},
 					{
 						type:'setIcon',
 						key:dom,
-						value: this.mobileUserCfg.userlist[domIndex].icon,
+						value: this.userPanelList.content[domIndex].icon,
 					},
 					{
 						type:'setLink', 
 						key:dom, 
-						value: this.mobileUserCfg.userlist[domIndex].link,
+						value: this.userPanelList.content[domIndex].link,
 					},
 				],		//输入框列表   依次为 菜单名称 菜单图标  页面地址 标题  摘要
 				pickFromLib: true,

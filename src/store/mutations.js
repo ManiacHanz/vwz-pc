@@ -1,5 +1,7 @@
 // 配置mutations
 
+import Vue from 'vue'
+
 import {
 	SET_LOGO,
 	SET_AVATAR,
@@ -13,6 +15,10 @@ import {
 	SET_MODALCFG,
 	OPEN_NOTIFICATION,
 	CLOSE_NOTIFICATION,
+	SAVE_HOMEPANELLIST,
+	SAVE_LISTPANELLIST,
+	SAVE_USERPANELLIST,
+	SAVE_TEMPORARYLIST,
 } from './mutation-types.js'
 
 export default {
@@ -23,6 +29,24 @@ export default {
 	//设置头像
 	[SET_AVATAR] (state, value) {
 		state.avatarUrl = value
+	},
+	// 保存3个面板的数据，用于渲染
+	[SAVE_HOMEPANELLIST] (state, obj) {
+		state.homePanelList = ''
+		state.homePanelList = Object.assign({}, obj)
+	},
+	[SAVE_LISTPANELLIST] (state, obj) {
+		state.listPanelList = ''
+		state.listPanelList = Object.assign({}, obj)
+	},
+	[SAVE_USERPANELLIST] (state, obj) {
+		state.userPanelList = ''
+		state.userPanelList = Object.assign({}, obj)
+	},
+	// 保存临时数据，用于模态框确认的方法 发送给哪个接口，发送什么数据
+	[SAVE_TEMPORARYLIST] (state, obj) {
+		state.temporaryPanelList = ''
+		state.temporaryPanelList = Object.assign({}, obj)
 	},
 	//保存手机配置信息
 	[SAVE_MOBILECFG] (state, mobileCfg) {
