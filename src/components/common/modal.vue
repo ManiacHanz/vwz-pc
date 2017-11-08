@@ -48,11 +48,18 @@
 						<p>确认删除后，此条数据将从列表中删除！</p>
 					</div>
 				</section>
+				<section class="del-article" v-if="modalCfg.modalFor==='delBtn'">
+					<div class="alert"></div>
+					<div class="tip">
+						<p>删除确认</p>
+						<p>确认删除后，此按钮将被删除！</p>
+					</div>
+				</section>
 				<section class="menu-icon" v-if="modalCfg.modalFor==='menuIcon'">
 					<div class="up">
 						<div>
-							<span>已选择的图标</span>
-							<img :src="menuIconList[selectedIcon]"></img>
+							<span style="line-height: 40px;display: inline-block;">已选择的图标</span>
+							<img :src="menuIconList[selectedIcon]" v-show="menuIconList[selectedIcon]"></img>
 						</div>
 						<div>
 							<input type="file" name="" id="menuIconUploader" @change="_menuIconChange" hidden="hidden">
@@ -72,8 +79,8 @@
 				<section class="plate-icon" v-if="modalCfg.modalFor==='plateIcon'">
 					<div class="up">
 						<div>
-							<span>已选择的图标</span>
-							<img :src="plateIconList[selectedIcon]"></img>
+							<span style="line-height: 40px;display: inline-block;">已选择的图标</span>
+							<img :src="plateIconList[selectedIcon]" v-show="plateIconList[selectedIcon]"></img>
 						</div>
 						<div>
 							<input type="file" name="" id="plateIconUploader" @change="_plateIconChange" hidden="hidden">
@@ -93,8 +100,8 @@
 				<section class="user-icon" v-if="modalCfg.modalFor==='userIcon'">
 					<div class="up">
 						<div>
-							<span>已选择的图标</span>
-							<img :src="userIconList[selectedIcon]"></img>
+							<span style="line-height: 40px;display: inline-block;">已选择的图标</span>
+							<img :src="userIconList[selectedIcon]" v-show="userIconList[selectedIcon]"></img>
 						</div>
 						<div>
 							<input type="file" name="" id="userIconUploader" @change="_userIconChange" hidden="hidden">
@@ -366,7 +373,7 @@ export default {
 		confirm() {
 			this.modalCfg.onSuccess(this)
 			// 这里后面不能放在这
-			this.CLOSE_MODAL()
+			// this.CLOSE_MODAL()
 		}
   }
 }

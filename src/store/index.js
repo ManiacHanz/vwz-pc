@@ -16,6 +16,7 @@ const state = {
 	hasNew: false,    //是否更新了
 	mobileColorStyle: 'blue',   //手机色彩配置
 	mobileActive: '',    //手机激活模块
+	menubtnStyle: '',			//面板的菜单按钮的配置 
 	mobileCfg: '',   //手机模块配置
 	formCfg: {				//首页右边表单配置
 		formFor:'',    //配置表单选项的唯一标识，负责配置唯一的数据

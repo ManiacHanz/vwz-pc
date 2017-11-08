@@ -1,13 +1,13 @@
 <template>
 	<div class="user-panel" :class="mobileColorStyle">
 		<section class="top">
-			<img src="/static/img/aaaaa.jpg">
+			<img :src="userPanelList.banner">
 		</section>
 		<ul class="ctr-list">
 			<li v-for="(item, index) in userPanelList.content" :key="index"
 			:class="[mobileActive==='userlist'+index?'active':'']"
 			@click.left="setUpModule(item.link,'userlist'+index)">
-				<img :src="item.icon">
+				<img :src="item.icon" v-show="item.icon">
 				<span>{{item.title}}</span>
 			</li>
 		</ul>
@@ -79,11 +79,6 @@ export default {
 						type:'setLink', 
 						key:dom, 
 						value: this.userPanelList.content[domIndex].link,
-					},
-					{
-						type:'setLinkType', 
-						key:dom, 
-						value: this.userPanelList.content[domIndex].linkType,
 					},
 				],		//输入框列表   依次为 菜单名称 菜单图标  页面地址 标题  摘要
 				pickFromLib: true,

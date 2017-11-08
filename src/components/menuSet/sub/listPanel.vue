@@ -4,7 +4,7 @@
 		@click.left="setUpModule('','listbanner')">
       <ul class="swiper-wrapper">
           <li class="swiper-slide" v-for="(item, index) in listPanelList.banner" :key="index">
-        		<img :src="item.img">
+        		<img :src="item.img" v-show="item.imglist">
         		<p>
         			<span>{{ item.title }}</span>
         		</p>

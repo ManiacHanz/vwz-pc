@@ -9,6 +9,7 @@ import {
 	SET_SHOWPANEL,
 	SET_MOBILE_COLOR,
 	SET_MOBILE_ACTIVE,
+	SET_MENUBTN_STYLE,
 	UPDATE_FORMCFG,
 	OPEN_MODAL,
 	CLOSE_MODAL,
@@ -30,6 +31,21 @@ export default {
 	[SET_AVATAR] (state, value) {
 		state.avatarUrl = value
 	},
+	// 设置面板菜单按钮的样式 
+	[SET_MENUBTN_STYLE] (state) {
+		if(state.homePanelList.button.length==4){
+    	state.menubtnStyle = 'type1'
+    }
+    else if (state.homePanelList.button.length==5) {
+    	// console.log(state.homePanelList.button[2].title=='')
+    	if(state.homePanelList.button[2].title=='' && state.homePanelList.button[1].title=='') {
+				state.menubtnStyle = 'type2'
+    	}
+    	else {
+    		state.menubtnStyle = 'type3'
+    	}
+    }
+	},
 	// 保存3个面板的数据，用于渲染
 	[SAVE_HOMEPANELLIST] (state, obj) {
 		state.homePanelList = ''
@@ -48,10 +64,13 @@ export default {
 		state.temporaryPanelList = ''
 		if(_interface === 'home') {
 			state.temporaryPanelList = Object.assign({}, state.homePanelList, obj)
-			// console.log()
+		 // console.log(obj)
 		}
 		if(_interface === 'list') {
 			state.temporaryPanelList = Object.assign({}, state.listPanelList, obj)
+		}
+		if(_interface === 'user') {
+			state.temporaryPanelList = Object.assign({}, state.userPanelList, obj)
 		}
 	},
 	//保存手机配置信息

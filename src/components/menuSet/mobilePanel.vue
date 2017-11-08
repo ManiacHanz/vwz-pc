@@ -8,7 +8,7 @@
 			</transition>
 			<div class="menubtn" v-if="homePanelList.button">
 				<ul :class="menubtnStyle">
-					<li :class="[mobileActive==='menubtn'+index?'active':'', item.icon==''?mobileColorStyle: '']" v-for="(item, index) in homePanelList.button" @click="switchPanel(item.default,item.link, index)">
+					<li :class="[mobileActive==='menubtn'+index?'active':'', item.icon==''?mobileColorStyle: '']" v-for="(item, index) in homePanelList.button" @click="switchPanel(item, index)">
 						<div class="icon">
 							<img v-show="item.icon != ''" :src="item.icon"></img>
 						</div>
@@ -52,13 +52,13 @@ export default {
   data () {
     return {
     	mobileCfg:'',    //手机配置,
-    	menuBtnIconList: ['/static/img/menuicon_01.png','','/static/img/menuicon_02.png','/static/img/menuicon_03.png'],   //按钮图标的默认配置
-    	menubtnStyle: 'type1',
+    	// menuBtnIconList: ['/static/img/menuicon_01.png','','/static/img/menuicon_02.png','/static/img/menuicon_03.png'],   //按钮图标的默认配置
+    	// menubtnStyle: 'type1',
     }
   },
   computed: {
   	...mapState([
-  			'showPanel','mobileActive','mobileColorStyle','homePanelList'
+  			'showPanel','mobileActive','mobileColorStyle','homePanelList','menubtnStyle'
   		])
   },
   created () {
@@ -68,7 +68,7 @@ export default {
   			this.SAVE_HOMEPANELLIST(res.home.data)
   		})
   		.then( ()=> {
-				this.initMenuBtnType ()
+				this.SET_MENUBTN_STYLE ()
   		})
   	
   },
@@ -93,64 +93,87 @@ export default {
   },
   methods: {
   	...mapMutations([
-  			'SET_SHOWPANEL','SET_MOBILE_COLOR','UPDATE_FORMCFG','SET_MOBILE_ACTIVE','SAVE_HOMEPANELLIST'
+  			'SET_SHOWPANEL','SET_MOBILE_COLOR','UPDATE_FORMCFG','SET_MOBILE_ACTIVE','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE'
   		]),
   	
   	//初始化菜单配置的样式 这里要通过数组的长度来判断  有3个按钮就传4位
-  	initMenuBtnType () {
-  		// console.log(this.homePanelList)
-  		if(this.homePanelList.button.length==4){
-	    	this.menubtnStyle = 'type1'
-	    }
-	    else if (this.homePanelList.button.length==5) {
-	    	// console.log(this.homePanelList.button[2].title=='')
-	    	if(this.homePanelList.button[2].title=='') {
-					this.menubtnStyle = 'type2'
-	    	}
-	    	else {
-	    		this.menubtnStyle = 'type3'
-	    	}
-	    }
-  	},
+  	// SET_MENUBTN_STYLE () {
+  	// 	// console.log(this.homePanelList)
+  	// 	if(this.homePanelList.button.length==4){
+	  //   	this.menubtnStyle = 'type1'
+	  //   }
+	  //   else if (this.homePanelList.button.length==5) {
+	  //   	// console.log(this.homePanelList.button[2].title=='')
+	  //   	if(this.homePanelList.button[2].title=='') {
+			// 		this.menubtnStyle = 'type2'
+	  //   	}
+	  //   	else {
+	  //   		this.menubtnStyle = 'type3'
+	  //   	}
+	  //   }
+  	// },
   	updateInputList (arr) {
 
   	},
-  	switchPanel (_default, link, index) {
+  	switchPanel (item, index) {
   		/*
-  			默认的3个按钮是有_default值的，但是没有link值
+  			默认的3个按钮是有type值的，但是没有link值
 
   		 */
 
   		//改变面板显示
-  		this.SET_SHOWPANEL(_default)
+  		this.SET_SHOWPANEL(item.type)
   		//改变激活对象
   		this.SET_MOBILE_ACTIVE('menubtn'+index)
   		//改变表格显示
-  		/*
-  		if (!!_default) {
-  			//如果有type就是默认的3个配置
-  			this.UPDATE_FORMCFG({
-	  			formTitle: '主菜单配置',
+  		if(!!item.type) {
+  			//默认的3个模块
+  			let option = {
+  				formFor: 'menubtn',
+  				formTitle: '主菜单配置',
 	  			formSubTitle: '',
 	  			removeMenu: false,
 	  			addMenu: false,
-	  			inputList: [{type:'setTitle', key:'1'},{type:'setIcon', key:'1'},{type:'setLink', key:'1'}],
+	  			inputList: [
+	  				{type:'setTitle', key:'menubtn'+index, value:item.title},
+	  				{type:'setIcon', key:'menubtn'+index, value: item.icon},
+	  				{type:'setLink', key:'menubtn'+index, value: item.link}
+  				],
 	  			pickFromLib: false
-	  		})
+  			}
+  			this.UPDATE_FORMCFG(option)
   		}
   		else {
-  			
-  			//新建一个菜单
-  			this.UPDATE_FORMCFG({
-	  			formTitle: '主菜单配置',
+  			let option = {
+  				formFor: 'menubtn',
+  				formTitle: '主菜单配置',
 	  			formSubTitle: '',
 	  			removeMenu: true,
 	  			addMenu: false,
-	  			inputList: [{type:'setTitle', key:'2'},{type:'setIcon', key:'2'},{type:'setLink', key:'2'}],
+	  			inputList: [
+	  				{type:'setTitle', key:'menubtn'+index, value: item.title},
+	  				{type:'setIcon', key:'menubtn'+index, value: item.icon},
+	  				{type:'setLink', key:'menubtn'+index, value: item.link}
+  				],
 	  			pickFromLib: false
-	  		})
+  			}
+  			//新建一个菜单
+  			this.UPDATE_FORMCFG(option)
+  			if (this.menubtnStyle === 'type1') {
+  				let obj = {
+  					title: '',
+	          icon: '',
+	          link: '',
+	          type: '',
+  				}
+  				this.homePanelList.button.splice(1,0,obj)
+  				this.homePanelList = Object.assign({},...this.homePanelList,this.homePanelList.button)
+  				alert('发送请求覆盖掉homePanelList')
+  				this.SAVE_HOMEPANELLIST(this.homePanelList)
+  				this.SET_MENUBTN_STYLE()
+  			}
   		}
-			*/
+			
   		
   	}
   }
@@ -278,10 +301,18 @@ export default {
 		}
 	}
 	.type2 {
+		li {
+			width: 63px;
+		}
 		li:nth-child(3) {
 			background: url('/static/img/add_menu.png') no-repeat;
-			background-size: 63px 46px;
+			background-size: 61px 46px;
 			flex-grow:1;
+		}
+	}
+	.type3 {
+		li {
+			width: 63px;
 		}
 	}
 }

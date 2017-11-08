@@ -27,11 +27,12 @@
 							页面地址
 						</div>
 						<div>
-							<input type="text" name="" maxlength="" v-model="linkValue" @blur="_linkBlur" @input="linkTypeValue = 0" id="linkInput">
+							<input type="text" name="" maxlength="" v-model="linkValue" @blur="_linkBlur" @input="linkTypeValue = 0" id="linkInput" placeholder="请输入完整的网页地址  http://www...">
 							<p class="alert"></p>
 							<div class="tip">
-								<div>输入第三方跳转网页(http://www...)</div>
+								<div>输入第三方跳转网页</div>
 								<div class="pick-btn" v-if="formCfg.pickFromLib" @click="_pickFromLib">从素材库中添加文章</div>
+                <div v-if="formCfg.formFor==='menubtn'">不输入保持为默认页面</div>
 							</div>
 						</div>
 					</div>
@@ -135,7 +136,7 @@ export default {
   // props:['formTitle', 'removeMenu', 'addMenu'],
   computed: {
   	...mapState([
-  			'formCfg','homePanelList','listPanelList'
+  			'formCfg','homePanelList','listPanelList','userPanelList','temporaryPanelList','menubtnStyle','mobileActive'
   		])
   },
   watch: {
@@ -193,6 +194,11 @@ export default {
   			this.iconValue = this._getInputVal(val.inputList, 'type', 'setIcon', 'value')
         this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
   		}
+      else if (val.formFor === 'menubtn') {
+        this.titleValue = this._getInputVal(val.inputList, 'type', 'setTitle', 'value') || ''
+        this.linkValue = this._getInputVal(val.inputList, 'type', 'setLink', 'value') || ''
+        this.iconValue = this._getInputVal(val.inputList, 'type', 'setIcon', 'value') || ''
+      }
   	},
   	selectedIndex: function(val) {
   		// 为轮播图配置的轮播选中的索引
@@ -203,7 +209,7 @@ export default {
   },
   methods: {
   	...mapMutations([
-  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR','SAVE_TEMPORARYLIST','SET_MOBILE_ACTIVE'
+  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR','SAVE_TEMPORARYLIST','SET_MOBILE_ACTIVE','SAVE_USERPANELLIST','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE'
   		]),
   	selectPic (index) {
   		this.selectedIndex = index
@@ -233,6 +239,10 @@ export default {
 					title: '请选择以下图标',					//模态框的标题
 					onSuccess: function(_this){		//选择图标的路径
 						alert(_this.plateIconList[_this.selectedIcon])
+            if(!_this.selectedIcon) {
+              alert('请选择图标')
+              return
+            }
 						that.iconValue = _this.plateIconList[_this.selectedIcon]
 					}
 				}
@@ -245,11 +255,31 @@ export default {
 					onSuccess: function(_this){		//选择图标的路径
 						alert(_this.userIconList[_this.selectedIcon])
 						that.iconValue = _this.userIconList[_this.selectedIcon]
-
+            if(!_this.selectedIcon) {
+              alert('请选择图标')
+              return
+            }
+            that.formCfg.inputList[1].value = that.iconValue
 					}
 				}
 				this.SET_MODALCFG(modalOption)
 			}
+      else if (this.formCfg.formFor == 'menubtn') {
+        let modalOption = {
+          modalFor: 'menuIcon',       //模态框用来做什么  参考modal.vue
+          title: '请选择以下图标',         //模态框的标题
+          onSuccess: function(_this){   //选择图标的路径
+            alert(_this.menuIconList[_this.selectedIcon])
+            that.iconValue = _this.menuIconList[_this.selectedIcon]
+            if(!_this.selectedIcon) {
+              alert('请选择图标')
+              return
+            }
+            that.formCfg.inputList[1].value = that.iconValue
+          }
+        }
+        this.SET_MODALCFG(modalOption)
+      }
   	},
 		// _setBack () {
 		// 	document.querySelector('#backUploader').click()
@@ -356,6 +386,20 @@ export default {
         ]
         this.UPDATE_FORMCFG({inputList:newInputList})
       }
+      else if (this.formCfg.formFor ==='userlist') {
+        this.userPanelList.content.unshift({
+          title: '',
+          icon: '',
+          link: '',
+        })
+        this.SET_MOBILE_ACTIVE('userlist0')
+        let newInputList = [
+          {key:'userlist0',type:'setName',value:''},
+          {key:'userlist0',type: 'setIcon', value: ''},
+          {key:'userlist0',type: 'setLink', value: ''}
+        ]
+        this.UPDATE_FORMCFG({inputList:newInputList})
+      }
     },
     _removeDataList() {
       if (this.formCfg.formFor ==='contentlist'){
@@ -374,6 +418,60 @@ export default {
         }
         else {
           alert('请至少保持一条列表')
+        }
+      }
+      else if(this.formCfg.formFor ==='menubtn') {
+        let index = this.mobileActive.substring(7)
+        let that = this
+        if (this.homePanelList.button.length === 5) {
+          if(this.homePanelList.button[1].title == '' && this.homePanelList.button[2].title == '') {
+            let modalOption = { 
+              modalFor: 'delBtn',
+              title: '温馨提示',
+              onSuccess: function() {
+                  that.homePanelList.button.splice(index, 1)
+                  that.SET_MENUBTN_STYLE()
+              }
+            }
+            this.SET_MODALCFG(modalOption)
+            this.OPEN_MODAL()
+          }
+          else{
+            const emptyBtn = {
+              title: '',
+              icon: '',
+              link: '',
+              type: '',
+            }
+            let modalOption = { 
+              modalFor: 'delBtn',
+              title: '温馨提示',
+              onSuccess: function() {
+                  that.homePanelList.button.splice(index, 1,emptyBtn)
+                  that.SET_MENUBTN_STYLE()
+              }
+            }
+            this.SET_MODALCFG(modalOption)
+            this.OPEN_MODAL()
+          }
+        }
+        else if(this.homePanelList.button.length === 4) {
+          const emptyBtn = {
+              title: '',
+              icon: '',
+              link: '',
+              type: '',
+            }
+            let modalOption = { 
+              modalFor: 'delBtn',
+              title: '温馨提示',
+              onSuccess: function() {
+                  that.homePanelList.button.splice(index, 1,emptyBtn)
+                  that.SET_MENUBTN_STYLE()
+              }
+            }
+            this.SET_MODALCFG(modalOption)
+            this.OPEN_MODAL()
         }
       }
       
@@ -570,6 +668,7 @@ export default {
             return
           }
           content = [...this.listPanelList.content]
+          let index = ''
           payload = {
             _interface: 'list',
             obj:{
@@ -577,6 +676,59 @@ export default {
             }
           }
           this.SAVE_TEMPORARYLIST(payload)
+          break;
+        case 'userlist':
+          if(!this.nameValue || !this.linkValue || !this.formCfg.inputList[1].value) {
+            alert('表单配置项不能为空,否则不会在手机页面上展示')
+            return
+          }
+          content = [...this.userPanelList.content]
+          index = this.formCfg.inputList[0].key.substring(8)
+          temporaryObj = {
+            icon:this.iconValue,
+            link: this.linkValue,
+            title: this.nameValue,
+          }
+          content.splice(index, 1, temporaryObj)
+          payload = {
+            _interface: 'list',
+            obj:{
+              banner: this.userPanelList.banner,
+              content
+            }
+          }
+          this.SAVE_TEMPORARYLIST(payload)
+          alert('提交给后台  整个用户面板的数据')
+
+          this.SAVE_USERPANELLIST(this.temporaryPanelList)
+          break;
+        case 'menubtn':
+          if(!this.titleValue ||  !this.iconValue) {
+            alert('表单配置项不能为空,否则不会在手机页面上展示')
+            return
+          }
+          let button = [...this.homePanelList.button]
+          index = this.formCfg.inputList[0].key.substring(7)
+          temporaryObj = {
+            icon:this.iconValue,
+            link: this.linkValue,
+            title: this.titleValue,
+            type:'',
+          }
+          button.splice(index, 1, temporaryObj)
+          // {button:button}
+          
+          payload = {
+            _interface: 'home',
+            obj:{
+              button:button
+            }
+          }
+          this.SAVE_TEMPORARYLIST(payload)
+          alert('提交给后台  整个用户面板的数据')
+
+          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)
+          this.SET_MENUBTN_STYLE()
           break;
   		}
   	}

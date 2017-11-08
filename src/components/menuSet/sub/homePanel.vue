@@ -54,11 +54,16 @@ export default {
   		]),
   },
   created () {
-  	__getHomePanel()
-  		.then( res => {
+  	// if(!this.homePanelList) {//这里可能不需要这个
+
+			__getHomePanel()
+  			.then( res => {
   			// console.log(res.home.data)
-  			this.SAVE_HOMEPANELLIST(res.home.data)
+  				this.SAVE_HOMEPANELLIST(res.home.data)
+  				this.SET_MENUBTN_STYLE()
   		})
+  	// }
+  	
   	//这里假数据的更换
     // console.log(mobileHomeCfg)
 		// this.mobileCfg = mobileHomeCfg
@@ -77,7 +82,7 @@ export default {
   },
   methods: {
   	...mapMutations([
-  			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG','SAVE_HOMEPANELLIST'
+  			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE'
   		]),
   	setUpModule (link, dom) {
   		// 改变激活状态
