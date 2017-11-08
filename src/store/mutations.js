@@ -44,9 +44,15 @@ export default {
 		state.userPanelList = Object.assign({}, obj)
 	},
 	// 保存临时数据，用于模态框确认的方法 发送给哪个接口，发送什么数据
-	[SAVE_TEMPORARYLIST] (state, obj) {
+	[SAVE_TEMPORARYLIST] (state, {_interface, obj}) {
 		state.temporaryPanelList = ''
-		state.temporaryPanelList = Object.assign({}, obj)
+		if(_interface === 'home') {
+			state.temporaryPanelList = Object.assign({}, state.homePanelList, obj)
+			// console.log()
+		}
+		if(_interface === 'list') {
+			state.temporaryPanelList = Object.assign({}, state.listPanelList, obj)
+		}
 	},
 	//保存手机配置信息
 	[SAVE_MOBILECFG] (state, mobileCfg) {

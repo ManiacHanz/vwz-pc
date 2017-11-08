@@ -17,7 +17,7 @@
 				<li v-for="(item, index) in listPanelList.content" :key="index" 
 				:class="[mobileActive==='contentlist'+index?'active':'']"
 				@click.left="setUpModule(item.link,'contentlist'+index)">
-					<type-a v-if="item.type==='a'" :content="item" :colorStyle="mobileColorStyle"></type-a>
+					<type-a v-if="item.imglist.length===3" :content="item" :colorStyle="mobileColorStyle"></type-a>
 					<type-b v-else :content="item" :colorStyle="mobileColorStyle"></type-b>
 				</li>
 			</ul>
@@ -86,20 +86,22 @@ export default {
   		this.SET_MOBILE_ACTIVE(dom)
   		// 配置轮播表单
   		if (dom === 'listbanner') {
-  			//图片数组
+  			//  重组数组
   			let bannerPicArr = []
+  			let bannerTitleArr = []
+  			let bannerLinkArr = []
+  			let bannerLinkTypeArr = []
   			for (let elem of this.listPanelList.banner) {
   				bannerPicArr.push(elem.img)
-  			}
-  			//标题数组
-  			let bannerTitleArr = []
-  			for (let elem of this.listPanelList.banner) {
   				bannerTitleArr.push(elem.title)
-  			}
-  			let bannerLinkArr = []
-  			for (let elem of this.listPanelList.banner) {
   				bannerLinkArr.push(elem.link)
+  				bannerLinkTypeArr.push(elem.linkType)
   			}
+  			
+  			// for (let elem of this.listPanelList.banner) {
+  			// }
+  			// for (let elem of this.listPanelList.banner) {
+  			// }
   			let option = {
   				formFor:'listbanner',    //配置表单选项的唯一标识，负责配置唯一的数据
 					formTitle: 'banner配置',		//表单标题
@@ -122,6 +124,11 @@ export default {
 							key:'listbanner', 
 							value: bannerLinkArr,
 						},
+						{
+							type:'setLinkType', 
+							key:'listbanner', 
+							value: bannerLinkTypeArr,
+						},
 					],		//输入框列表   依次为 菜单名称 菜单图标  页面地址 标题  摘要
 					pickFromLib: true,
   			}
@@ -133,6 +140,7 @@ export default {
   				formFor:'contentlist',    //配置表单选项的唯一标识，负责配置唯一的数据
 					formTitle: '二级菜单配置',		//表单标题
 					formSubTitle: '',
+					listIndex: domIndex,				//给列表的索引
 					removeMenu: true,		//删除按钮
 					addMenu: true,		//添加按钮
 					inputList:[
@@ -150,6 +158,11 @@ export default {
 							type:'setLink', 
 							key:dom, 
 							value: this.listPanelList.content[domIndex].link,
+						},
+						{
+							type:'setLinkType', 
+							key:dom, 
+							value: this.listPanelList.content[domIndex].linkType,
 						},
 					],		//输入框列表   依次为 菜单名称 菜单图标  页面地址 标题  摘要
 					pickFromLib: true,

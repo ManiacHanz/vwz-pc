@@ -84,19 +84,17 @@ export default {
   		this.SET_MOBILE_ACTIVE(dom)
   		// 配置轮播表单
   		if (dom === 'homebanner') {
-  			//图片数组
+  			// 重组数据格式
   			let bannerPicArr = []
+  			let bannerTitleArr = []
+  			let bannerLinkArr = []
+  			let bannerLinkTypeArr = []
+
   			for (let elem of this.homePanelList.banner) {
   				bannerPicArr.push(elem.img)
-  			}
-  			//标题数组
-  			let bannerTitleArr = []
-  			for (let elem of this.homePanelList.banner) {
   				bannerTitleArr.push(elem.title)
-  			}
-  			let bannerLinkArr = []
-  			for (let elem of this.homePanelList.banner) {
   				bannerLinkArr.push(elem.link)
+  				bannerLinkTypeArr.push(elem.linkType)
   			}
   			let option = {
   				formFor:'homebanner',    //配置表单选项的唯一标识，负责配置唯一的数据
@@ -120,6 +118,11 @@ export default {
 							key:'homebanner', 
 							value: bannerLinkArr,
 						},
+						{
+							type:'setLinkType', 
+							key:'homebanner', 
+							value: bannerLinkTypeArr,
+						}
 					],		//输入框列表   依次为 菜单名称 菜单图标  页面地址 标题  摘要
 					pickFromLib: true,
   			}
@@ -154,6 +157,11 @@ export default {
 							key:'introduce', 
 							value: this.homePanelList.intro.link,
 						},
+						{
+							type:'setLinkType', 
+							key:'introduce', 
+							value: this.homePanelList.intro.linkType,
+						}
 					],		//输入框列表   依次为 菜单名称 菜单图标  页面地址 标题  摘要
 					pickFromLib: true,
   			}
@@ -188,6 +196,11 @@ export default {
 								key: dom,
 								value: this.homePanelList.content[dom.substring(5)].link,
 							},
+							{
+								type:'setLinkType',
+								key: dom,
+								value: this.homePanelList.content[dom.substring(5)].linkType,
+							},
   					]
   				})
   			}
@@ -213,6 +226,11 @@ export default {
 								type:'setLink',
 								key: dom,
 								value: this.homePanelList.content[dom.substring(5)].link,
+							},
+							{
+								type:'setLinkType',
+								key: dom,
+								value: this.homePanelList.content[dom.substring(5)].linkType,
 							},
   					]
   				})

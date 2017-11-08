@@ -27,11 +27,25 @@
 						<p>删除后“banner配置”下的配置内容将被删除</p>
 					</div>
 				</section>
+				<section class="del-pic" v-if="modalCfg.modalFor==='delPic'">
+					<div class="alert"></div>
+					<div class="tip">
+						<p>删除确认</p>
+						<p>确认删除后，图片将被删除！</p>
+					</div>
+				</section>
 				<section class="del-article" v-if="modalCfg.modalFor==='delArticle'">
 					<div class="alert"></div>
 					<div class="tip">
 						<p>删除确认</p>
 						<p>确认删除后，文章内容将被删除！</p>
+					</div>
+				</section>
+				<section class="del-article" v-if="modalCfg.modalFor==='delList'">
+					<div class="alert"></div>
+					<div class="tip">
+						<p>删除确认</p>
+						<p>确认删除后，此条数据将从列表中删除！</p>
 					</div>
 				</section>
 				<section class="menu-icon" v-if="modalCfg.modalFor==='menuIcon'">
@@ -41,7 +55,8 @@
 							<img :src="menuIconList[selectedIcon]"></img>
 						</div>
 						<div>
-							<p class="upload-btn">上传本地图标</p>
+							<input type="file" name="" id="menuIconUploader" @change="_menuIconChange" hidden="hidden">
+							<p class="upload-btn" @click="_uploaderTrigger('menuIconUploader')">上传本地图标</p>
 							<p class="advice">建议尺寸120x120</p>
 						</div>
 					</div>
@@ -61,7 +76,8 @@
 							<img :src="plateIconList[selectedIcon]"></img>
 						</div>
 						<div>
-							<p class="upload-btn">本地上传</p>
+							<input type="file" name="" id="plateIconUploader" @change="_plateIconChange" hidden="hidden">
+							<p class="upload-btn" @click="_uploaderTrigger('plateIconUploader')">本地上传</p>
 							<p class="advice">建议尺寸140x140</p>
 						</div>
 					</div>
@@ -78,16 +94,17 @@
 					<div class="up">
 						<div>
 							<span>已选择的图标</span>
-							<img :src="userIconList[mobileColorStyle][selectedIcon]"></img>
+							<img :src="userIconList[selectedIcon]"></img>
 						</div>
 						<div>
-							<p class="upload-btn">本地上传</p>
+							<input type="file" name="" id="userIconUploader" @change="_userIconChange" hidden="hidden">
+							<p class="upload-btn" @click="_uploaderTrigger('userIconUploader')">本地上传</p>
 							<p class="advice">建议尺寸140x140</p>
 						</div>
 					</div>
 					<div class="down">
 						<ul>
-							<li v-for="(item, index) in userIconList[mobileColorStyle]" @click="selectIcon(index)">
+							<li v-for="(item, index) in userIconList" @click="selectIcon(index)">
 								<div class="mask" v-show="selectedIcon===index"></div>
 								<img :src="item">
 							</li>
@@ -101,7 +118,7 @@
 					</div>
 					<div class="right">
 						<input type="file" name="" hidden="hidden" value="选择LOGO" id="logoUploadBtn" accept="image/png, image/jpeg" @change="logoChange">
-						<div class="pick-logo" @click="logoUpload">选择LOGO</div>
+						<div class="pick-logo" @click="_uploaderTrigger('logoUploadBtn')">选择LOGO</div>
 						<p>LOGO必须是jpg或者png格式图片；</p>
 						<p>新LOGO不允许涉及政治敏感与色情</p>
 					</div>
@@ -113,7 +130,7 @@
 					</div>
 					<div class="right">
 						<input type="file" name="" hidden="hidden" value="选择头像" id="avatarUploadBtn" accept="image/png, image/jpeg" @change="avatarChange">
-						<div class="pick-avatar" @click="avatarUpload">选择头像</div>
+						<div class="pick-avatar" @click="_uploaderTrigger('avatarUploadBtn')">选择头像</div>
 						<p>头像必须是jpg或者png格式图片；</p>
 						<p>新头像不允许涉及政治敏感与色情</p>
 					</div>
@@ -216,19 +233,15 @@ export default {
     return {
     	// 这里应该是去接口调到他的图标列表 再添加进来 用数组的concat方法
     	menuIconList: 
-    			 ['/static/img/menuicon_01.png','/static/img/menuicon_02.png','/static/img/menuicon_03.png','/static/img/menuicon_04.png','/static/img/menuicon_05.png',
-    			'/static/img/menuicon_01_dark.png','/static/img/menuicon_02_dark.png','/static/img/menuicon_03_dark.png','/static/img/menuicon_04_dark.png','/static/img/menuicon_05_dark.png',
-    			'/static/img/menuicon_01_green.png','/static/img/menuicon_02_green.png','/static/img/menuicon_03_green.png','/static/img/menuicon_04_green.png','/static/img/menuicon_05_green.png'],
-    		
-    			
-    	
+  			['/static/img/menuicon_01.png','/static/img/menuicon_02.png','/static/img/menuicon_03.png','/static/img/menuicon_04.png','/static/img/menuicon_05.png',
+  			'/static/img/menuicon_01_dark.png','/static/img/menuicon_02_dark.png','/static/img/menuicon_03_dark.png','/static/img/menuicon_04_dark.png','/static/img/menuicon_05_dark.png',
+  			'/static/img/menuicon_01_green.png','/static/img/menuicon_02_green.png','/static/img/menuicon_03_green.png','/static/img/menuicon_04_green.png','/static/img/menuicon_05_green.png'
+  			],
     	plateIconList: ['/static/img/plate_icon_02.png','/static/img/plate_icon_03.png','/static/img/plate_icon_04.png','/static/img/plate_icon_05.png','/static/img/plate_icon_06.png'
     	],
-    	userIconList: {
-    			blue: ['/static/img/usericon_02.png','/static/img/usericon_03.png','/static/img/usericon_04.png'],
-    			dark: ['/static/img/usericon_02_dark.png','/static/img/usericon_03_dark.png','/static/img/usericon_04_dark.png'],
-    			green:['/static/img/usericon_02_green.png','/static/img/usericon_03_green.png','/static/img/usericon_04_green.png'],
-    	},
+    	userIconList: 
+  			['/static/img/usericon_02.png','/static/img/usericon_03.png','/static/img/usericon_04.png','/static/img/usericon_02_dark.png','/static/img/usericon_03_dark.png','/static/img/usericon_04_dark.png','/static/img/usericon_02_green.png','/static/img/usericon_03_green.png','/static/img/usericon_04_green.png'
+  			],
     	selectedIcon:'',		//选择的第几个 这里在点开模态框的时候是否应该传进来，如果不传，那上面src应该有个默认值
     	//logo和头像地址要调用  
     	logoBack: { backgroundImage: 'url(/static/img/logo.png)' },
@@ -264,7 +277,11 @@ export default {
   		else {
   			this.newPasswordAlert = false
   		}
+  	},
+  	isShowModal: function() {
+  		this.selectedIcon = ''
   	}
+
   },
   mounted () {
 		//初始化列表数据  这里应该放在watch里面做
@@ -277,13 +294,31 @@ export default {
   	selectIcon (index) {
   		this.selectedIcon = index
   	},
-  	CLOSE_MODAL () {
-  		this.CLOSE_MODAL()
+  	// 按钮触发器input file
+  	_uploaderTrigger (id) {
+  		let idSelector = "#"+ id
+  		document.querySelector(idSelector).click()
+  	},
+  	// plateIcon 上传
+  	_plateIconChange (e) {
+  		const that = this
+  		u_viewPick(e.target, function(_this) {
+  			that.plateIconList.push(_this.result)
+  		})
+  	},
+  	_userIconChange (e) {
+  		const that = this
+  		u_viewPick(e.target, function(_this) {
+  			that.userIconList.push(_this.result)
+  		})
+  	},
+  	_menuIconChange (e) {
+			const that = this
+  		u_viewPick(e.target, function(_this) {
+  			that.menuIconList.push(_this.result)
+  		})
   	},
   	//LOGO修改
-  	logoUpload () {
-  		document.querySelector('#logoUploadBtn').click()
-  	},
   	logoChange (e) {
   		const that = this
   		u_viewPick(e.target, function (_this) {
@@ -304,9 +339,7 @@ export default {
   		// }
   	},
   	// 头像的修改
-  	avatarUpload () {
-			document.querySelector('#avatarUploadBtn').click()
-  	},
+  
   	avatarChange (e) {
   		const that = this
   		u_viewPick(e.target, function (_this) {
@@ -386,7 +419,7 @@ export default {
 	}
 }
 .body {
-	.confirm-submit, .confirm-login-out, .confirm-remove, .del-article {
+	.confirm-submit, .confirm-login-out, .confirm-remove, .del-article, .del-pic {
 		height: 50px;
 		margin: 200px 0 0 255px;
 		display: flex;

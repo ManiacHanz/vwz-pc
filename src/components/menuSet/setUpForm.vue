@@ -6,8 +6,8 @@
 					<span class="form-subtitle">{{formCfg.formSubTitle}}</span>
 				</div>
 				<div>
-					<span class="remove" v-if="formCfg.removeMenu">删除菜单</span>
-					<span class="add" v-if="formCfg.addMenu">添加菜单</span>
+					<span class="remove" v-if="formCfg.removeMenu" @click="_removeDataList">删除菜单</span>
+					<span class="add" v-if="formCfg.addMenu" @click="_addDataList">添加菜单</span>
 				</div>			
 			</section>
 			<section class="panel">
@@ -27,10 +27,10 @@
 							页面地址
 						</div>
 						<div>
-							<input type="text" name="" maxlength="" v-model="linkValue" @blur="_linkBlur">
+							<input type="text" name="" maxlength="" v-model="linkValue" @blur="_linkBlur" @input="linkTypeValue = 0" id="linkInput">
 							<p class="alert"></p>
 							<div class="tip">
-								<div>输入第三方跳转网页</div>
+								<div>输入第三方跳转网页(http://www...)</div>
 								<div class="pick-btn" v-if="formCfg.pickFromLib" @click="_pickFromLib">从素材库中添加文章</div>
 							</div>
 						</div>
@@ -40,15 +40,18 @@
 							菜单图标
 						</div>
 						<div @click="_setIcon">
-							上传图标
+							<img :src="iconValue" v-show="iconValue">
+							<span class="btn">上传图标</span>
 						</div>
 					</div>
 					<div class="back-input" v-if="item.type==='setBack'">
 						<div class="input-title">
 							背景图片
 						</div>
+						<img :src="backValue" v-show="backValue">
 						<div>
-							<div class="btn" @click="_setBack">上传图片</div>
+							<input type="file" hidden="hidden" id="backUploader" @change="_backUploaderChange">
+							<div class="btn" @click="_uploaderTrigger('backUploader')">上传图片</div>
 							<p>背景图建议尺寸672*324</p>
 						</div>
 						
@@ -82,22 +85,22 @@
 								<a role="button" class="del" @click="_bannerDel(index)"></a>
 							</li>
 						</ul>
-						<div class="add" v-if="item.imglist.length<6" @click="_addClick"></div>
+						<div class="add" v-if="item.imglist.length<6" @click="_uploaderTrigger('bannerAddBtn')"></div>
 						<input type="file" id="bannerAddBtn" @change="_bannerAdd" hidden="hidden">
 					</div>
 					<div class="list-pic-uploader" v-if="item.type==='setListPicUploader'">
 						<div class="left">缩略图</div>
 						<div class="right">
 							<ul>
-								<li v-if="item.imglist.length>0" v-for="(subItem, index) in item.imglist" :class="[index===selectedIndex?'active':'']">
+								<li v-if="item.imglist.length>0" v-for="(subItem, index) in item.imglist">
 									<img :src="subItem" :key="index">
-									<a role="button" class="del"></a>
+									<a role="button" class="del" @click="_listPicDel(index)"></a>
 								</li>
-								<li class="add" v-if="item.imglist.length<3"></li>
+								<li class="add" v-if="item.imglist.length<3" @click="_uploaderTrigger('listPicAdd')"></li>
 							</ul>
-							
-							<p class="alert">缩略图不可传两张</p>
-							<p>缩略图只可以上传一张或者三张，建议尺寸324x240</p>
+							<input type="file" id="listPicAdd" @change="_listPicAdd" hidden="hidden">
+							<p class="alert" style="color: #f00">缩略图不可传两张</p>
+							<p style="color: #888">缩略图只可以上传一张或者三张，建议尺寸324x240</p>
 						</div>
 						
 					</div>
@@ -112,7 +115,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import {u_viewPick} from 'config/mUtils'
+import {u_viewPick, u_getDate} from 'config/mUtils'
 export default {
 
   name: 'setUpForm',
@@ -122,14 +125,17 @@ export default {
     	selectedIndex: 0,     //选中的第几个banner图片
     	nameValue: '',				//标题输入框的绑定值
     	linkValue: '',				//页面输入框的绑定值
+    	linkTypeValue: '',		//判断是第三方跳转还是文章跳转，文章选1 第三方选0
     	titleValue: '',				//菜单名称输入框的绑定值
     	summaryValue: '',			//摘要输入框的绑定值
+    	iconValue:'',					//图标显示的绑定值
+    	backValue: '',				// temp_3 的背景图值
     }
   },
   // props:['formTitle', 'removeMenu', 'addMenu'],
   computed: {
   	...mapState([
-  			'formCfg'
+  			'formCfg','homePanelList','listPanelList'
   		])
   },
   watch: {
@@ -141,41 +147,63 @@ export default {
   			this.linkValue = this._getInputVal(val.inputList, 'type', 'setLink', 'value')[this.selectedIndex]
   			this.titleValue = ''
   			this.summaryValue = ''
+  			this.iconValue = ''
+  		  this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')[this.selectedIndex]
   		}
   		else if (val.formFor === 'introduce') {
   			this.nameValue = this._getInputVal(val.inputList, 'type', 'setName', 'value')
   			this.linkValue = this._getInputVal(val.inputList, 'type', 'setLink', 'value')
   			this.titleValue = this._getInputVal(val.inputList, 'type', 'setTitle', 'value')
   			this.summaryValue = this._getInputVal(val.inputList, 'type', 'setSummary', 'value')
+        this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
+
+  			this.iconValue = ''
   		}
   		else if (val.formFor.substring(0,5) === 'temp_') {
   			this.linkValue = this._getInputVal(val.inputList, 'type', 'setLink', 'value')
   			this.titleValue = this._getInputVal(val.inputList, 'type', 'setTitle', 'value')
   			this.summaryValue = ''
   			this.nameValue = this._getInputVal(val.inputList, 'type', 'setName', 'value') || ''
+  			this.iconValue = this._getInputVal(val.inputList, 'type', 'setIcon', 'value')
+  			this.backValue = this._getInputVal(val.inputList, 'type', 'setBack', 'value')
+        this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
+  		}
+  		else if(val.formFor === 'listbanner') {
+  			//配置列表页轮播的标题参数
+  			this.nameValue = this._getInputVal(val.inputList, 'type', 'setName', 'value')[this.selectedIndex]
+  			this.linkValue = this._getInputVal(val.inputList, 'type', 'setLink', 'value')[this.selectedIndex]
+        this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')[this.selectedIndex]
+  			this.titleValue = ''
+  			this.summaryValue = ''
+  			this.iconValue = ''
   		}
   		else if (val.formFor === 'contentlist') {
   			this.nameValue = this._getInputVal(val.inputList, 'type', 'setName', 'value')
   			this.linkValue = this._getInputVal(val.inputList, 'type', 'setLink', 'value')
   			this.summaryValue = ''
   			this.titleValue = ''
+  			this.iconValue = ''
+        this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
   		}
   		else if (val.formFor === 'userlist') {
   			this.nameValue = this._getInputVal(val.inputList, 'type', 'setName', 'value')
   			this.linkValue = this._getInputVal(val.inputList, 'type', 'setLink', 'value')
   			this.summaryValue = ''
   			this.titleValue = ''
+  			this.iconValue = this._getInputVal(val.inputList, 'type', 'setIcon', 'value')
+        this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
   		}
   	},
   	selectedIndex: function(val) {
   		// 为轮播图配置的轮播选中的索引
   		this.nameValue = this._getInputVal(this.formCfg.inputList, 'type', 'setName', 'value')[val]
 			this.linkValue = this._getInputVal(this.formCfg.inputList, 'type', 'setLink', 'value')[val]
-  	}
+  	},
+
   },
   methods: {
   	...mapMutations([
-  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR'
+  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR','SAVE_TEMPORARYLIST','SET_MOBILE_ACTIVE'
   		]),
   	selectPic (index) {
   		this.selectedIndex = index
@@ -189,8 +217,14 @@ export default {
   			}
   		}
   	},
+  	// 按钮触发器input file
+  	_uploaderTrigger (id) {
+  		let idSelector = "#"+ id
+  		document.querySelector(idSelector).click()
+  	},
   	//上传图片 上传图标
   	_setIcon () {
+  		// this.selectedIndex = 0
 			this.OPEN_MODAL()
 			let that = this
 			if(this.formCfg.formFor.substring(0,5) == 'temp_') {
@@ -199,6 +233,7 @@ export default {
 					title: '请选择以下图标',					//模态框的标题
 					onSuccess: function(_this){		//选择图标的路径
 						alert(_this.plateIconList[_this.selectedIcon])
+						that.iconValue = _this.plateIconList[_this.selectedIcon]
 					}
 				}
 				this.SET_MODALCFG(modalOption)
@@ -209,31 +244,42 @@ export default {
 					title: '请选择以下图标',					//模态框的标题
 					onSuccess: function(_this){		//选择图标的路径
 						alert(_this.userIconList[_this.selectedIcon])
+						that.iconValue = _this.userIconList[_this.selectedIcon]
+
 					}
 				}
 				this.SET_MODALCFG(modalOption)
 			}
   	},
-		_setBack () {
-
+		// _setBack () {
+		// 	document.querySelector('#backUploader').click()
+		// },
+		_backUploaderChange (e) {
+			const that = this
+  		u_viewPick(e.target, function(_this) {
+  			that.backValue = _this.result
+  		})
 		},
   	// 从素材库
   	_pickFromLib () {
 			this.OPEN_MODAL()
 			let that = this
+      let linkInput = document.querySelector('#linkInput')
 			let modalOption = {
 				modalFor: 'pickArticle',				//模态框用来做什么  参考modal.vue
 				title: '选择文章',					//模态框的标题
 				onSuccess: function(_this){		//点击确认的逻辑
 					that.linkValue = _this.articlePicked
+          // that._linkBlur()
+          that.linkTypeValue = 1
 				}
 			}
 			this.SET_MODALCFG(modalOption)
   	},
   	//banner更改 
-  	_addClick () {
-  		document.querySelector('#bannerAddBtn').click()
-  	},
+  	// _addClick () {
+  	// 	document.querySelector('#bannerAddBtn').click()
+  	// },
   	_bannerAdd (e) {
   		let that = this
 			let newFormCfg = Object.assign({},this.formCfg)
@@ -249,7 +295,7 @@ export default {
   	_bannerDel (index) {
   		let that = this
   		let newFormCfg = Object.assign({},this.formCfg)
-  		let modalOption = {
+  		let modalOption = { 
   			modalFor: 'remove',
   			title: '温馨提示',
   			onSuccess: function() {
@@ -273,15 +319,89 @@ export default {
   			newInputList[1].value[this.selectedIndex] = this.nameValue
   			this.UPDATE_FORMCFG(newInputList)
   		}
+      if (this.formCfg.formFor ==='contentlist') {
+        newInputList[0].value = this.nameValue
+      }
   	},
   	_linkBlur () {
   		let that = this
   		let newInputList = Object.assign({},this.formCfg.inputList)
-  		//banner标题
+  		//banner链接
   		if (this.formCfg.formFor ==='homebanner' || this.formCfg.formFor ==='listbanner') {
   			newInputList[2].value[this.selectedIndex] = this.linkValue
   			this.UPDATE_FORMCFG(newInputList)
+  			// console.log(this.formCfg)
   		}
+      if (this.formCfg.formFor ==='contentlist') {
+        newInputList[2].value = this.linkValue
+      }
+  	},
+    //添加删除数据列表
+    _addDataList () {
+      if (this.formCfg.formFor ==='contentlist') {
+        let nowTime = u_getDate()
+        this.listPanelList.content.unshift({
+                  title: '',
+                  imglist: [],
+                  time: nowTime,
+                  link: '',
+                  linkType: 0,
+                })
+        this.SET_MOBILE_ACTIVE('contentlist0')
+        let newInputList = [
+          {key:'contentlist0',type:'setName',value:''},
+          {imglist:[],key:'contentlist0',type:'setListPicUploader'},
+          {key:'contentlist0',type: 'setLink', value: ''},
+          {key:'contentlist0',type: 'setLinkType', value: ''}
+        ]
+        this.UPDATE_FORMCFG({inputList:newInputList})
+      }
+    },
+    _removeDataList() {
+      if (this.formCfg.formFor ==='contentlist'){
+        if(this.listPanelList.content.length> 1) {
+          const index = this.formCfg.inputList[0].key.substring(11)
+          let that = this
+          let modalOption = { 
+            modalFor: 'delList',
+            title: '温馨提示',
+            onSuccess: function() {
+                that.listPanelList.content.splice(index, 1)
+            }
+          }
+          this.SET_MODALCFG(modalOption)
+          this.OPEN_MODAL()
+        }
+        else {
+          alert('请至少保持一条列表')
+        }
+      }
+      
+    },
+  	// list列表的缩略图修改
+  	_listPicAdd (e) {
+  		let that = this
+			let newFormCfg = Object.assign({},this.formCfg)
+      // console.log(newFormCfg==this.formCfg)
+  		u_viewPick(e.target, function(_this){
+  			//_this代表 new FileReader对象 that 代表vue组件
+  			newFormCfg.inputList[1].imglist.push(_this.result)
+  			that.UPDATE_FORMCFG(newFormCfg)
+  		})
+  	},
+  	_listPicDel (index) {
+  		let that = this
+  		let newFormCfg = Object.assign({},this.formCfg)
+  		let modalOption = {
+  			modalFor: 'delPic',
+  			title: '温馨提示',
+  			onSuccess: function() {
+  				newFormCfg.inputList[1].imglist.splice(index, 1)
+  				that.UPDATE_FORMCFG(newFormCfg)
+  			}
+  		}
+  		this.SET_MODALCFG(modalOption)
+  		this.OPEN_MODAL()
   	},
   	//保存并发布
   	_submit () {
@@ -291,6 +411,7 @@ export default {
   			return
   		}
   		switch(this.formCfg.formFor) {
+  			//首屏banner
   			case 'homebanner': 
   				//linkValue  nameValue  summaryValue  titleValue
   				let banner = new Array
@@ -298,18 +419,165 @@ export default {
   					title: '',
   					img: '',
   					link: '',
+            linkType: '',
   				}
   				let inputlist = this.formCfg.inputList
-  				for(let i in inputlist) {
+  				for(let i = 0; i < inputlist[0].imglist.length; i++) {
   					banner.push(Object.assign({},temporaryObj, {
   						title: inputlist[1].value[i],
   						img:inputlist[0].imglist[i],
   						link:inputlist[2].value[i],
+              linkType: inputlist[3].value[i],
   					}))
   				}
-
-  				console.log(banner)
+  				let payload = {
+  					_interface: 'home',
+  					obj:{
+  						banner
+  					}
+  				}
+  				this.SAVE_TEMPORARYLIST(payload)
+  				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
   				break;
+  			case 'introduce':
+  			//首屏intro
+  				let intro = {
+  					title: this.titleValue,
+  					tempName: this.nameValue,
+  					content: this.summaryValue,
+  					link: this.linkValue,
+  				}
+  				payload = {
+  					_interface: 'home',
+  					obj: {
+  						intro
+  					}
+  				}
+  				this.SAVE_TEMPORARYLIST(payload)
+  				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
+  				break;
+  			//首屏内容4个板块
+  			case 'temp_0':
+  				let tempObj = {
+  					describe:'',
+            back:'',
+            icon: this.iconValue,
+            tempName: this.titleValue,
+            link: this.linkValue
+  				}
+  				let content = [...this.homePanelList.content]
+  				console.log(content)
+  				content.splice(0, 1, tempObj)
+  				payload = {
+  					_interface: 'home',
+  					obj: {
+  						content
+  					}
+  				}
+  				this.SAVE_TEMPORARYLIST(payload)
+  				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
+  				break;
+  			case 'temp_1':
+  				tempObj = {
+  					describe:'',
+            back:'',
+            icon: this.iconValue,
+            tempName: this.titleValue,
+            link: this.linkValue
+  				}
+  				content = [...this.homePanelList.content]
+  				console.log(content)
+  				content.splice(1, 1, tempObj)
+  				payload = {
+  					_interface: 'home',
+  					obj: {
+  						content
+  					}
+  				}
+  				this.SAVE_TEMPORARYLIST(payload)
+  				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
+  				break;
+  			case 'temp_2':
+  				tempObj = {
+  					describe:'',
+            back:'',
+            icon: this.iconValue,
+            tempName: this.titleValue,
+            link: this.linkValue
+  				}
+  				content = [...this.homePanelList.content]
+  				console.log(content)
+  				content.splice(2, 1, tempObj)
+  				payload = {
+  					_interface: 'home',
+  					obj: {
+  						content
+  					}
+  				}
+  				this.SAVE_TEMPORARYLIST(payload)
+  				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
+  				break;
+  			case 'temp_3':
+  				tempObj = {
+  					describe: this.nameValue,
+            back: this.backValue,
+            icon: this.iconValue,
+            tempName: this.titleValue,
+            link: this.linkValue
+  				}
+  				content = [...this.homePanelList.content]
+  				console.log(content)
+  				content.splice(3, 1, tempObj)
+  				payload = {
+  					_interface: 'home',
+  					obj: {
+  						content
+  					}
+  				}
+  				this.SAVE_TEMPORARYLIST(payload)
+  				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
+  				break;
+  			//list页banner
+  			case 'listbanner': 
+  				//linkValue  nameValue  summaryValue  titleValue
+  				banner = new Array
+  				temporaryObj = {
+  					title: '',
+  					img: '',
+  					link: '',
+  				}
+  				inputlist = this.formCfg.inputList
+  				for(let i = 0; i < inputlist[0].imglist.length; i++) {
+  					banner.push(Object.assign({},temporaryObj, {
+  						title: inputlist[1].value[i],
+  						img:inputlist[0].imglist[i],
+  						link:inputlist[2].value[i],
+              linkType: inputlist[3].value[i],
+  					}))
+  				}
+  				payload = {
+  					_interface: 'list',
+  					obj:{
+  						banner
+  					}
+  				}
+  				this.SAVE_TEMPORARYLIST(payload)
+  				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 listpanellist的数据和自己的数据
+  				break;
+  			case 'contentlist':
+          if(!this.nameValue || !this.linkValue || !this.formCfg.inputList[1].imglist.length) {
+            alert('表单配置项不能为空,否则不会在手机页面上展示')
+            return
+          }
+          content = [...this.listPanelList.content]
+          payload = {
+            _interface: 'list',
+            obj:{
+              content
+            }
+          }
+          this.SAVE_TEMPORARYLIST(payload)
+          break;
   		}
   	}
   }
@@ -392,7 +660,16 @@ export default {
 		width: 94px;
 		line-height: 30px;
 	}
-	&>div:last-of-type {
+	img {
+		width: 28px;
+		height: 28px;
+		vertical-align: middle;
+		background: #dedede;
+		padding: 2px;
+		margin-right: 6px;
+	}
+	.btn {
+		display: inline-block;
 		width: 100px;
 		height: 30px;
 		line-height: 30px;
@@ -411,6 +688,13 @@ export default {
 	.input-title {
 		width: 94px;
 		line-height: 30px;
+	}
+	img {
+		display: block;
+		width: 75px;
+		height: 50px;
+		vertical-align: middle;
+		margin-right: 10px;
 	}
 	.btn {
 		width: 100px;

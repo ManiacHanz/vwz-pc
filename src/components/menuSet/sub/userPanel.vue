@@ -80,6 +80,11 @@ export default {
 						key:dom, 
 						value: this.userPanelList.content[domIndex].link,
 					},
+					{
+						type:'setLinkType', 
+						key:dom, 
+						value: this.userPanelList.content[domIndex].linkType,
+					},
 				],		//输入框列表   依次为 菜单名称 菜单图标  页面地址 标题  摘要
 				pickFromLib: true,
   		}

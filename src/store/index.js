@@ -21,8 +21,9 @@ const state = {
 		formFor:'',    //配置表单选项的唯一标识，负责配置唯一的数据
 		formTitle: '主菜单配置',		//表单标题
 		formSubTitle: '',				//表单副标题
-		removeMenu: true,		//删除按钮
-		addMenu: true,		//添加按钮
+		listIndex: '',       //给列表用的索引
+		removeMenu: false,		//删除按钮
+		addMenu: false,		//添加按钮
 		inputList:[				//输入框列表   依次为  banner图片  菜单名称 菜单图标  页面地址 标题  摘要
 			// {
 			// 	type:'setMultiPicUploader',

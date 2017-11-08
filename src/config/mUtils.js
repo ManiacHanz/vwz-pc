@@ -10,6 +10,19 @@ export const u_viewPick = (input, callback) => {
     }
 }
 
+/*
+    获取当前时间
+ */
+export const u_getDate = () => {
+    let time = new Date()
+    let year = time.getFullYear()
+    let month = (time.getMonth() + 1 )< 10? '0'+ time.getMonth() + 1 : time.getMonth() + 1
+    let date = time.getDate() < 10? '0' +time.getDate(): time.getDate()
+    let hour = time.getHours() < 10? '0' + time.getHours() : time.getHours()
+    let minute = time.getMinutes()
+    return year + '-' + month + '-' + date + ' ' + hour + '-' + minute
+}
+
 /**
  * 存储localStorage
  */
