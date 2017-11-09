@@ -12,6 +12,7 @@
   "dependencies": {
     "@xkeshi/vue-qrcode": "^0.3.0",
     "fastclick": "^1.0.6",
+    "lrz": "^4.9.40",
     "qrcode.vue": "^1.5.1",
     "v-qrcode": "^1.0.3",
     "vue": "^2.4.2",

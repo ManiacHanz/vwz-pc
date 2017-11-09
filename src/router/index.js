@@ -5,6 +5,8 @@ import PostCard from '../page/PostCard'
 import Shake from '../page/Shake'
 import WifiPortal from '../page/WifiPortal'
 import ArticleEdit from '../page/Edit/ArticleEdit'
+import Sample from '../page/Sample/Sample'
+
 import Hello from '../components/Hello'
 
 Vue.use(Router)
@@ -45,6 +47,11 @@ export default new Router({
       path: '/wifiportal',
       name: 'WifiPortal',
       component: WifiPortal
+    },
+    {
+      path: '/sample',
+      name: 'Sample',
+      component: Sample
     },
     {
       path: '/hello',

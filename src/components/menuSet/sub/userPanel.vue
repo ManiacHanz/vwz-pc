@@ -1,7 +1,7 @@
 <template>
 	<div class="user-panel" :class="mobileColorStyle">
 		<section class="top">
-			<img :src="userPanelList.banner">
+			<img src="/static/img/ad_01.jpg">
 		</section>
 		<ul class="ctr-list">
 			<li v-for="(item, index) in userPanelList.content" :key="index"
@@ -153,13 +153,14 @@ export default {
 	}
 }
 .dark {
+	background-color: @dark_back;
 	.ctr-list{
 		color: @dark_lightFont;
 		li {
 			background: url('/static/img/arrow_dark.png') no-repeat;
 			background-position: 95% center;
 			background-size: 8px;
-			background-color: @dark_back;
+			
 			border-bottom-color: @dark_border;
 			&.active:after {
 				border-color: @dark_lightFont;

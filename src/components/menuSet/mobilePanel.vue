@@ -6,7 +6,7 @@
 			<list-panel v-else-if="showPanel==='list'"></list-panel>
 			<user-panel v-else-if="showPanel==='user'"></user-panel>
 			</transition>
-			<div class="menubtn" v-if="homePanelList.button">
+			<div class="menubtn" v-if="homePanelList.button" :class='mobileColorStyle'>
 				<ul :class="menubtnStyle">
 					<li :class="[mobileActive==='menubtn'+index?'active':'', item.icon==''?mobileColorStyle: '']" v-for="(item, index) in homePanelList.button" @click="switchPanel(item, index)">
 						<div class="icon">
@@ -137,7 +137,8 @@ export default {
 	  			inputList: [
 	  				{type:'setTitle', key:'menubtn'+index, value:item.title},
 	  				{type:'setIcon', key:'menubtn'+index, value: item.icon},
-	  				{type:'setLink', key:'menubtn'+index, value: item.link}
+	  				{type:'setLink', key:'menubtn'+index, value: item.link},
+	  				{type:'setType', key:'menubtn'+index, value: item.type},
   				],
 	  			pickFromLib: false
   			}
@@ -198,6 +199,15 @@ export default {
 .menubtn {
 	font-size: 10px;
 	border-top: 1px solid #dddddd;
+	&.dark {
+		background-color: @dark_back;
+		li.active:after {
+			border-color: @dark_lightFont;
+		}
+	}
+	&.green li.active:after {
+		border-color: @green_font;
+	}
 	ul {
 		display: flex;
 		justify-content: space-between;
@@ -295,7 +305,7 @@ export default {
 		}
 	.type1{
 		li:nth-child(2) {
-			background: url('/static/img/add_menu.png') no-repeat;
+			background: url('/static/img/add_menu_long.png') no-repeat;
 			background-size: 128px 46px;
 			flex-grow:2;
 		}

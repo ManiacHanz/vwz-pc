@@ -1,12 +1,39 @@
 /*
-    本地预览图片
+    本地预览图片  JPG压缩 PNG不动
  */
-export const u_viewPick = (input, callback) => {
+import lrz from 'lrz'
+export const u_viewPick = (input, option) => {
+    let _default = {
+        width: 300,
+        quality: 0.7,
+        maxSize: 100000,
+    }
+    let _option = Object.assign({}, _default, option)
     let file = input.files[0]
-    let reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onloadend = function(){
-        callback(this)
+    let size = file.size             //尺寸 --字节
+    let fileName = input.value        //格式名字
+    if(/\.(jpg|jpeg|JPG)$/.test(fileName)){
+        // console.log('jpg图片')
+        return lrz(input.files[0], _option)
+    }
+    else if(/\.(png|PNG)$/.test(fileName)) {
+        // console.log('png图片')
+        if(size < _default.maxSize) {
+            const reader = new FileReader()
+            reader.readAsDataURL(file)
+            return new Promise( (resolve, reject) => {
+                reader.onloadend = function() {
+                    resolve(this.result)
+                }
+            })
+        }else {
+            alert('图片大小过大，请重新上传')
+            return false
+        }
+    }
+    else {
+        alert('请上传png/jpg图片，其他类型暂不支持')
+        return false
     }
 }
 

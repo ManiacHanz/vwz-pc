@@ -4,7 +4,7 @@
 		@click.left="setUpModule('','listbanner')">
       <ul class="swiper-wrapper">
           <li class="swiper-slide" v-for="(item, index) in listPanelList.banner" :key="index">
-        		<img :src="item.img" v-show="item.imglist">
+        		<img :src="item.img" v-show="item.img">
         		<p>
         			<span>{{ item.title }}</span>
         		</p>
@@ -270,6 +270,7 @@ export default {
 }
 
 .dark {
+	background: @dark_back;
 	.banner.active:after {
 		border-color: @dark_lightFont;
 	}

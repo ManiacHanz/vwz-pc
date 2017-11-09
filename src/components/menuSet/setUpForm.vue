@@ -131,6 +131,7 @@ export default {
     	summaryValue: '',			//摘要输入框的绑定值
     	iconValue:'',					//图标显示的绑定值
     	backValue: '',				// temp_3 的背景图值
+      typeValue: '',        //  给面板菜单按钮专门用的 判断是不是默认按钮
     }
   },
   // props:['formTitle', 'removeMenu', 'addMenu'],
@@ -150,6 +151,7 @@ export default {
   			this.summaryValue = ''
   			this.iconValue = ''
   		  this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')[this.selectedIndex]
+         this.typeValue = ''
   		}
   		else if (val.formFor === 'introduce') {
   			this.nameValue = this._getInputVal(val.inputList, 'type', 'setName', 'value')
@@ -159,6 +161,7 @@ export default {
         this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
 
   			this.iconValue = ''
+         this.typeValue = ''
   		}
   		else if (val.formFor.substring(0,5) === 'temp_') {
   			this.linkValue = this._getInputVal(val.inputList, 'type', 'setLink', 'value')
@@ -168,6 +171,7 @@ export default {
   			this.iconValue = this._getInputVal(val.inputList, 'type', 'setIcon', 'value')
   			this.backValue = this._getInputVal(val.inputList, 'type', 'setBack', 'value')
         this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
+         this.typeValue = ''
   		}
   		else if(val.formFor === 'listbanner') {
   			//配置列表页轮播的标题参数
@@ -177,6 +181,7 @@ export default {
   			this.titleValue = ''
   			this.summaryValue = ''
   			this.iconValue = ''
+         this.typeValue = ''
   		}
   		else if (val.formFor === 'contentlist') {
   			this.nameValue = this._getInputVal(val.inputList, 'type', 'setName', 'value')
@@ -185,6 +190,7 @@ export default {
   			this.titleValue = ''
   			this.iconValue = ''
         this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
+         this.typeValue = ''
   		}
   		else if (val.formFor === 'userlist') {
   			this.nameValue = this._getInputVal(val.inputList, 'type', 'setName', 'value')
@@ -193,11 +199,13 @@ export default {
   			this.titleValue = ''
   			this.iconValue = this._getInputVal(val.inputList, 'type', 'setIcon', 'value')
         this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
+        this.typeValue = ''
   		}
       else if (val.formFor === 'menubtn') {
         this.titleValue = this._getInputVal(val.inputList, 'type', 'setTitle', 'value') || ''
         this.linkValue = this._getInputVal(val.inputList, 'type', 'setLink', 'value') || ''
         this.iconValue = this._getInputVal(val.inputList, 'type', 'setIcon', 'value') || ''
+        this.typeValue = this._getInputVal(val.inputList, 'type', 'setType', 'value') || ''
       }
   	},
   	selectedIndex: function(val) {
@@ -703,9 +711,15 @@ export default {
           this.SAVE_USERPANELLIST(this.temporaryPanelList)
           break;
         case 'menubtn':
-          if(!this.titleValue ||  !this.iconValue) {
-            alert('表单配置项不能为空,否则不会在手机页面上展示')
+          if(!this.titleValue) {
+            alert('按钮名称不能为空,否则不会在手机页面上展示')
             return
+          }
+          if(!this.typeValue) {
+            if (!this.iconValue) {
+              alert('新增按钮图标不能为空')
+              return
+            }
           }
           let button = [...this.homePanelList.button]
           index = this.formCfg.inputList[0].key.substring(7)
@@ -900,8 +914,9 @@ export default {
 			position: absolute;
 			right: -10px;
 			top: -10px;
-			background: url("/static/img/sprite.png") no-repeat;
-			background-position: -103px -901px;
+			background: url("/static/img/del.png") no-repeat;
+      background-size: 20px;
+			// background-position: -103px -901px;
 			z-index: 10;
 		}
 	}
@@ -942,8 +957,9 @@ export default {
 				position: absolute;
 				right: -10px;
 				top: -10px;
-				background: url("/static/img/sprite.png") no-repeat;
-				background-position: -103px -901px;
+				background: url("/static/img/del.png") no-repeat;
+        background-size: 20px;
+				// background-position: -103px -901px;
 				z-index: 10;
 			}
 		}

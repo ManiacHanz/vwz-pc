@@ -79,7 +79,7 @@
 				<section class="plate-icon" v-if="modalCfg.modalFor==='plateIcon'">
 					<div class="up">
 						<div>
-							<span style="line-height: 40px;display: inline-block;">已选择的图标</span>
+							<span style="line-height: 48px;display: inline-block;">已选择的图标</span>
 							<img :src="plateIconList[selectedIcon]" v-show="plateIconList[selectedIcon]"></img>
 						</div>
 						<div>
@@ -309,8 +309,17 @@ export default {
   	// plateIcon 上传
   	_plateIconChange (e) {
   		const that = this
-  		u_viewPick(e.target, function(_this) {
-  			that.plateIconList.push(_this.result)
+  		// u_viewPick(e.target, function(_this) {
+  		// 	that.plateIconList.push(_this.result)
+  		// })
+  		u_viewPick(e.target, undefined, 1).then(rst=>{
+  			if(rst.base64) {
+  				that.plateIconList.push(rst.base64)
+  			}
+  			else {
+  				that.plateIconList.push(rst)
+  			}
+  			console.table(rst)
   		})
   	},
   	_userIconChange (e) {

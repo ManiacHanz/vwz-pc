@@ -12,7 +12,7 @@
             <img class="thumbnail" :src="item.thumbnail">
           </div>
           <div class="content-detail">{{item.content}}</div>
-          <div class="mask">预览文章</div>
+          <a class="mask" target="_blank" href="#/sample">预览文章</a>
         </div>
         <ul class="btns">
           <li class="edit-btn" @click="_goEdit(item.id)">
