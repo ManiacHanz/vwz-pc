@@ -312,38 +312,61 @@ export default {
   		// u_viewPick(e.target, function(_this) {
   		// 	that.plateIconList.push(_this.result)
   		// })
-  		u_viewPick(e.target, undefined, 1).then(rst=>{
-  			if(rst.base64) {
-  				that.plateIconList.push(rst.base64)
-  			}
-  			else {
+  		u_viewPick(e.target).then(rst=>{
+  			// if(rst.base64) {
+  			// 	that.plateIconList.push(rst.base64)
+  			// }
+  			// else {
   				that.plateIconList.push(rst)
-  			}
-  			console.table(rst)
+  			// }
+  			// console.table(rst)
   		})
   	},
   	_userIconChange (e) {
   		const that = this
-  		u_viewPick(e.target, function(_this) {
-  			that.userIconList.push(_this.result)
+  		u_viewPick(e.target).then(rst=>{
+  			// if(rst.base64) {
+  			// 	that.userIconList.push(rst.base64)
+  			// }
+  			// else {
+  				that.userIconList.push(rst)
+  			// }
+  			// console.table(rst)
   		})
   	},
   	_menuIconChange (e) {
 			const that = this
-  		u_viewPick(e.target, function(_this) {
-  			that.menuIconList.push(_this.result)
+			u_viewPick(e.target).then(rst=>{
+  			// if(rst.base64) {
+  			// 	that.menuIconList.push(rst.base64)
+  			// }
+  			// else {
+  				that.menuIconList.push(rst)
+  			// }
+  			// console.table(rst)
   		})
   	},
   	//LOGO修改
   	logoChange (e) {
   		const that = this
-  		u_viewPick(e.target, function (_this) {
-  			//这里_this是封装的reader对象 that是这个vuecomponent所以要用
-  			that.logoBack = Object.assign({}, that.logoBack, {
-  				backgroundImage: 'url('+_this.result+')'
+  		u_viewPick(e.target).then(rst=>{
+  			// if(rst.base64) {
+  			// 	alert(1)
+  			// 	//这里_this是封装的reader对象 that是这个vuecomponent所以要用
+	  		// 	that.logoBack = Object.assign({}, that.logoBack, {
+	  		// 		backgroundImage: 'url('+rst.base64+')'
+	  		// 	})
+  			// }
+  			// else {
+  			// 	alert(2)
+				that.logoBack = Object.assign({}, that.logoBack, {
+  				backgroundImage: 'url('+rst+')'
   			})
-  			that.SET_LOGO(_this.result)
+  			// }
+  			that.SET_LOGO(rst)
+  			// console.table(rst)
   		})
+  		
   		// let file = e.target.files[0]
   		// let reader = new FileReader()
   		// reader.readAsDataURL(file)
@@ -358,12 +381,20 @@ export default {
   
   	avatarChange (e) {
   		const that = this
-  		u_viewPick(e.target, function (_this) {
-  			//这里_this是封装的reader对象 that是这个vuecomponent所以要用
-  			that.avatarBack = Object.assign({}, that.avatarBack, {
-  				backgroundImage: 'url('+_this.result+')'
-  			})
-  			that.SET_AVATAR(_this.result)
+  		u_viewPick(e.target).then(rst=>{
+  			if(rst.base64) {
+  				//这里_this是封装的reader对象 that是这个vuecomponent所以要用
+	  			that.avatarBack = Object.assign({}, that.avatarBack, {
+	  				backgroundImage: 'url('+rst.base64+')'
+	  			})
+  			}
+  			else {
+  				that.avatarBack = Object.assign({}, that.avatarBack, {
+	  				backgroundImage: 'url('+rst+')'
+	  			})
+  			}
+  			that.SET_AVATAR(rst)
+  			// console.table(rst)
   		})
   	},
   	// 剪贴板回调

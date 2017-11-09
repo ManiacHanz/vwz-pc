@@ -1,76 +1,89 @@
 <template>
-  <div class="edit-box">
-    <div class="top-nav">
-      <div class="back" @click="historyBack()"></div>
-      <ul class="nav">
-        <li @click="historyBack()">文章管理</li>
-        &nbsp;  >
-        <li>文章编辑</li>
-      </ul>
-    </div>
-    <div class="body">
-      <div class="left">
-        <p>文章封面图</p>
-        <div class="pic-btn" :class="{active: activeName === 'picBtn' || hoverName === 'picBtn' }" 
-        @click.left="switchActive('picBtn')" @mouseenter="switchHover('picBtn')" @mouseleave="switchHover('')">
-          <div class="backimg"></div>
-          <p>图片建议尺寸260X160</p>
+  <div>
+    <div class="edit-box">
+      <div class="top-nav">
+        <div class="back" @click="historyBack()"></div>
+        <ul class="nav">
+          <li @click="historyBack()">文章管理</li>
+          &nbsp;  >
+          <li>文章编辑</li>
+        </ul>
+      </div>
+      <div class="body">
+        <div class="left">
+          <p>文章封面图</p>
+          <div class="pic-btn" :class="{active: activeName === 'picBtn' || hoverName === 'picBtn' }" 
+          @click.left="switchActive('picBtn')" @mouseenter="switchHover('picBtn')" @mouseleave="switchHover('')">
+            <div class="backimg" @click="_uploaderTrigger('coverUploader')">
+              <img :src="coverSrc" v-show="coverSrc" style="width:100%;height:100%;background: #fff;">
+            </div>
+            <input type="file" id="coverUploader" @change="_coverChange" hidden="hidden">
+            <p>图片建议尺寸260X160</p>
+          </div>
+        </div>
+        <div class="mid">
+          <form>
+            <div class="title">
+              <input type="text" name="title" placeholder="这里输入标题"
+              :class="{active: activeName === 'titleInput' || hoverName === 'titleInput' }" 
+              @click.left="switchActive('titleInput')" v-model="titleValue">
+            </div>
+            <div class="author">
+              <input type="text" name="author" placeholder="这里输入作者"
+              :class="{active: activeName === 'authorInput' || hoverName === 'authorInput' }" 
+              @click.left="switchActive('authorInput')" v-model="authorValue">
+            </div>
+            <div class="decribe">
+              <input type="text" name="decribe" placeholder="这里输入描述，不超过40字"
+              :class="{active: activeName === 'decribeInput' || hoverName === 'decribeInput' }" 
+              @click.left="switchActive('decribeInput')" v-model="describeValue">
+            </div>
+            <div class="ueditor">
+               <VueUEditor style="margin-bottom:30px;"></VueUEditor>
+            </div>
+            <div class="copy">
+              <p>网页版权信息</p>
+              <input type="text" name="copy" placeholder="这里输入网站版权信息"
+              :class="{active: activeName === 'copyInput' || hoverName === 'copyInput' }" 
+              @click.left="switchActive('copyInput')" v-model="copyValue">
+            </div>
+          </form>
+
+        </div>
+        <div class="right">
+          <p>多媒体素材</p>
+          <ul>
+            <li :class="{active: liActiveName === 'addPic' || liHoverName === 'addPic'}"
+             @click.left="switchLiActive('addPic')" @mouseenter="switchLiHover('addPic')" @mouseleave="switchLiHover('')">
+              <div class="icon"></div>
+              图片
+            </li>
+            <li :class="{active: liActiveName === 'addAudio' || liHoverName === 'addAudio'}"
+            @click.left="switchLiActive('addAudio')" @mouseenter="switchLiHover('addAudio')" @mouseleave="switchLiHover('')">
+              <div class="icon"></div>
+              音频
+            </li>
+            <li :class="{active: liActiveName === 'addVideo' || liHoverName === 'addVideo'}"
+            @click.left="switchLiActive('addVideo')" @mouseenter="switchLiHover('addVideo')" @mouseleave="switchLiHover('')">
+              <div class="icon"></div>
+              视频
+            </li>
+          </ul>
         </div>
       </div>
-      <div class="mid">
-        <form>
-          <div class="title">
-            <input type="text" name="title" placeholder="这里输入标题"
-            :class="{active: activeName === 'titleInput' || hoverName === 'titleInput' }" 
-            @click.left="switchActive('titleInput')">
-          </div>
-          <div class="author">
-            <input type="text" name="author" placeholder="这里输入作者"
-            :class="{active: activeName === 'authorInput' || hoverName === 'authorInput' }" 
-            @click.left="switchActive('authorInput')">
-          </div>
-          <div class="decribe">
-            <input type="text" name="decribe" placeholder="这里输入描述，不超过40字"
-            :class="{active: activeName === 'decribeInput' || hoverName === 'decribeInput' }" 
-            @click.left="switchActive('decribeInput')">
-          </div>
-          <div class="ueditor">
-            <ueditor></ueditor>
-          </div>
-          <div class="copy">
-            <p>网页版权信息</p>
-            <input type="text" name="copy" placeholder="这里输入网站版权信息"
-            :class="{active: activeName === 'copyInput' || hoverName === 'copyInput' }" 
-            @click.left="switchActive('copyInput')">
-          </div>
-        </form>
-      </div>
-      <div class="right">
-        <p>多媒体素材</p>
-        <ul>
-          <li :class="{active: liActiveName === 'addPic' || liHoverName === 'addPic'}"
-           @click.left="switchLiActive('addPic')" @mouseenter="switchLiHover('addPic')" @mouseleave="switchLiHover('')">
-            <div class="icon"></div>
-            图片
-          </li>
-          <li :class="{active: liActiveName === 'addAudio' || liHoverName === 'addAudio'}"
-          @click.left="switchLiActive('addAudio')" @mouseenter="switchLiHover('addAudio')" @mouseleave="switchLiHover('')">
-            <div class="icon"></div>
-            音频
-          </li>
-          <li :class="{active: liActiveName === 'addVideo' || liHoverName === 'addVideo'}"
-          @click.left="switchLiActive('addVideo')" @mouseenter="switchLiHover('addVideo')" @mouseleave="switchLiHover('')">
-            <div class="icon"></div>
-            视频
-          </li>
-        </ul>
+    </div>
+    <div class="footer">
+      <div class="inner">
+        <a role="button">保存</a>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Ueditor from '../../components/editor/Ueditor' //富文本
+import {u_viewPick} from 'config/mUtils'
+
+import VueUEditor from '../../components/editor/VueUEditor' //富文本
 
 export default {
   data() {
@@ -80,11 +93,16 @@ export default {
       hoverName: '',   //表单鼠标悬停时的样式名称
       liActiveName: '',
       liHoverName: '',
-      params:''
+      params:'',
+      coverSrc: '',
+      titleValue: '',    //标题输入框的值
+      authorValue: '',    //作者输入框的值
+      describeValue: '',    //描述输入框的值
+      copyValue: '',    //版权输入框的值
     }
   },
   components: {
-    ueditor: Ueditor
+    VueUEditor
   },
   
   mounted() {
@@ -112,7 +130,24 @@ export default {
     },
     switchLiHover (name) {
       this.liHoverName = name
-    }
+    },
+    // 按钮触发器input file
+    _uploaderTrigger (id) {
+      let idSelector = "#"+ id
+      document.querySelector(idSelector).click()
+    },
+    _coverChange (e) {
+      const that = this
+      u_viewPick(e.target, undefined, 1).then(rst=>{
+        // if(rst.base64) {
+        //   that.coverSrc = rst.base64
+        // }
+        // else {
+          that.coverSrc = rst
+        // }
+        // console.table(rst)
+      })
+    },
   },
   watch: {
     //监测参数的变化来发送请求
@@ -127,6 +162,14 @@ export default {
   beforeRouteEnter(to, from ,next) {
     // console.log("before...")
     next()
+  },
+  beforeRouteLeave (to,from,next) {
+    this.coverSrc = ''
+    this.titleValue = ''
+    this.authorValue = ''
+    this.describeValue = ''
+    this.copyValue = ''
+    next()
   }
 }
 </script>
@@ -138,7 +181,7 @@ export default {
   min-height: 780px;
   border: 1px solid #dddddd;
   background: #ffffff;
-  margin: 30px auto 10px;
+  margin: 30px auto 50px;
 }
 .top-nav {
   font-size: 16px;
@@ -275,6 +318,38 @@ export default {
       }
     }
   }
-
 }
+.footer {
+  // width:100%;
+  height: 76px;
+  border-top: 1px solid #dedede;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background:#fff;
+  .inner {
+    width: 716px;
+    margin: 0 auto;
+    height: 76px;
+    text-align: right;
+    a {
+      color: #fff;
+      display: inline-block;
+      width: 104px;
+      height: 32px;
+      text-align: center;
+      line-height: 32px;
+      border-radius: 5px;
+      background: #00acee;
+      margin-top: 22px;
+      transition: all .3s;
+      &:hover {
+        background:  #008ec4;
+        // box-shadow: 0 0 40px 0px #00acee;
+      }
+    }
+  }
+}
+
 </style>

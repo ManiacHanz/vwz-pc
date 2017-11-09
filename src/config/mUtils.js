@@ -14,7 +14,12 @@ export const u_viewPick = (input, option) => {
     let fileName = input.value        //格式名字
     if(/\.(jpg|jpeg|JPG)$/.test(fileName)){
         // console.log('jpg图片')
-        return lrz(input.files[0], _option)
+        let promise = new Promise( (resolve, reject) => {
+            lrz(input.files[0], _option).then(rst=>{
+                resolve(rst.base64)
+            })
+        })
+        return promise
     }
     else if(/\.(png|PNG)$/.test(fileName)) {
         // console.log('png图片')

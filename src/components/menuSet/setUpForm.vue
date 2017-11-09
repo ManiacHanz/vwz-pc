@@ -294,9 +294,14 @@ export default {
 		// },
 		_backUploaderChange (e) {
 			const that = this
-  		u_viewPick(e.target, function(_this) {
-  			that.backValue = _this.result
-  		})
+      u_viewPick(e.target).then( rst => {
+        // if(rst.base64) {
+        //   that.backValue = rst.base64
+        // }
+        // else {
+          that.backValue = rst
+        // }
+      })
 		},
   	// 从素材库
   	_pickFromLib () {
@@ -321,14 +326,20 @@ export default {
   	_bannerAdd (e) {
   		let that = this
 			let newFormCfg = Object.assign({},this.formCfg)
-  		u_viewPick(e.target, function(_this){
-  			//_this代表 new FileReader对象 that 代表vue组件
-  			newFormCfg.inputList[0].imglist.push(_this.result)
-  			newFormCfg.inputList[1].value.push('')
-  			newFormCfg.inputList[2].value.push('')
-  			that.UPDATE_FORMCFG(newFormCfg)
-  			that.selectedIndex = newFormCfg.inputList[0].imglist.length -1
-  		})
+      u_viewPick(e.target).then( rst =>{
+        // if(rst.base64) {
+        //   newFormCfg.inputList[0].imglist.push(rst.base64)
+        //   newFormCfg.inputList[1].value.push('')
+        //   newFormCfg.inputList[2].value.push('')
+        // }
+        // else {
+          newFormCfg.inputList[0].imglist.push(rst)
+          newFormCfg.inputList[1].value.push('')
+          newFormCfg.inputList[2].value.push('')
+        // }
+        that.UPDATE_FORMCFG(newFormCfg)
+        that.selectedIndex = newFormCfg.inputList[0].imglist.length -1
+      })
   	},
   	_bannerDel (index) {
   		let that = this
@@ -489,11 +500,15 @@ export default {
   		let that = this
 			let newFormCfg = Object.assign({},this.formCfg)
       // console.log(newFormCfg==this.formCfg)
-  		u_viewPick(e.target, function(_this){
-  			//_this代表 new FileReader对象 that 代表vue组件
-  			newFormCfg.inputList[1].imglist.push(_this.result)
-  			that.UPDATE_FORMCFG(newFormCfg)
-  		})
+      u_viewPick(e.target).then( rst => {
+        // if(rst.base64) {
+        //   newFormCfg.inputList[1].imglist.push(rst.base64)
+        // }
+        // else {
+          newFormCfg.inputList[1].imglist.push(rst)
+        // }
+        that.UPDATE_FORMCFG(newFormCfg)
+      })
   	},
   	_listPicDel (index) {
   		let that = this
