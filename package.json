@@ -12,6 +12,7 @@
   "dependencies": {
     "lrz": "^4.9.40",
     "qrcode.vue": "^1.5.1",
+    "querystring": "^0.2.0",
     "vue": "^2.4.2",
     "vue-clipboard2": "0.0.6",
     "vue-router": "^2.7.0",

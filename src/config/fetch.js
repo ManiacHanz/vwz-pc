@@ -1,6 +1,7 @@
 import {
 	baseUrl
 } from './env'
+import qs from 'querystring'
 
 export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 	type = type.toUpperCase();
@@ -34,7 +35,7 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 
 		if (type == 'POST') {
 			Object.defineProperty(requestConfig, 'body', {
-				value: data
+				value: qs.stringify(data)
 				// value: JSON.stringify(data)
 			})
 		}
