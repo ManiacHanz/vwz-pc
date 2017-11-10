@@ -62,6 +62,8 @@ const state = {
 		title: '温馨提示',					//模态框的标题
 		onSuccess: function(){},    // 控制确定的作用
 	},
+	isShowLoading: false,					//是否显示Loading
+	loadingText: '',							// loading是否自定义文字
 	isShowNotification: false,		//是否展示发布成功的提示框
 	homePanelList: '',			//默认3个手机页面的数据存储和渲染
 	listPanelList: '',

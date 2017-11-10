@@ -1,5 +1,10 @@
 <template>
   <div id="app">
+    <div class="loading-box" v-if="isShowLoading">
+      <loading>
+        <p v-if="loadingText">{{loadingText}}</p>
+      </loading>
+    </div>
     <div style="background:#fff;border-bottom: 1px solid #dddddd">
       <div class="myhead">
         <my-header></my-header>
@@ -27,6 +32,7 @@ import {mapState, mapMutations} from 'vuex'
 import Header from './components/common/Header'
 import modal from './components/common/modal'
 import successNotify from './components/notification/successNotify'
+import loading from './components/loading/loading'
 
 export default {
   name: 'app',
@@ -34,10 +40,11 @@ export default {
     'my-header': Header,
     modal,
     successNotify,
+    loading,
   },
   computed: {
     ...mapState([
-        'isShowNotification'
+        'isShowNotification','isShowLoading','loadingText'
       ]),
   }
 }
@@ -78,5 +85,14 @@ export default {
 .notify-fade-enter, .notify-fade-leave-to {
   transform: translateY(-70px);
   opacity: 0;
+}
+.loading-box {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 99999;
 }
 </style>

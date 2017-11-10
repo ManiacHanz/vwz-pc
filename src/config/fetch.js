@@ -23,8 +23,10 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 			// credentials: 'include',  //带不带cookies
 			method: type,
 			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
+				// 'Accept': 'application/json',
+				// 'Content-Type': 'application/json'
+				'Content-Type': 'application/x-www-form-urlencoded'
+
 			},
 			mode: "cors",
 			cache: "force-cache"
@@ -32,7 +34,8 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 
 		if (type == 'POST') {
 			Object.defineProperty(requestConfig, 'body', {
-				value: JSON.stringify(data)
+				value: data
+				// value: JSON.stringify(data)
 			})
 		}
 		

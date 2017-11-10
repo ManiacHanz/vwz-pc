@@ -215,7 +215,7 @@
 </template>
 
 <script>
-
+import { __sendBase64 } from 'service/sendData'
 import {u_viewPick} from 'config/mUtils'
 
 //引入数据组件
@@ -359,11 +359,21 @@ export default {
   			// }
   			// else {
   			// 	alert(2)
+  			console.log(rst.base64, rst.type)
 				that.logoBack = Object.assign({}, that.logoBack, {
-  				backgroundImage: 'url('+rst+')'
+  				backgroundImage: 'url('+rst.base64+')'
+  			})
+  			let data = {
+  				uid: 'USER0P07LdVR',
+  				datas: rst.base64,
+  				type: 'd',
+  				suffix: rst.type,
+  			}
+  			__sendBase64(data).then(res=>{
+  				console.log(res)
   			})
   			// }
-  			that.SET_LOGO(rst)
+  			that.SET_LOGO(rst.base64)
   			// console.table(rst)
   		})
   		

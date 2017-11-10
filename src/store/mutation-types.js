@@ -11,6 +11,7 @@ export const OPEN_MODAL = 'OPEN_MODAL'
 export const SET_MODALCFG = 'SET_MODALCFG'
 export const OPEN_NOTIFICATION = 'OPEN_NOTIFICATION'
 export const CLOSE_NOTIFICATION = 'CLOSE_NOTIFICATION'
+export const SET_LOADING = 'SET_LOADING'
 export const SET_LOGO = 'SET_LOGO'
 export const SET_AVATAR = 'SET_AVATAR'
 

@@ -16,6 +16,7 @@ import {
 	SET_MODALCFG,
 	OPEN_NOTIFICATION,
 	CLOSE_NOTIFICATION,
+	SET_LOADING,
 	SAVE_HOMEPANELLIST,
 	SAVE_LISTPANELLIST,
 	SAVE_USERPANELLIST,
@@ -114,5 +115,10 @@ export default {
 	//关闭 发布成功 这个提示
 	[CLOSE_NOTIFICATION] (state) {
 		state.isShowNotification = false
+	},
+	//打开关闭 loading
+	[SET_LOADING] (state, text) {
+		state.isShowLoading = !state.isShowLoading
+		text? state.loadingText = text : state.loadingText = ''
 	}
 }

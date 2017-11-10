@@ -103,6 +103,7 @@
         //启用自动保存
         enableAutoSave: false,
         //自动保存间隔时间， 单位ms
+        saveInterval: 0,
         //,saveInterval: 500
 
         //,fullscreen : false //是否开启初始化时即全屏，默认关闭
@@ -277,6 +278,7 @@
         //可以最多回退的次数,默认20
         //,maxUndoCount:20
         //当输入的字符数超过该值时，保存一次现场
+        maxInputCount:100000,
         //,maxInputCount:1
 
         //autoHeightEnabled

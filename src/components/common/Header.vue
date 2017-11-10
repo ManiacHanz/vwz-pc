@@ -88,6 +88,7 @@ export default {
 				title: '修改LOGO',					//模态框的标题
 				onSuccess: function(){		//点击确认的逻辑
 					that.logo = that.logoUrl
+					
 				}
 			}
 			this.SET_MODALCFG(modalOption)

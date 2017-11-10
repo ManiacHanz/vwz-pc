@@ -12,23 +12,32 @@ export const u_viewPick = (input, option) => {
     let file = input.files[0]
     let size = file.size             //尺寸 --字节
     let fileName = input.value        //格式名字
+    let fileType = ''
     if(/\.(jpg|jpeg|JPG)$/.test(fileName)){
+        fileType = 'jpg'
         // console.log('jpg图片')
         let promise = new Promise( (resolve, reject) => {
-            lrz(input.files[0], _option).then(rst=>{
-                resolve(rst.base64)
+            lrz(input.files[0], _option).then((rst)=>{
+                let pic = {
+                    base64: rst.base64,
+                    type: fileType
+                }
+                return pic
+            }).then(pic=>{
+                resolve(pic)
             })
         })
         return promise
     }
     else if(/\.(png|PNG)$/.test(fileName)) {
+        fileType = 'png'
         // console.log('png图片')
-        if(size < _default.maxSize) {
+        if(size < _option.maxSize) {
             const reader = new FileReader()
             reader.readAsDataURL(file)
             return new Promise( (resolve, reject) => {
                 reader.onloadend = function() {
-                    resolve(this.result)
+                    resolve(this.result, fileType)
                 }
             })
         }else {
