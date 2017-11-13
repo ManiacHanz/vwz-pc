@@ -216,7 +216,7 @@ export default {
   },
   methods: {
   	...mapMutations([
-  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR','SAVE_TEMPORARYLIST','SET_MOBILE_ACTIVE','SAVE_USERPANELLIST','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE','SAVE_LISTPANELLIST'
+  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR','SAVE_TEMPORARYLIST','SET_MOBILE_ACTIVE','SAVE_USERPANELLIST','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE','SAVE_LISTPANELLIST','CLEAR_FORMCFG'
   		]),
   	selectPic (index) {
   		this.selectedIndex = index
@@ -428,7 +428,27 @@ export default {
             modalFor: 'delList',
             title: '温馨提示',
             onSuccess: function() {
-                that.listPanelList.content.splice(index, 1)
+              that.listPanelList.content.splice(index, 1)
+              that.CLEAR_FORMCFG()
+            }
+          }
+          this.SET_MODALCFG(modalOption)
+          this.OPEN_MODAL()
+        }
+        else {
+          alert('请至少保持一条列表')
+        }
+      }
+      else if(this.formCfg.formFor ==='userlist'){
+        if(this.userPanelList.content.length> 1) {
+          const index = this.formCfg.inputList[0].key.substring(11)
+          let that = this
+          let modalOption = { 
+            modalFor: 'delList',
+            title: '温馨提示',
+            onSuccess: function() {
+              that.userPanelList.content.splice(index, 1)
+              that.CLEAR_FORMCFG()
             }
           }
           this.SET_MODALCFG(modalOption)
@@ -449,6 +469,7 @@ export default {
               onSuccess: function() {
                   that.homePanelList.button.splice(index, 1)
                   that.SET_MENUBTN_STYLE()
+                  that.CLEAR_FORMCFG()
               }
             }
             this.SET_MODALCFG(modalOption)
@@ -467,6 +488,7 @@ export default {
               onSuccess: function() {
                   that.homePanelList.button.splice(index, 1,emptyBtn)
                   that.SET_MENUBTN_STYLE()
+                  that.CLEAR_FORMCFG()
               }
             }
             this.SET_MODALCFG(modalOption)
@@ -486,6 +508,7 @@ export default {
               onSuccess: function() {
                   that.homePanelList.button.splice(index, 1,emptyBtn)
                   that.SET_MENUBTN_STYLE()
+                  that.CLEAR_FORMCFG()
               }
             }
             this.SET_MODALCFG(modalOption)
@@ -527,8 +550,9 @@ export default {
   	_submit () {
 			// 保存并发布就是转化成需要发送的数据 ，给模态框确认的时候只需要通过这个来判断发送给哪个接口 就行了
 
-  		if(this.formCfg.formFor == '') {
-  			return
+  		if( !this.formCfg || this.formCfg.formFor == '') {
+        alert('请选择修改板块')
+  			return false
   		}
   		switch(this.formCfg.formFor) {
   			//首屏banner
@@ -784,8 +808,8 @@ export default {
             return
           }
           if(!this.typeValue) {
-            if (!this.iconValue) {
-              alert('新增按钮图标不能为空')
+            if (!this.iconValue || !this.linkValue) {
+              alert('新增按钮图标或链接地址不能为空')
               return
             }
           }

@@ -11,6 +11,7 @@ import {
 	SET_MOBILE_ACTIVE,
 	SET_MENUBTN_STYLE,
 	UPDATE_FORMCFG,
+	CLEAR_FORMCFG,
 	OPEN_MODAL,
 	CLOSE_MODAL,
 	SET_MODALCFG,
@@ -93,6 +94,11 @@ export default {
 	// 更新手机配置表单的属性
 	[UPDATE_FORMCFG] (state, obj) {
 		state.formCfg = Object.assign({}, state.formCfg, obj)
+	},
+	// 清空表单配置
+	[CLEAR_FORMCFG] (state) {
+		state.formCfg.inputList = null
+		//state.formCfg = null
 	},
 	//设置手机激活模块
 	[SET_MOBILE_ACTIVE] (state,module) {
