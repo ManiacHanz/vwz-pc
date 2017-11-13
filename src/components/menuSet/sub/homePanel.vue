@@ -69,15 +69,19 @@ export default {
 		// this.mobileCfg = mobileHomeCfg
   },
   mounted () {
-  	
 		// 初始化轮播 
   	new Swiper('#Swiper1', {
-        pagination: '#SPagination_1',
-        loop: true,
-        autoplay: 3000,
-        paginationClickable: true,  //点击分页器
-        observer:true,//修改swiper自己或子元素时，自动初始化swiper
-   			observeParents:true,//修改swiper的父元素时，自动初始化swiper
+      pagination: '#SPagination_1',
+      loop: true,
+      autoplay: 3000,
+      paginationClickable: true,  //点击分页器
+      observer:true,//修改swiper自己或子元素时，自动初始化swiper
+ 			observeParents:true,//修改swiper的父元素时，自动初始化swiper
+ 			onSlideChangeEnd: function(swiper){ 	//下面都是为了动态swiper的重初始化
+				swiper.update();  
+				swiper.startAutoplay();
+				swiper.reLoop();  
+			}
     })
   },
   methods: {
@@ -249,7 +253,7 @@ export default {
 
 <style lang="less" scoped>
 @import '../../../style/variety.less';
-
+@import '../../../style/common.less';
 
 .home-panel {
 	height: 448px;
@@ -333,6 +337,7 @@ export default {
 		font-size: 13px;
 		color: #888888;
 		line-height: 140%;
+		word-wrap: break-word;
 	}
 	.tem-name {
 		font-size: 12px;

@@ -24,6 +24,7 @@ export const u_viewPick = (input, option) => {
                 }
                 return pic
             }).then(pic=>{
+                // console.log(pic.type)
                 resolve(pic)
             })
         })
@@ -37,7 +38,11 @@ export const u_viewPick = (input, option) => {
             reader.readAsDataURL(file)
             return new Promise( (resolve, reject) => {
                 reader.onloadend = function() {
-                    resolve(this.result, fileType)
+                    let pic = {
+                        base64: this.result,
+                        type: fileType
+                    }
+                    resolve(pic)
                 }
             })
         }else {

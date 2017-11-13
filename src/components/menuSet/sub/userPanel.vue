@@ -62,6 +62,7 @@ export default {
 	      formFor:'userlist',    //配置表单选项的唯一标识，负责配置唯一的数据
 				formTitle: '二级菜单配置',		//表单标题
 				formSubTitle: '',
+				listIndex: domIndex,
 				removeMenu: true,		//删除按钮
 				addMenu: true,		//添加按钮
 				inputList:[
@@ -79,6 +80,11 @@ export default {
 						type:'setLink', 
 						key:dom, 
 						value: this.userPanelList.content[domIndex].link,
+					},
+					{
+						type:'setLinkType', 
+						key:dom, 
+						value: this.userPanelList.content[domIndex].linkType,
 					},
 				],		//输入框列表   依次为 菜单名称 菜单图标  页面地址 标题  摘要
 				pickFromLib: true,

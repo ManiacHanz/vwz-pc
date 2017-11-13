@@ -75,6 +75,11 @@ export default {
         paginationClickable: true,  //点击分页器
         observer:true,//修改swiper自己或子元素时，自动初始化swiper
    			observeParents:true,//修改swiper的父元素时，自动初始化swiper
+   			onSlideChangeEnd: function(swiper){ 	//下面都是为了动态swiper的重初始化
+					swiper.update();  
+					swiper.startAutoplay();
+					swiper.reLoop();  
+				}
     })
   },
   methods: {

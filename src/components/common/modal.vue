@@ -62,7 +62,7 @@
 							<img :src="menuIconList[selectedIcon]" v-show="menuIconList[selectedIcon]"></img>
 						</div>
 						<div>
-							<input type="file" name="" id="menuIconUploader" @change="_menuIconChange" hidden="hidden">
+							<input type="file" name="" id="menuIconUploader" @change="_menuIconChange" hidden="hidden" accept=".png, .jpg, .jpeg">
 							<p class="upload-btn" @click="_uploaderTrigger('menuIconUploader')">上传本地图标</p>
 							<p class="advice">建议尺寸120x120</p>
 						</div>
@@ -83,7 +83,7 @@
 							<img :src="plateIconList[selectedIcon]" v-show="plateIconList[selectedIcon]"></img>
 						</div>
 						<div>
-							<input type="file" name="" id="plateIconUploader" @change="_plateIconChange" hidden="hidden">
+							<input type="file" name="" id="plateIconUploader" @change="_plateIconChange" hidden="hidden" accept=".png, .jpg, .jpeg">
 							<p class="upload-btn" @click="_uploaderTrigger('plateIconUploader')">本地上传</p>
 							<p class="advice">建议尺寸140x140</p>
 						</div>
@@ -104,7 +104,7 @@
 							<img :src="userIconList[selectedIcon]" v-show="userIconList[selectedIcon]"></img>
 						</div>
 						<div>
-							<input type="file" name="" id="userIconUploader" @change="_userIconChange" hidden="hidden">
+							<input type="file" name="" id="userIconUploader" @change="_userIconChange" hidden="hidden" accept=".png, .jpg, .jpeg">
 							<p class="upload-btn" @click="_uploaderTrigger('userIconUploader')">本地上传</p>
 							<p class="advice">建议尺寸140x140</p>
 						</div>
@@ -124,7 +124,7 @@
 						<p>大图预览</p>
 					</div>
 					<div class="right">
-						<input type="file" name="" hidden="hidden" value="选择LOGO" id="logoUploadBtn" accept="image/png, image/jpeg" @change="logoChange">
+						<input type="file" name="" hidden="hidden" value="选择LOGO" id="logoUploadBtn" @change="logoChange" accept=".png, .jpg, .jpeg">
 						<div class="pick-logo" @click="_uploaderTrigger('logoUploadBtn')">选择LOGO</div>
 						<p>LOGO必须是jpg或者png格式图片；</p>
 						<p>新LOGO不允许涉及政治敏感与色情</p>
@@ -136,7 +136,7 @@
 						<p>大图预览</p>
 					</div>
 					<div class="right">
-						<input type="file" name="" hidden="hidden" value="选择头像" id="avatarUploadBtn" accept="image/png, image/jpeg" @change="avatarChange">
+						<input type="file" name="" hidden="hidden" value="选择头像" id="avatarUploadBtn" @change="avatarChange" accept=".png, .jpg, .jpeg">
 						<div class="pick-avatar" @click="_uploaderTrigger('avatarUploadBtn')">选择头像</div>
 						<p>头像必须是jpg或者png格式图片；</p>
 						<p>新头像不允许涉及政治敏感与色情</p>
@@ -312,36 +312,36 @@ export default {
   		// u_viewPick(e.target, function(_this) {
   		// 	that.plateIconList.push(_this.result)
   		// })
-  		u_viewPick(e.target).then(rst=>{
+  		u_viewPick(e.target).then( ({base64, type})=>{
   			// if(rst.base64) {
   			// 	that.plateIconList.push(rst.base64)
   			// }
   			// else {
-  				that.plateIconList.push(rst)
+  				that.plateIconList.push(base64)
   			// }
   			// console.table(rst)
   		})
   	},
   	_userIconChange (e) {
   		const that = this
-  		u_viewPick(e.target).then(rst=>{
+  		u_viewPick(e.target).then( ({base64, type})=>{
   			// if(rst.base64) {
   			// 	that.userIconList.push(rst.base64)
   			// }
   			// else {
-  				that.userIconList.push(rst)
+  				that.userIconList.push(base64)
   			// }
   			// console.table(rst)
   		})
   	},
   	_menuIconChange (e) {
 			const that = this
-			u_viewPick(e.target).then(rst=>{
+			u_viewPick(e.target).then( ({base64, type})=>{
   			// if(rst.base64) {
   			// 	that.menuIconList.push(rst.base64)
   			// }
   			// else {
-  				that.menuIconList.push(rst)
+  				that.menuIconList.push(base64)
   			// }
   			// console.table(rst)
   		})
@@ -349,7 +349,7 @@ export default {
   	//LOGO修改
   	logoChange (e) {
   		const that = this
-  		u_viewPick(e.target).then(rst=>{
+  		u_viewPick(e.target).then( ({base64, type})=>{
   			// if(rst.base64) {
   			// 	alert(1)
   			// 	//这里_this是封装的reader对象 that是这个vuecomponent所以要用
@@ -359,21 +359,22 @@ export default {
   			// }
   			// else {
   			// 	alert(2)
-  			console.log(rst.base64, rst.type)
+  			// console.log(rst.base64, rst.type)
+  			// 
 				that.logoBack = Object.assign({}, that.logoBack, {
-  				backgroundImage: 'url('+rst.base64+')'
+  				backgroundImage: 'url('+base64+')'
   			})
   			let data = {
   				uid: 'USER0P07LdVR',
-  				datas: rst.base64,
+  				datas: base64,
   				type: 'd',
-  				suffix: rst.type,
+  				suffix: type,
   			}
   			__sendBase64(data).then(res=>{
   				console.log(res)
   			})
   			// }
-  			that.SET_LOGO(rst.base64)
+  			that.SET_LOGO(base64)
   			// console.table(rst)
   		})
   		
@@ -391,19 +392,14 @@ export default {
   
   	avatarChange (e) {
   		const that = this
-  		u_viewPick(e.target).then(rst=>{
-  			if(rst.base64) {
-  				//这里_this是封装的reader对象 that是这个vuecomponent所以要用
-	  			that.avatarBack = Object.assign({}, that.avatarBack, {
-	  				backgroundImage: 'url('+rst.base64+')'
-	  			})
-  			}
-  			else {
-  				that.avatarBack = Object.assign({}, that.avatarBack, {
-	  				backgroundImage: 'url('+rst+')'
-	  			})
-  			}
-  			that.SET_AVATAR(rst)
+  		u_viewPick(e.target).then( ({base64, type}) =>{
+  			
+				//这里_this是封装的reader对象 that是这个vuecomponent所以要用
+  			that.avatarBack = Object.assign({}, that.avatarBack, {
+  				backgroundImage: 'url('+base64+')'
+  			})
+  		
+  			that.SET_AVATAR(base64)
   			// console.table(rst)
   		})
   	},

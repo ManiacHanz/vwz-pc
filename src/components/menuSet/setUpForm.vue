@@ -51,7 +51,7 @@
 						</div>
 						<img :src="backValue" v-show="backValue">
 						<div>
-							<input type="file" hidden="hidden" id="backUploader" @change="_backUploaderChange">
+							<input type="file" hidden="hidden" id="backUploader" @change="_backUploaderChange" accept=".png, .jpg, .jpeg">
 							<div class="btn" @click="_uploaderTrigger('backUploader')">上传图片</div>
 							<p>背景图建议尺寸672*324</p>
 						</div>
@@ -87,7 +87,7 @@
 							</li>
 						</ul>
 						<div class="add" v-if="item.imglist.length<6" @click="_uploaderTrigger('bannerAddBtn')"></div>
-						<input type="file" id="bannerAddBtn" @change="_bannerAdd" hidden="hidden">
+						<input type="file" id="bannerAddBtn" @change="_bannerAdd" hidden="hidden" accept=".png, .jpg, .jpeg">
 					</div>
 					<div class="list-pic-uploader" v-if="item.type==='setListPicUploader'">
 						<div class="left">缩略图</div>
@@ -99,7 +99,7 @@
 								</li>
 								<li class="add" v-if="item.imglist.length<3" @click="_uploaderTrigger('listPicAdd')"></li>
 							</ul>
-							<input type="file" id="listPicAdd" @change="_listPicAdd" hidden="hidden">
+							<input type="file" id="listPicAdd" @change="_listPicAdd" hidden="hidden" accept=".png, .jpg, .jpeg">
 							<p class="alert" style="color: #f00">缩略图不可传两张</p>
 							<p style="color: #888">缩略图只可以上传一张或者三张，建议尺寸324x240</p>
 						</div>
@@ -151,7 +151,7 @@ export default {
   			this.summaryValue = ''
   			this.iconValue = ''
   		  this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')[this.selectedIndex]
-         this.typeValue = ''
+        this.typeValue = ''
   		}
   		else if (val.formFor === 'introduce') {
   			this.nameValue = this._getInputVal(val.inputList, 'type', 'setName', 'value')
@@ -159,9 +159,8 @@ export default {
   			this.titleValue = this._getInputVal(val.inputList, 'type', 'setTitle', 'value')
   			this.summaryValue = this._getInputVal(val.inputList, 'type', 'setSummary', 'value')
         this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
-
   			this.iconValue = ''
-         this.typeValue = ''
+        this.typeValue = ''
   		}
   		else if (val.formFor.substring(0,5) === 'temp_') {
   			this.linkValue = this._getInputVal(val.inputList, 'type', 'setLink', 'value')
@@ -171,7 +170,7 @@ export default {
   			this.iconValue = this._getInputVal(val.inputList, 'type', 'setIcon', 'value')
   			this.backValue = this._getInputVal(val.inputList, 'type', 'setBack', 'value')
         this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
-         this.typeValue = ''
+        this.typeValue = ''
   		}
   		else if(val.formFor === 'listbanner') {
   			//配置列表页轮播的标题参数
@@ -181,7 +180,7 @@ export default {
   			this.titleValue = ''
   			this.summaryValue = ''
   			this.iconValue = ''
-         this.typeValue = ''
+        this.typeValue = ''
   		}
   		else if (val.formFor === 'contentlist') {
   			this.nameValue = this._getInputVal(val.inputList, 'type', 'setName', 'value')
@@ -190,7 +189,7 @@ export default {
   			this.titleValue = ''
   			this.iconValue = ''
         this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
-         this.typeValue = ''
+        this.typeValue = ''
   		}
   		else if (val.formFor === 'userlist') {
   			this.nameValue = this._getInputVal(val.inputList, 'type', 'setName', 'value')
@@ -198,7 +197,7 @@ export default {
   			this.summaryValue = ''
   			this.titleValue = ''
   			this.iconValue = this._getInputVal(val.inputList, 'type', 'setIcon', 'value')
-        this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value')
+        this.linkTypeValue = this._getInputVal(val.inputList, 'type', 'setLinkType', 'value') || ''
         this.typeValue = ''
   		}
       else if (val.formFor === 'menubtn') {
@@ -217,7 +216,7 @@ export default {
   },
   methods: {
   	...mapMutations([
-  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR','SAVE_TEMPORARYLIST','SET_MOBILE_ACTIVE','SAVE_USERPANELLIST','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE'
+  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR','SAVE_TEMPORARYLIST','SET_MOBILE_ACTIVE','SAVE_USERPANELLIST','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE','SAVE_LISTPANELLIST'
   		]),
   	selectPic (index) {
   		this.selectedIndex = index
@@ -294,12 +293,12 @@ export default {
 		// },
 		_backUploaderChange (e) {
 			const that = this
-      u_viewPick(e.target).then( rst => {
+      u_viewPick(e.target).then( ({base64, type}) => {
         // if(rst.base64) {
         //   that.backValue = rst.base64
         // }
         // else {
-          that.backValue = rst
+          that.backValue = base64
         // }
       })
 		},
@@ -326,14 +325,14 @@ export default {
   	_bannerAdd (e) {
   		let that = this
 			let newFormCfg = Object.assign({},this.formCfg)
-      u_viewPick(e.target).then( rst =>{
+      u_viewPick(e.target).then( ({base64, type}) =>{
         // if(rst.base64) {
         //   newFormCfg.inputList[0].imglist.push(rst.base64)
         //   newFormCfg.inputList[1].value.push('')
         //   newFormCfg.inputList[2].value.push('')
         // }
         // else {
-          newFormCfg.inputList[0].imglist.push(rst)
+          newFormCfg.inputList[0].imglist.push(base64)
           newFormCfg.inputList[1].value.push('')
           newFormCfg.inputList[2].value.push('')
         // }
@@ -500,12 +499,12 @@ export default {
   		let that = this
 			let newFormCfg = Object.assign({},this.formCfg)
       // console.log(newFormCfg==this.formCfg)
-      u_viewPick(e.target).then( rst => {
+      u_viewPick(e.target).then( ({base64, type}) => {
         // if(rst.base64) {
         //   newFormCfg.inputList[1].imglist.push(rst.base64)
         // }
         // else {
-          newFormCfg.inputList[1].imglist.push(rst)
+          newFormCfg.inputList[1].imglist.push(base64)
         // }
         that.UPDATE_FORMCFG(newFormCfg)
       })
@@ -534,6 +533,10 @@ export default {
   		switch(this.formCfg.formFor) {
   			//首屏banner
   			case 'homebanner': 
+          if(!this.nameValue || !this.linkValue || !this.formCfg.inputList[0].imglist.length) {
+            alert('表单配置项不能为空,否则不会在手机页面上展示')
+            return
+          }
   				//linkValue  nameValue  summaryValue  titleValue
   				let banner = new Array
   				let temporaryObj = {
@@ -559,12 +562,18 @@ export default {
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
+          alert('提交给后台  整个主页面板的数据')
+          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
   				break;
   			case 'introduce':
   			//首屏intro
+          if(!this.nameValue || !this.titleValue || !this.linkValue || !this.summaryValue) {
+            alert('表单配置项不能为空,否则不会在手机页面上展示')
+            return
+          }
   				let intro = {
-  					title: this.titleValue,
-  					tempName: this.nameValue,
+  					title: this.nameValue,
+  					tempName: this.titleValue,
   					content: this.summaryValue,
   					link: this.linkValue,
   				}
@@ -576,9 +585,15 @@ export default {
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
+          alert('提交给后台  整个主页面板的数据')
+          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)    //
   				break;
   			//首屏内容4个板块
   			case 'temp_0':
+          if(!this.titleValue || !this.linkValue || !this.iconValue) {
+            alert('表单配置项不能为空,否则不会在手机页面上展示')
+            return
+          }
   				let tempObj = {
   					describe:'',
             back:'',
@@ -597,8 +612,14 @@ export default {
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
+          alert('提交给后台  整个主页面板的数据')
+          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
   				break;
   			case 'temp_1':
+          if(!this.titleValue || !this.linkValue || !this.iconValue) {
+            alert('表单配置项不能为空,否则不会在手机页面上展示')
+            return
+          }
   				tempObj = {
   					describe:'',
             back:'',
@@ -617,8 +638,14 @@ export default {
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
+          alert('提交给后台  整个主页面板的数据')
+          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)    
   				break;
   			case 'temp_2':
+          if(!this.titleValue || !this.linkValue || !this.iconValue) {
+            alert('表单配置项不能为空,否则不会在手机页面上展示')
+            return
+          }
   				tempObj = {
   					describe:'',
             back:'',
@@ -637,8 +664,14 @@ export default {
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
+          alert('提交给后台  整个主页面板的数据')
+          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
   				break;
   			case 'temp_3':
+          if(!this.titleValue || !this.linkValue || !this.titleValue) {
+            alert('表单配置项不能为空,否则不会在手机页面上展示')
+            return
+          }
   				tempObj = {
   					describe: this.nameValue,
             back: this.backValue,
@@ -657,10 +690,16 @@ export default {
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
+          alert('提交给后台  整个主页面板的数据')
+          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
   				break;
   			//list页banner
   			case 'listbanner': 
   				//linkValue  nameValue  summaryValue  titleValue
+          if(!this.nameValue || !this.linkValue || !this.formCfg.inputList[0].imglist.length) {
+            alert('表单配置项不能为空,否则不会在手机页面上展示')
+            return
+          } 
   				banner = new Array
   				temporaryObj = {
   					title: '',
@@ -684,6 +723,8 @@ export default {
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 listpanellist的数据和自己的数据
+          alert('提交给后台  整个列表面板的数据')
+          this.SAVE_LISTPANELLIST(this.temporaryPanelList)  
   				break;
   			case 'contentlist':
           if(!this.nameValue || !this.linkValue || !this.formCfg.inputList[1].imglist.length) {
@@ -691,7 +732,16 @@ export default {
             return
           }
           content = [...this.listPanelList.content]
-          let index = ''
+          let index = this.formCfg.listIndex
+          temporaryObj = {
+            title: this.nameValue,
+            imglist: this.formCfg.inputList[1].imglist,
+            time: u_getDate(),
+            link: this.linkValue,
+            linkType: this.linkTypeValue,
+          }
+          content.splice(index, 1, temporaryObj)
+          // console.log(content)
           payload = {
             _interface: 'list',
             obj:{
@@ -699,6 +749,9 @@ export default {
             }
           }
           this.SAVE_TEMPORARYLIST(payload)
+          debugger
+          alert('提交给后台  整个列表面板的数据')
+          this.SAVE_LISTPANELLIST(this.temporaryPanelList)
           break;
         case 'userlist':
           if(!this.nameValue || !this.linkValue || !this.formCfg.inputList[1].value) {
