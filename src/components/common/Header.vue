@@ -19,6 +19,10 @@
 						<span></span>
 						修改头像
 					</li>
+					<li class="modify-title" @click="changeTitle">
+						<span></span>
+						项目名称
+					</li>
 					<li class="login-out">
 						<span></span>
 						退出
@@ -116,6 +120,20 @@ export default {
 				onSuccess: function(_this){		//点击确认的逻辑
 					//发送请求 
 					console.log(_this.modifyPsw)
+				}
+			}
+			this.SET_MODALCFG(modalOption)
+		},
+		// 修改项目名称
+		changeTitle () {
+			this.OPEN_MODAL()
+			let that = this
+			let modalOption = {
+				modalFor: 'projectName',				//模态框用来做什么  参考modal.vue
+				title: '修改项目名称',					//模态框的标题
+				onSuccess: function(_this){		//点击确认的逻辑
+					//发送请求 
+					console.log(_this.projectNameInput)
 				}
 			}
 			this.SET_MODALCFG(modalOption)
@@ -247,6 +265,9 @@ export default {
 			&.login-out span{
 				background-position: -310px -110px;
 			}
+			&.modify-title span {
+		 		background: url('/static/img/project_icon_white.png') no-repeat center ;
+		 	}
 		}
 		span {
 			display: inline-block;
@@ -267,7 +288,11 @@ export default {
 		&.login-out span{
 			background-position: -310px -62px;
 		}
+		&.modify-title span {
+	 		background: url('/static/img/project_icon.png') no-repeat center ;
+	 	}
  	}
+ 	
 }
 a {
 	padding: 0 20px;

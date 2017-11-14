@@ -160,6 +160,12 @@
 						<p class="alert" v-show="modifyPswConfirm!=modifyPswNew">两次输入密码不一致</p>
 					</div>
 				</section>
+				<section class="modify-project-name" v-if="modalCfg.modalFor==='projectName'">
+					<div>
+						<input type="text" v-model="projectNameInput" maxlength="12" placeholder="在此输入新的项目名称">
+						<p>项目名称不超过12个字</p>
+					</div>
+				</section>
 				<section class="pick-article" v-if="modalCfg.modalFor==='pickArticle'">
 					<div class="top">
 						<div class="search">
@@ -262,6 +268,8 @@ export default {
   		modifyPswConfirm:'',
     	
     	newPasswordAlert: false,
+    	//项目名称
+    	projectNameInput: '',
 
     	//单选选择
     	articlePicked: '',
@@ -663,6 +671,28 @@ export default {
 			&.alert {
 				color: #f00;
 			}
+		}
+	}
+	.modify-project-name {
+		div {
+			width: 400px;
+			margin: 180px auto 0 ; 
+		}
+		input {
+			width: 100%;
+			height: 30px;
+			line-height:30px;
+			text-indent: 10px;
+			color: #333;
+			border: 1px solid #dedede;
+			margin-bottom: 12px;
+			&:focus {
+				border-color: #888;
+			}
+		}
+		p {
+			text-indent: 10px;
+			color: #888;
 		}
 	}
 	.QR-code {
