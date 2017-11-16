@@ -69,6 +69,69 @@ export const u_getDate = () => {
     return year + '-' + month + '-' + date + ' ' + hour + '-' + minute
 }
 
+/*
+    处理掉返回数据的引号
+ */
+export const jsonParse = (data) => {
+    //console.log(data.startsWith('{')|| data.startsWith('['))  //es6新方法
+    // console.log(eval('(' + data + ')'))      // 字符串转对象
+    if(!data || typeof data != 'object') {
+        console.log('jsonParse error...')
+        return false
+    }
+    let newData = {}
+    for(let i in data) {
+        // console.log(data[i])
+        if( typeof data[i] == 'string' && (data[i].startsWith('{') || data[i].startsWith('['))) {
+            //是个对象或者数组的字符串 就要去掉引号
+            Object.defineProperty(newData, i, {
+                value: eval('(' + data[i] + ')') ,
+                enumerable: true,
+            })
+            // Object.assign({}, newData, {i: eval('(' + data[i] + ')')})
+        }
+        else {
+            Object.defineProperty(newData, i, {
+                value: data[i],
+                enumerable: true,
+            })
+            // Object.assign({}, newData, {i: data[i]})
+        }
+    }
+    return newData
+}
+
+
+/*
+    发送数据转换成JSON字符串
+ */
+export const jsonStringify = (data) => {
+    if(!data || typeof data != 'object') {
+        console.log('jsonStringify error...')
+        return false
+    }
+    let newData = {}
+    for(let i in data) {
+        // console.log(data[i])
+        if( typeof data[i] != 'string' ) {
+            //是个对象或者数组 就要增加引号
+            Object.defineProperty(newData, i, {
+                value: JSON.stringify(data[i]) ,
+                enumerable: true,
+            })
+            // Object.assign({}, newData, {i: eval('(' + data[i] + ')')})
+        }
+        else {
+            Object.defineProperty(newData, i, {
+                value: data[i],
+                enumerable: true,
+            })
+            // Object.assign({}, newData, {i: data[i]})
+        }
+    }
+    return newData
+}
+
 /**
  * 存储localStorage
  */

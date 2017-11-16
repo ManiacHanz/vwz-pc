@@ -50,6 +50,7 @@ export default {
 	},
 	// 保存3个面板的数据，用于渲染
 	[SAVE_HOMEPANELLIST] (state, obj) {
+		// console.log(obj)
 		state.homePanelList = ''
 		state.homePanelList = Object.assign({}, obj)
 	},
@@ -115,8 +116,14 @@ export default {
 		state.modalCfg = Object.assign({}, state.modalCfg, obj)
 	},
 	//打开 发布成功 这个提示
-	[OPEN_NOTIFICATION] (state) {
+	[OPEN_NOTIFICATION] (state, text) {
 		state.isShowNotification = true
+		if(text){
+			state.showNotificationText = text
+		} 
+		else {
+			state.showNotificationText = '发布成功'
+		}
 	},
 	//关闭 发布成功 这个提示
 	[CLOSE_NOTIFICATION] (state) {

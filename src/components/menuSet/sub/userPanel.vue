@@ -7,7 +7,7 @@
 			<li v-for="(item, index) in userPanelList.content" :key="index"
 			:class="[mobileActive==='userlist'+index?'active':'']"
 			@click.left="setUpModule(item.link,'userlist'+index)">
-				<img :src="item.icon" v-show="item.icon">
+				<img :src="imgBaseUrl+item.icon" v-show="item.icon">
 				<span>{{item.title}}</span>
 			</li>
 		</ul>
@@ -18,6 +18,8 @@
 
 import { mapState, mapMutations } from 'vuex'
 import {__getUserPanel} from 'service/getData.js'
+import {imageBaseUrl} from 'config/env.js'
+import {jsonParse} from 'config/mUtils'
 
 // 模拟手机用户配置数据 
 import { mobileUserCfg } from '../../../../static/data/mobileUserCfg.js'
@@ -29,18 +31,27 @@ export default {
   data () {
     return {
     	mobileUserCfg:'',
+    	imgBaseUrl: imageBaseUrl,
+
     }
   },
   computed: {
   	...mapState([
-  			'mobileColorStyle','mobileActive','userPanelList'
+  			'mobileColorStyle','mobileActive','userPanelList','userInfo'
   		]),
   },
    created () {
-  	__getUserPanel()
-  		.then( res => {
-  			// console.log(res.home.data)
-  			this.SAVE_USERPANELLIST(res.user.data)
+  	__getUserPanel({...this.userInfo})
+			.then( res => {
+			// console.log(res.data.banner)
+  			if (!res.result) {
+  				alert(res.message)
+  				return false
+  			}
+  			let jres = jsonParse(res.data)
+  			// console.log(jres)
+				this.SAVE_USERPANELLIST(jres)
+				this.SET_MENUBTN_STYLE()
   		})
   	//这里假数据的更换
     // console.log(mobileHomeCfg)
@@ -51,7 +62,7 @@ export default {
   },
   methods: {
   	...mapMutations([
-  			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG','SAVE_USERPANELLIST'
+  			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG','SAVE_USERPANELLIST','SET_MENUBTN_STYLE'
   		]),
   	setUpModule (link, dom) {
   		// 改变激活状态

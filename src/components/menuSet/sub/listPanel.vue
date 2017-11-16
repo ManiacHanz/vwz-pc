@@ -4,7 +4,7 @@
 		@click.left="setUpModule('','listbanner')">
       <ul class="swiper-wrapper">
           <li class="swiper-slide" v-for="(item, index) in listPanelList.banner" :key="index">
-        		<img :src="item.img" v-show="item.img">
+        		<img :src="imgBaseUrl + item.img" v-show="item.img">
         		<p>
         			<span>{{ item.title }}</span>
         		</p>
@@ -35,6 +35,8 @@ import typeB from '@/components/list/typeB'
 
 import { mapState, mapMutations } from 'vuex'
 import {__getListPanel} from 'service/getData.js'
+import {imageBaseUrl} from 'config/env.js'
+import {jsonParse} from 'config/mUtils'
 
 // 模拟手机首页配置数据 
 // import { mobileListCfg } from '../../../../static/data/mobileListCfg.js'
@@ -49,18 +51,24 @@ export default {
   data () {
     return {
 			mobileCfg:'',    //手机配置,
+    	imgBaseUrl: imageBaseUrl,
     }
   },
   computed: {
   	...mapState([
-  			'mobileColorStyle','mobileActive','listPanelList'
+  			'mobileColorStyle','mobileActive','listPanelList','userInfo'
   		]),
   },
   created () {
-  	__getListPanel()
+  	__getListPanel({...this.userInfo})
   		.then( res => {
   			// console.log(res.home.data)
-  			this.SAVE_LISTPANELLIST(res.list.data)
+  			if (!res.result) {
+  				alert(res.message)
+  				return false
+  			}
+	  			let jres = jsonParse(res.data)
+  			this.SAVE_LISTPANELLIST(jres)
   		})
   	//这里假数据的更换
     // console.log(mobileHomeCfg)

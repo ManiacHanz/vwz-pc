@@ -41,7 +41,7 @@
 							菜单图标
 						</div>
 						<div @click="_setIcon">
-							<img :src="iconValue" v-show="iconValue">
+							<img :src="imgBaseUrl+iconValue" v-show="iconValue">
 							<span class="btn">上传图标</span>
 						</div>
 					</div>
@@ -49,7 +49,7 @@
 						<div class="input-title">
 							背景图片
 						</div>
-						<img :src="backValue" v-show="backValue">
+						<img :src="imgBaseUrl+backValue" v-show="backValue">
 						<div>
 							<input type="file" hidden="hidden" id="backUploader" @change="_backUploaderChange" accept=".png, .jpg, .jpeg">
 							<div class="btn" @click="_uploaderTrigger('backUploader')">上传图片</div>
@@ -82,7 +82,7 @@
 							<li v-if="item.imglist.length>0" v-for="(subItem, index) in item.imglist" @click="selectPic(index)"
 								:class="[index===selectedIndex?'active':'']">
 								<div class="mask" v-show="index!==selectedIndex"></div>
-								<img :src="subItem">
+								<img :src="imgBaseUrl + subItem">
 								<a role="button" class="del" @click="_bannerDel(index)"></a>
 							</li>
 						</ul>
@@ -94,7 +94,7 @@
 						<div class="right">
 							<ul>
 								<li v-if="item.imglist.length>0" v-for="(subItem, index) in item.imglist">
-									<img :src="subItem" :key="index">
+									<img :src="imgBaseUrl+subItem" :key="index">
 									<a role="button" class="del" @click="_listPicDel(index)"></a>
 								</li>
 								<li class="add" v-if="item.imglist.length<3" @click="_uploaderTrigger('listPicAdd')"></li>
@@ -116,13 +116,19 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import {u_viewPick, u_getDate} from 'config/mUtils'
+
+import {imageBaseUrl} from 'config/env'
+
+import {u_viewPick, u_getDate, jsonStringify} from 'config/mUtils'
+import {__sendHomePanel, __sendListPanel, __sendUserPanel, __sendBase64} from 'service/sendData.js'
+
 export default {
 
   name: 'setUpForm',
 
   data () {
     return {
+      imgBaseUrl: imageBaseUrl,     //添加的默认图片地址
     	selectedIndex: 0,     //选中的第几个banner图片
     	nameValue: '',				//标题输入框的绑定值
     	linkValue: '',				//页面输入框的绑定值
@@ -137,7 +143,7 @@ export default {
   // props:['formTitle', 'removeMenu', 'addMenu'],
   computed: {
   	...mapState([
-  			'formCfg','homePanelList','listPanelList','userPanelList','temporaryPanelList','menubtnStyle','mobileActive'
+  			'formCfg','homePanelList','listPanelList','userPanelList','temporaryPanelList','menubtnStyle','mobileActive','userInfo'
   		])
   },
   watch: {
@@ -216,7 +222,7 @@ export default {
   },
   methods: {
   	...mapMutations([
-  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR','SAVE_TEMPORARYLIST','SET_MOBILE_ACTIVE','SAVE_USERPANELLIST','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE','SAVE_LISTPANELLIST','CLEAR_FORMCFG'
+  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR','SAVE_TEMPORARYLIST','SET_MOBILE_ACTIVE','SAVE_USERPANELLIST','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE','SAVE_LISTPANELLIST','CLEAR_FORMCFG','SET_LOADING','OPEN_NOTIFICATION','CLOSE_MODAL'
   		]),
   	selectPic (index) {
   		this.selectedIndex = index
@@ -245,12 +251,13 @@ export default {
 					modalFor: 'plateIcon',				//模态框用来做什么  参考modal.vue
 					title: '请选择以下图标',					//模态框的标题
 					onSuccess: function(_this){		//选择图标的路径
-						alert(_this.plateIconList[_this.selectedIcon])
-            if(!_this.selectedIcon) {
+						// alert(_this.plateIconList[_this.selectedIcon])
+            if(_this.selectedIcon==undefined) {
               alert('请选择图标')
               return
             }
-						that.iconValue = _this.plateIconList[_this.selectedIcon]
+						that.iconValue = _this.plateIconList[_this.selectedIcon].replace(that.imgBaseUrl, '')
+            that.CLOSE_MODAL()
 					}
 				}
 				this.SET_MODALCFG(modalOption)
@@ -261,7 +268,7 @@ export default {
 					title: '请选择以下图标',					//模态框的标题
 					onSuccess: function(_this){		//选择图标的路径
 						alert(_this.userIconList[_this.selectedIcon])
-						that.iconValue = _this.userIconList[_this.selectedIcon]
+						that.iconValue = _this.userIconList[_this.selectedIcon].replace(that.imgBaseUrl, '')
             if(!_this.selectedIcon) {
               alert('请选择图标')
               return
@@ -277,7 +284,7 @@ export default {
           title: '请选择以下图标',         //模态框的标题
           onSuccess: function(_this){   //选择图标的路径
             alert(_this.menuIconList[_this.selectedIcon])
-            that.iconValue = _this.menuIconList[_this.selectedIcon]
+            that.iconValue = _this.menuIconList[_this.selectedIcon].replace(that.imgBaseUrl, '')
             if(!_this.selectedIcon) {
               alert('请选择图标')
               return
@@ -326,16 +333,30 @@ export default {
   		let that = this
 			let newFormCfg = Object.assign({},this.formCfg)
       u_viewPick(e.target).then( ({base64, type}) =>{
-        // if(rst.base64) {
-        //   newFormCfg.inputList[0].imglist.push(rst.base64)
-        //   newFormCfg.inputList[1].value.push('')
-        //   newFormCfg.inputList[2].value.push('')
-        // }
-        // else {
-          newFormCfg.inputList[0].imglist.push(base64)
-          newFormCfg.inputList[1].value.push('')
-          newFormCfg.inputList[2].value.push('')
-        // }
+        let data = {
+          ...that.userInfo,
+          datas: base64,
+          suffix: type,
+          type: 'd',
+        }
+        // that.SET_LOADING()
+        __sendBase64(data)
+          .then( res => {
+            // that.SET_LOADING()
+            console.log(res)
+            if(!res){
+              alert('网络错误，请检查网络或稍后再试')
+              return false
+            }
+            if(!res.result) {
+              alert(res.message)
+              return false
+            }
+            newFormCfg.inputList[0].imglist.push(res.data)    // 这里因为上面标签里已经用了imgbaseurl了
+            // newFormCfg.inputList[0].imglist.push(base64)
+            newFormCfg.inputList[1].value.push('')
+            newFormCfg.inputList[2].value.push('')
+          })
         that.UPDATE_FORMCFG(newFormCfg)
         that.selectedIndex = newFormCfg.inputList[0].imglist.length -1
       })
@@ -402,7 +423,7 @@ export default {
           {key:'contentlist0',type: 'setLink', value: ''},
           {key:'contentlist0',type: 'setLinkType', value: ''}
         ]
-        this.UPDATE_FORMCFG({inputList:newInputList})
+        this.UPDATE_FORMCFG({inputList:newInputList, listIndex: "0"})
       }
       else if (this.formCfg.formFor ==='userlist') {
         this.userPanelList.content.unshift({
@@ -423,13 +444,33 @@ export default {
       if (this.formCfg.formFor ==='contentlist'){
         if(this.listPanelList.content.length> 1) {
           const index = this.formCfg.inputList[0].key.substring(11)
+          console.log(index)
           let that = this
+
           let modalOption = { 
             modalFor: 'delList',
             title: '温馨提示',
             onSuccess: function() {
+              that.SET_LOADING()
               that.listPanelList.content.splice(index, 1)
-              that.CLEAR_FORMCFG()
+              //这里直接修改了源数据 不知道会不会错，没有用temporary数据
+              __sendListPanel(jsonStringify({...that.userInfo,...that.listPanelList})).then( res =>{
+                console.log(res)
+                that.SET_LOADING()
+                if(!res){
+                  alert('网络错误，请检查网络或稍后再试')
+                  return false
+                }
+                if(!res.result) {
+                  alert(res.message)
+                  return false
+                }
+                that.OPEN_NOTIFICATION('删除成功')
+                //that.SAVE_LISTPANELLIST(that.temporaryPanelList)     //在把临时数据存到  展示的数据里
+              })
+              that.CLEAR_FORMCFG()        //清除右边表单配置
+              that.SET_MOBILE_ACTIVE('')  //清除左边手机面板配置
+              that.CLOSE_MODAL()
             }
           }
           this.SET_MODALCFG(modalOption)
@@ -523,13 +564,30 @@ export default {
 			let newFormCfg = Object.assign({},this.formCfg)
       // console.log(newFormCfg==this.formCfg)
       u_viewPick(e.target).then( ({base64, type}) => {
-        // if(rst.base64) {
-        //   newFormCfg.inputList[1].imglist.push(rst.base64)
-        // }
-        // else {
-          newFormCfg.inputList[1].imglist.push(base64)
-        // }
+        let data = {
+          ...that.userInfo,
+          datas: base64,
+          suffix: type,
+          type: 'd',
+        }
+        // that.SET_LOADING()
+        __sendBase64(data)
+          .then( res => {
+            // that.SET_LOADING()
+            console.log(res)
+            if(!res){
+              alert('网络错误，请检查网络或稍后再试')
+              return false
+            }
+            if(!res.result) {
+              alert(res.message)
+              return false
+            }
+            newFormCfg.inputList[1].imglist.push(res.data)    // 这里因为上面标签里已经用了imgbaseurl了
+            // newFormCfg.inputList[1].imglist.push(base64)
+          })
         that.UPDATE_FORMCFG(newFormCfg)
+        that.selectedIndex = newFormCfg.inputList[0].imglist.length -1
       })
   	},
   	_listPicDel (index) {
@@ -541,6 +599,7 @@ export default {
   			onSuccess: function() {
   				newFormCfg.inputList[1].imglist.splice(index, 1)
   				that.UPDATE_FORMCFG(newFormCfg)
+          that.CLOSE_MODAL()
   			}
   		}
   		this.SET_MODALCFG(modalOption)
@@ -549,7 +608,7 @@ export default {
   	//保存并发布
   	_submit () {
 			// 保存并发布就是转化成需要发送的数据 ，给模态框确认的时候只需要通过这个来判断发送给哪个接口 就行了
-
+      let that = this
   		if( !this.formCfg || this.formCfg.formFor == '') {
         alert('请选择修改板块')
   			return false
@@ -559,8 +618,30 @@ export default {
   			case 'homebanner': 
           if(!this.nameValue || !this.linkValue || !this.formCfg.inputList[0].imglist.length) {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
-            return
+            return false
           }
+          for (let i in this.formCfg.inputList[0].imglist) {
+            if(this.formCfg.inputList[0].imglist[i] == '') {
+              alert('轮播图片不能为空，否则不会在手机页面上展示')
+              break
+            }
+          }
+          for (let i in this.formCfg.inputList[1].value) {
+            if(this.formCfg.inputList[1].value[i] == '') {
+              alert('轮播图片的标题不能为空，否则不会在手机页面上展示')
+              return false
+              break
+            }
+          }
+          for (let i in this.formCfg.inputList[2].value) {
+            if(this.formCfg.inputList[2].value[i] == '') {
+              alert('轮播图片的页面地址不能为空，否则不会在手机页面上展示')
+              return false
+              break
+            }
+          }
+          // alert(123)
+          this.SET_LOADING()
   				//linkValue  nameValue  summaryValue  titleValue
   				let banner = new Array
   				let temporaryObj = {
@@ -581,12 +662,26 @@ export default {
   				let payload = {
   					_interface: 'home',
   					obj:{
+              ...this.userInfo,
   						banner
   					}
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
-          alert('提交给后台  整个主页面板的数据')
+          __sendHomePanel (jsonStringify(that.temporaryPanelList)).then( res =>{
+            that.SET_LOADING()
+            if(!res){
+              alert('网络错误，请检查网络或稍后再试')
+              return false
+            }
+            if(!res.result) {
+              alert(res.message)
+              return false
+            }
+            that.OPEN_NOTIFICATION()
+            that.SAVE_HOMEPANELLIST(that.temporaryPanelList)   //在把临时数据存到  展示的数据里
+          })
+          // alert('提交给后台  整个主页面板的数据')
           this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
   				break;
   			case 'introduce':
@@ -595,6 +690,7 @@ export default {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
           }
+          this.SET_LOADING()
   				let intro = {
   					title: this.nameValue,
   					tempName: this.titleValue,
@@ -604,13 +700,30 @@ export default {
   				payload = {
   					_interface: 'home',
   					obj: {
+              ...this.userInfo,
   						intro
   					}
   				}
-  				this.SAVE_TEMPORARYLIST(payload)
+  				this.SAVE_TEMPORARYLIST(payload)      // 这个临时数据是state里面的 只能用mutation里面去改变
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
-          alert('提交给后台  整个主页面板的数据')
-          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)    //
+          // let newdaaaa = jsonStringify(this.temporaryPanelList)
+          // console.log(newdaaaa)
+          __sendHomePanel (jsonStringify(that.temporaryPanelList)).then( res =>{
+            that.SET_LOADING()
+            if(!res){
+              alert('网络错误，请检查网络或稍后再试')
+              return false
+            }
+            if(!res.result) {
+              alert(res.message)
+              return false
+            }
+            that.OPEN_NOTIFICATION()
+            that.SAVE_HOMEPANELLIST(that.temporaryPanelList)   //在把临时数据存到  展示的数据里
+          })
+          // console.log(this.temporaryPanelList)
+          // alert('提交给后台  整个主页面板的数据')
+          // this.SAVE_HOMEPANELLIST(this.temporaryPanelList)    //
   				break;
   			//首屏内容4个板块
   			case 'temp_0':
@@ -618,6 +731,8 @@ export default {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
           }
+          this.SET_LOADING()
+
   				let tempObj = {
   					describe:'',
             back:'',
@@ -626,24 +741,40 @@ export default {
             link: this.linkValue
   				}
   				let content = [...this.homePanelList.content]
-  				console.log(content)
+  				// console.log(content)
   				content.splice(0, 1, tempObj)
   				payload = {
   					_interface: 'home',
   					obj: {
+              ...this.userInfo,
   						content
   					}
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
-          alert('提交给后台  整个主页面板的数据')
-          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
+          __sendHomePanel (jsonStringify(that.temporaryPanelList)).then( res =>{
+            that.SET_LOADING()
+            if(!res){
+              alert('网络错误，请检查网络或稍后再试')
+              return false
+            }
+            if(!res.result) {
+              alert(res.message)
+              return false
+            }
+            that.OPEN_NOTIFICATION()
+            that.SAVE_HOMEPANELLIST(that.temporaryPanelList)   //在把临时数据存到  展示的数据里
+          })
+          // alert('提交给后台  整个主页面板的数据')
+          // this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
   				break;
   			case 'temp_1':
           if(!this.titleValue || !this.linkValue || !this.iconValue) {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
           }
+          this.SET_LOADING()
+
   				tempObj = {
   					describe:'',
             back:'',
@@ -652,24 +783,40 @@ export default {
             link: this.linkValue
   				}
   				content = [...this.homePanelList.content]
-  				console.log(content)
+  				// console.log(content)
   				content.splice(1, 1, tempObj)
   				payload = {
   					_interface: 'home',
   					obj: {
+              ...this.userInfo,
   						content
   					}
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
-          alert('提交给后台  整个主页面板的数据')
-          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)    
+           __sendHomePanel (jsonStringify(that.temporaryPanelList)).then( res =>{
+            that.SET_LOADING()
+            if(!res){
+              alert('网络错误，请检查网络或稍后再试')
+              return false
+            }
+            if(!res.result) {
+              alert(res.message)
+              return false
+            }
+            that.OPEN_NOTIFICATION()
+            that.SAVE_HOMEPANELLIST(that.temporaryPanelList)   //在把临时数据存到  展示的数据里
+          })
+          // alert('提交给后台  整个主页面板的数据')
+          // this.SAVE_HOMEPANELLIST(this.temporaryPanelList)    
   				break;
   			case 'temp_2':
           if(!this.titleValue || !this.linkValue || !this.iconValue) {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
           }
+          this.SET_LOADING()
+
   				tempObj = {
   					describe:'',
             back:'',
@@ -678,24 +825,40 @@ export default {
             link: this.linkValue
   				}
   				content = [...this.homePanelList.content]
-  				console.log(content)
+  				// console.log(content)
   				content.splice(2, 1, tempObj)
   				payload = {
   					_interface: 'home',
   					obj: {
+              ...this.userInfo,
   						content
   					}
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
-          alert('提交给后台  整个主页面板的数据')
-          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
+          __sendHomePanel (jsonStringify(that.temporaryPanelList)).then( res =>{
+            that.SET_LOADING()
+            if(!res){
+              alert('网络错误，请检查网络或稍后再试')
+              return false
+            }
+            if(!res.result) {
+              alert(res.message)
+              return false
+            }
+            that.OPEN_NOTIFICATION()
+            that.SAVE_HOMEPANELLIST(that.temporaryPanelList)   //在把临时数据存到  展示的数据里
+          })
+          // alert('提交给后台  整个主页面板的数据')
+          // this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
   				break;
   			case 'temp_3':
           if(!this.titleValue || !this.linkValue || !this.titleValue) {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
           }
+          this.SET_LOADING()
+
   				tempObj = {
   					describe: this.nameValue,
             back: this.backValue,
@@ -709,13 +872,27 @@ export default {
   				payload = {
   					_interface: 'home',
   					obj: {
+              ...this.userInfo,
   						content
   					}
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 homepanellist的数据和自己的数据
-          alert('提交给后台  整个主页面板的数据')
-          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
+          __sendHomePanel (jsonStringify(that.temporaryPanelList)).then( res =>{
+            that.SET_LOADING()
+            if(!res){
+              alert('网络错误，请检查网络或稍后再试')
+              return false
+            }
+            if(!res.result) {
+              alert(res.message)
+              return false
+            }
+            that.OPEN_NOTIFICATION()
+            that.SAVE_HOMEPANELLIST(that.temporaryPanelList)   //在把临时数据存到  展示的数据里
+          }) 
+          // alert('提交给后台  整个主页面板的数据')
+          // this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
   				break;
   			//list页banner
   			case 'listbanner': 
@@ -724,6 +901,27 @@ export default {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
           } 
+          for (let i in this.formCfg.inputList[0].imglist) {
+            if(this.formCfg.inputList[0].imglist[i] == '') {
+              alert('轮播图片不能为空，否则不会在手机页面上展示')
+              break
+            }
+          }
+          for (let i in this.formCfg.inputList[1].value) {
+            if(this.formCfg.inputList[1].value[i] == '') {
+              alert('轮播图片的标题不能为空，否则不会在手机页面上展示')
+              return false
+              break
+            }
+          }
+          for (let i in this.formCfg.inputList[2].value) {
+            if(this.formCfg.inputList[2].value[i] == '') {
+              alert('轮播图片的页面地址不能为空，否则不会在手机页面上展示')
+              return false
+              break
+            }
+          }
+          that.SET_LOADING()
   				banner = new Array
   				temporaryObj = {
   					title: '',
@@ -742,19 +940,34 @@ export default {
   				payload = {
   					_interface: 'list',
   					obj:{
+              ...this.userInfo,
   						banner
   					}
   				}
   				this.SAVE_TEMPORARYLIST(payload)
   				//这里就是弹出框 然后 发数据 然后用temporarylist的数据去覆盖掉 listpanellist的数据和自己的数据
-          alert('提交给后台  整个列表面板的数据')
-          this.SAVE_LISTPANELLIST(this.temporaryPanelList)  
+          __sendListPanel(jsonStringify(that.temporaryPanelList)).then( res =>{
+            that.SET_LOADING()
+            if(!res){
+              alert('网络错误，请检查网络或稍后再试')
+              return false
+            }
+            if(!res.result) {
+              alert(res.message)
+              return false
+            }
+            that.OPEN_NOTIFICATION()
+            this.SAVE_LISTPANELLIST(this.temporaryPanelList)     //在把临时数据存到  展示的数据里
+          })
+          // alert('提交给后台  整个列表面板的数据')
+          // this.SAVE_LISTPANELLIST(this.temporaryPanelList)  
   				break;
   			case 'contentlist':
           if(!this.nameValue || !this.linkValue || !this.formCfg.inputList[1].imglist.length) {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
           }
+          that.SET_LOADING()
           content = [...this.listPanelList.content]
           let index = this.formCfg.listIndex
           temporaryObj = {
@@ -769,13 +982,26 @@ export default {
           payload = {
             _interface: 'list',
             obj:{
+              ...this.userInfo,
               content
             }
           }
           this.SAVE_TEMPORARYLIST(payload)
-          debugger
-          alert('提交给后台  整个列表面板的数据')
-          this.SAVE_LISTPANELLIST(this.temporaryPanelList)
+          __sendListPanel(jsonStringify(that.temporaryPanelList)).then( res =>{
+            that.SET_LOADING()
+            if(!res){
+              alert('网络错误，请检查网络或稍后再试')
+              return false
+            }
+            if(!res.result) {
+              alert(res.message)
+              return false
+            }
+            that.OPEN_NOTIFICATION()
+            this.SAVE_LISTPANELLIST(this.temporaryPanelList)     //在把临时数据存到  展示的数据里
+          })
+          // alert('提交给后台  整个列表面板的数据')
+          // this.SAVE_LISTPANELLIST(this.temporaryPanelList)
           break;
         case 'userlist':
           if(!this.nameValue || !this.linkValue || !this.formCfg.inputList[1].value) {

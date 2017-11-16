@@ -3,6 +3,7 @@ import {
 } from './env'
 import qs from 'querystring'
 
+
 export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 	type = type.toUpperCase();
 	url = baseUrl + url;
@@ -35,13 +36,15 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 
 		if (type == 'POST') {
 			Object.defineProperty(requestConfig, 'body', {
-				value: qs.stringify(data)
+				value: qs.stringify(data),
+				enumerable: true
 				// value: JSON.stringify(data)
 			})
 		}
 		
 		try {
 			const response = await fetch(url, requestConfig);
+
 			const responseJson = await response.json();
 			// if(response.loginState == 0) {
 			// 	alert('请重新登录')

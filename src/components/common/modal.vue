@@ -146,7 +146,7 @@
 					<div>
 						<span>旧密码：</span>
 						<input type="password" name="oldPassword" v-model="modifyPswOld" maxlength="12">
-						<p class="alert" v-show="">旧密码输入错误</p>
+						<p class="alert" v-show="oldPasswordAlert">旧密码输入错误</p>
 					</div>
 					<div>
 						<span>新密码：</span>
@@ -221,7 +221,10 @@
 </template>
 
 <script>
+import {imageBaseUrl} from 'config/env'
+
 import { __sendBase64 } from 'service/sendData'
+import {__getImgUrl} from 'service/getData'
 import {u_viewPick} from 'config/mUtils'
 
 //引入数据组件
@@ -245,16 +248,9 @@ export default {
   data () {
     return {
     	// 这里应该是去接口调到他的图标列表 再添加进来 用数组的concat方法
-    	menuIconList: 
-  			['/static/img/menuicon_01.png','/static/img/menuicon_02.png','/static/img/menuicon_03.png','/static/img/menuicon_04.png','/static/img/menuicon_05.png',
-  			'/static/img/menuicon_01_dark.png','/static/img/menuicon_02_dark.png','/static/img/menuicon_03_dark.png','/static/img/menuicon_04_dark.png','/static/img/menuicon_05_dark.png',
-  			'/static/img/menuicon_01_green.png','/static/img/menuicon_02_green.png','/static/img/menuicon_03_green.png','/static/img/menuicon_04_green.png','/static/img/menuicon_05_green.png'
-  			],
-    	plateIconList: ['/static/img/plate_icon_02.png','/static/img/plate_icon_03.png','/static/img/plate_icon_04.png','/static/img/plate_icon_05.png','/static/img/plate_icon_06.png'
-    	],
-    	userIconList: 
-  			['/static/img/usericon_02.png','/static/img/usericon_03.png','/static/img/usericon_04.png','/static/img/usericon_02_dark.png','/static/img/usericon_03_dark.png','/static/img/usericon_04_dark.png','/static/img/usericon_02_green.png','/static/img/usericon_03_green.png','/static/img/usericon_04_green.png'
-  			],
+    	menuIconList: [],
+    	plateIconList: [],
+    	userIconList: [],
     	selectedIcon:'',		//选择的第几个 这里在点开模态框的时候是否应该传进来，如果不传，那上面src应该有个默认值
     	//logo和头像地址要调用  
     	logoBack: { backgroundImage: 'url(/static/img/logo.png)' },
@@ -266,7 +262,7 @@ export default {
     	modifyPswOld: '',
   		modifyPswNew:'',
   		modifyPswConfirm:'',
-    	
+    	oldPasswordAlert: false,
     	newPasswordAlert: false,
     	//项目名称
     	projectNameInput: '',
@@ -281,7 +277,7 @@ export default {
   },
   computed: {
   	...mapState([
-  			'isShowModal','modalCfg','mobileColorStyle'
+  			'isShowModal','modalCfg','mobileColorStyle','userInfo'
   		])
   },
   watch: {
@@ -293,18 +289,88 @@ export default {
   			this.newPasswordAlert = false
   		}
   	},
-  	isShowModal: function() {
+  	isShowModal: function(newVal) {
   		this.selectedIcon = ''
+  		let that = this
+  		if(newVal) {//确保是打开的时候
+  			let data = {
+					...this.userInfo,
+					type: 'a',
+				}
+  			if(this.modalCfg.modalFor == 'plateIcon') {
+					__getImgUrl(data)
+						.then( res => {
+							// console.log(res)
+							if(!res) {
+								alert('网络错误，请检查网络或稍后再试')
+								return false
+							}
+							if(!res.result) {
+								alert(res.message)
+								return false
+							}
+  						that.plateIconList = []				// 在有网络并且成功的情况下清空图标？ 还是在最上面
+							res.data.forEach(function(item, index){
+								that.plateIconList.push(imageBaseUrl+item.iconUrl)
+							})
+						})
+  			}
+  			else if (this.modalCfg.modalFor == 'menuIcon') {
+  				Object.defineProperty(data, 'type', {
+  					value: 'b',
+  					enumerable:true,
+  				})
+  				__getImgUrl(data)
+						.then( res => {
+							// console.log(res)
+							if(!res) {
+								alert('网络错误，请检查网络或稍后再试')
+								return false
+							}
+							if(!res.result) {
+								alert(res.message)
+								return false
+							}
+  						that.menuIconList = []				// 在有网络并且成功的情况下清空图标？ 还是在最上面
+							res.data.forEach(function(item, index){
+								that.menuIconList.push(imageBaseUrl+item.iconUrl)
+							})
+						})
+  			}
+  			else if (this.modalCfg.modalFor == 'userIcon') {
+					Object.defineProperty(data, 'type', {
+  					value: 'c',
+  					enumerable:true,
+  				})
+  				__getImgUrl(data)
+						.then( res => {
+							// console.log(res)
+							if(!res) {
+								alert('网络错误，请检查网络或稍后再试')
+								return false
+							}
+							if(!res.result) {
+								alert(res.message)
+								return false
+							}
+  						that.userIconList = []				// 在有网络并且成功的情况下清空图标？ 还是在最上面
+							res.data.forEach(function(item, index){
+								that.userIconList.push(imageBaseUrl+item.iconUrl)
+							})
+						})
+  			}
+  		}
   	}
 
   },
   mounted () {
 		//初始化列表数据  这里应该放在watch里面做
 		this.articleList = materialArticleData()
+		
   },
   methods: {
   	...mapMutations([
-  			'CLOSE_MODAL','SET_LOGO','SET_AVATAR'
+  			'CLOSE_MODAL','SET_LOGO','SET_AVATAR','SET_LOADING'
   		]),
   	selectIcon (index) {
   		this.selectedIcon = index
@@ -317,41 +383,83 @@ export default {
   	// plateIcon 上传
   	_plateIconChange (e) {
   		const that = this
-  		// u_viewPick(e.target, function(_this) {
-  		// 	that.plateIconList.push(_this.result)
-  		// })
   		u_viewPick(e.target).then( ({base64, type})=>{
-  			// if(rst.base64) {
-  			// 	that.plateIconList.push(rst.base64)
-  			// }
-  			// else {
-  				that.plateIconList.push(base64)
-  			// }
-  			// console.table(rst)
+  				// that.plateIconList.push(base64)
+  				that.SET_LOADING('图片上传中...')
+  				let data = {
+  					...that.userInfo,
+  					datas: base64,
+  					suffix: type,
+  					type: 'a',
+  				}
+  				__sendBase64(data)
+  					.then( res => {
+  						console.log(res)
+  						that.SET_LOADING()
+  						if(!res) {
+  							alert('网络错误，请检查网络或稍后再试')
+  							return false
+  						}
+  						if(!res.result) {
+  							alert(res.message)
+  							return false
+  						}
+  						that.plateIconList.push(imageBaseUrl + res.data)
+  					})
   		})
   	},
   	_userIconChange (e) {
   		const that = this
   		u_viewPick(e.target).then( ({base64, type})=>{
-  			// if(rst.base64) {
-  			// 	that.userIconList.push(rst.base64)
-  			// }
-  			// else {
-  				that.userIconList.push(base64)
-  			// }
-  			// console.table(rst)
+  			//	that.userIconList.push(base64)
+  			that.SET_LOADING('图片上传中...')
+  				let data = {
+  					...that.userInfo,
+  					datas: base64,
+  					suffix: type,
+  					type: 'c',
+  				}
+  				__sendBase64(data)
+  					.then( res => {
+  						console.log(res)
+  						that.SET_LOADING()
+  						if(!res) {
+  							alert('网络错误，请检查网络或稍后再试')
+  							return false
+  						}
+  						if(!res.result) {
+  							alert(res.message)
+  							return false
+  						}
+  						that.userIconList.push(imageBaseUrl + res.data)
+  					})
   		})
   	},
   	_menuIconChange (e) {
 			const that = this
 			u_viewPick(e.target).then( ({base64, type})=>{
-  			// if(rst.base64) {
-  			// 	that.menuIconList.push(rst.base64)
-  			// }
-  			// else {
-  				that.menuIconList.push(base64)
-  			// }
-  			// console.table(rst)
+  			//	that.menuIconList.push(base64)
+  			that.SET_LOADING('图片上传中...')
+  				let data = {
+  					...that.userInfo,
+  					datas: base64,
+  					suffix: type,
+  					type: 'b',
+  				}
+  				__sendBase64(data)
+  					.then( res => {
+  						console.log(res)
+  						that.SET_LOADING()
+  						if(!res) {
+  							alert('网络错误，请检查网络或稍后再试')
+  							return false
+  						}
+  						if(!res.result) {
+  							alert(res.message)
+  							return false
+  						}
+  						that.menuIconList.push(imageBaseUrl + res.data)
+  					})
   		})
   	},
   	//LOGO修改
@@ -372,15 +480,7 @@ export default {
 				that.logoBack = Object.assign({}, that.logoBack, {
   				backgroundImage: 'url('+base64+')'
   			})
-  			let data = {
-  				uid: 'USER0P07LdVR',
-  				datas: base64,
-  				type: 'd',
-  				suffix: type,
-  			}
-  			__sendBase64(data).then(res=>{
-  				console.log(res)
-  			})
+  		
   			// }
   			that.SET_LOGO(base64)
   			// console.table(rst)

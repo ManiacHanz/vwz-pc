@@ -3,8 +3,8 @@
     <div class="alert">
       <div class="icon"></div>
       <div class="char">
-        <p>菜单编辑中</p>
-        菜单未发布，请确认菜单编辑完成后点击“保存并发布”同步到手机。
+        <p>温馨提示</p>
+        菜单编辑完成后需点击“保存并发布”才能同步到手机。
       </div>
     </div>
     <div class="body">

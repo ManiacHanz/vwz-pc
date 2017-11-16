@@ -10,7 +10,10 @@ import action from './action'
 Vue.use(Vuex)
 
 const state = {
-	userInfo: '',   //用户信息
+	userInfo: {
+		uid: 'USERSSbQ9qkU',   //用户ID
+		token: '7ae889227c8adbeea5fdb6645747f4f9'								// token
+	},
 	avatarUrl: '',		//头像地址
 	logoUrl: '',      //LOGO 地址
 	hasNew: false,    //是否更新了
@@ -64,6 +67,7 @@ const state = {
 	},
 	isShowLoading: false,					//是否显示Loading
 	loadingText: '',							// loading是否自定义文字
+	showNotificationText: '',     //发布信息的文字
 	isShowNotification: false,		//是否展示发布成功的提示框
 	homePanelList: '',			//默认3个手机页面的数据存储和渲染
 	listPanelList: '',

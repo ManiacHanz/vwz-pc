@@ -13,7 +13,9 @@
     <div class="mybody">
       <transition name="notify-fade" mode="out-in">
         <div class="notification" v-show="isShowNotification===true">
-          <success-notify></success-notify>
+          <success-notify>
+            <span v-if="showNotificationText">{{showNotificationText}}</span>
+          </success-notify>
         </div>
       </transition>
       <transition name="router-fade" mode="out-in">
@@ -44,7 +46,7 @@ export default {
   },
   computed: {
     ...mapState([
-        'isShowNotification','isShowLoading','loadingText'
+        'isShowNotification','isShowLoading','loadingText','showNotificationText'
       ]),
   }
 }

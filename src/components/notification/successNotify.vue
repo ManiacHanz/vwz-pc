@@ -1,7 +1,9 @@
 <template>
 	<div>
 		<span class="icon"></span>
-		<span>发布成功</span>
+    <slot>
+		  <span>发布成功</span>
+    </slot>
 	</div>
 </template>
 

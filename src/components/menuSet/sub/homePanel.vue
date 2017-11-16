@@ -1,10 +1,10 @@
 <template>
-	<div class="home-panel" :class="mobileColorStyle">
+	<div class="home-panel" :class="mobileColorStyle" v-if="homePanelList">
 		<section class="banner swiper-container" :class="[mobileActive==='homebanner'?'active':'']" id="Swiper1"
 		@click.left="setUpModule('','homebanner')">
       <ul class="swiper-wrapper">
           <li class="swiper-slide" v-for="(item, index) in homePanelList.banner" :key="index" >
-        		<img :src="item.img">
+        		<img :src="imgBaseUrl+item.img">
         		<p>
         			<span>{{ item.title }}</span>
         		</p>
@@ -20,9 +20,9 @@
 		<section class="plate">
 			<div v-for="(item, index) in homePanelList.content" :class="['temp_'+index,mobileActive==='temp_'+index?'active':'']" 
 			@click="setUpModule('','temp_'+index)">
-				<img v-if="item.back" :src="item.back" class="background">
+				<img v-if="item.back" :src="imgBaseUrl+item.back" class="background">
 				<p class="describe" v-if="item.describe">{{ item.describe }}</p>
-				<img :src="item.icon" v-if="item.icon">
+				<img :src="imgBaseUrl+item.icon" v-if="item.icon">
 				<p class="plate-name">{{ item.tempName }}</p>
 			</div>
 		</section>
@@ -35,6 +35,9 @@ import '../../../../static/plugin/swiper.min.js'
 
 import { mapState, mapMutations } from 'vuex'
 import {__getHomePanel} from 'service/getData.js'
+import {imageBaseUrl} from 'config/env.js'
+import {jsonParse} from 'config/mUtils'
+
 
 // 模拟手机首页配置数据 
 // import { mobileHomeCfg } from '../../../../static/data/mobileHomeCfg.js'
@@ -45,28 +48,31 @@ export default {
   data () {
     return {
     	mobileCfg:'',    //手机配置,
-
+    	imgBaseUrl: imageBaseUrl,
     }
   },
   computed: {
   	...mapState([
-  			'mobileColorStyle','mobileActive','homePanelList'
+  			'mobileColorStyle','mobileActive','homePanelList','userInfo'
   		]),
   },
   created () {
   	// if(!this.homePanelList) {//这里可能不需要这个
-
-			__getHomePanel()
+  	console.log({...this.userInfo})
+			__getHomePanel({...this.userInfo})
   			.then( res => {
-  			// console.log(res.home.data)
-  				this.SAVE_HOMEPANELLIST(res.home.data)
+  			// console.log(res.data)
+	  			if (!res.result) {
+	  				alert(res.message)
+	  				return false
+	  			}
+	  			let jres = jsonParse(res.data)
+	  			// console.log(jres)
+  				this.SAVE_HOMEPANELLIST(jres)
   				this.SET_MENUBTN_STYLE()
   		})
-  	// }
   	
-  	//这里假数据的更换
-    // console.log(mobileHomeCfg)
-		// this.mobileCfg = mobileHomeCfg
+  	
   },
   mounted () {
 		// 初始化轮播 

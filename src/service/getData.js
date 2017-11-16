@@ -7,19 +7,26 @@ import {getStore} from '../config/mUtils'
 	获取home面板数据
  */
 
-export const __getHomePanel = () => fetch('/home', {}, 'POST')
+// export const __getHomePanel = () => fetch('/home', {}, 'POST')
+export const __getHomePanel = (data) => fetch('/site/menu_datas', data, 'POST')
 
 /*
 	获取list面板数据
  */
 
-export const __getListPanel = () => fetch('/list', {}, 'POST')
+export const __getListPanel = (data) => fetch('/site/news_datas', data, 'POST')
 /*
 	获取user面板数据
  */
 
-export const __getUserPanel = () => fetch('/user', {}, 'POST')
+export const __getUserPanel = (data) => fetch('/site/service_datas', data, 'POST')
 
+
+// 获取图标	
+export const __getImgUrl = (data) => fetch('/site/icon_datas', data, 'POST')
+
+// 获取主题
+export const __getTheme = (data) => fetch('/site/get_themes', data, 'POST')
 
 /**
  * 获取首页默认地址

@@ -31,6 +31,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import {__getHomePanel} from 'service/getData.js'
+import {jsonParse} from 'config/mUtils'
 
 //引入手机页面的3个模板页
 import homePanel from './sub/homePanel.vue'
@@ -58,17 +59,29 @@ export default {
   },
   computed: {
   	...mapState([
-  			'showPanel','mobileActive','mobileColorStyle','homePanelList','menubtnStyle'
+  			'showPanel','mobileActive','mobileColorStyle','homePanelList','menubtnStyle','userInfo'
   		])
   },
   created () {
-  	__getHomePanel()
+  	console.log({...this.userInfo})
+
+  	__getHomePanel({...this.userInfo})
   		.then( res => {
-  			// console.log(res.home.data)
-  			this.SAVE_HOMEPANELLIST(res.home.data)
+  			if (!res) {
+  				alert('网络请求失败，请检查网络后刷新页面')
+  				return false
+  			}
+  			if (!res.result) {
+  				alert(res.message)
+  				return false
+  			}
+  			let jres = jsonParse(res.data)
+  			// console.log(jres)
+  			this.SAVE_HOMEPANELLIST(jres)
+  			// console.log(this.homePanelList)
   		})
   		.then( ()=> {
-				this.SET_MENUBTN_STYLE ()
+				// this.SET_MENUBTN_STYLE ()
   		})
   	
   },

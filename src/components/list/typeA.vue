@@ -2,19 +2,22 @@
 	<div class="box" :class="colorStyle">
 		<p class="title">{{ content.title }}</p>
 		<div class="imglist" >
-			<img :src="item" v-for="item in content.imglist">
+			<img :src="imgBaseUrl+item" v-for="item in content.imglist">
 		</div>
 		<p class="time">{{ content.time }}</p>
 	</div>
 </template>
 
 <script>
+import {imageBaseUrl} from 'config/env.js'
+
 export default {
 
   name: 'typeA',
 
   data () {
     return {
+    	imgBaseUrl: imageBaseUrl,
 
     }
   },

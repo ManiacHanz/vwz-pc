@@ -23,7 +23,7 @@
 						<span></span>
 						项目名称
 					</li>
-					<li class="login-out">
+					<li class="login-out" @click="_loginOut">
 						<span></span>
 						退出
 					</li>
@@ -41,6 +41,8 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
+import {__loginOut, __modifyPsw, __sendBase64} from 'service/sendData'
+import {imageBaseUrl} from 'config/env'
 export default {
 	data: function () {
 		return {
@@ -69,7 +71,7 @@ export default {
 	},
 	computed: {
 		...mapState([
-				'avatarUrl','logoUrl','hasNew'
+				'avatarUrl','logoUrl','hasNew','userInfo'
 			]),
 	},
 	mounted () {
@@ -77,7 +79,8 @@ export default {
 	},
 	methods: {
 		...mapMutations([
-				'OPEN_NOTIFICATION','OPEN_MODAL','SET_MODALCFG'
+				'OPEN_NOTIFICATION','OPEN_MODAL','CLOSE_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION'
+
 			]),
 		toggleTabs(index) {
 			this.nowIndex = index
@@ -91,8 +94,29 @@ export default {
 				modalFor: 'logo',				//模态框用来做什么  参考modal.vue
 				title: '修改LOGO',					//模态框的标题
 				onSuccess: function(){		//点击确认的逻辑
-					that.logo = that.logoUrl
-					
+					that.SET_LOADING()
+					let data = {
+						...that.userInfo,
+						datas: that.logoUrl,
+						type: 2,
+					}
+					__sendBase64(data,'/site/upload_headimg')
+						.then( res => {
+							that.SET_LOADING()
+							console.log(res)
+							if(!res) {
+								alert('上传失败，请稍后再试')
+								return false
+							}
+							if(!res.result) {
+								alert(res.message)
+								return false
+							}
+							that.logo = imageBaseUrl + res.data
+							that.OPEN_NOTIFICATION('修改成功')
+							that.CLOSE_MODAL()
+						})
+					// that.logo = that.logoUrl
 				}
 			}
 			this.SET_MODALCFG(modalOption)
@@ -104,8 +128,30 @@ export default {
 			let modalOption = {
 				modalFor: 'avatar',				//模态框用来做什么  参考modal.vue
 				title: '修改头像',					//模态框的标题
-				onSuccess: function(){		//点击确认的逻辑
-					that.avatar = that.avatarUrl
+				onSuccess: function(_this){		//点击确认的逻辑
+					that.SET_LOADING()
+					let data = {
+						...that.userInfo,
+						datas: that.avatarUrl,
+						type: 1,
+					}
+					__sendBase64(data,'/site/upload_headimg')
+						.then( res => {
+							that.SET_LOADING()
+							console.log(res)
+							if(!res) {
+								alert('上传失败，请稍后再试')
+								return false
+							}
+							if(!res.result) {
+								alert(res.message)
+								return false
+							}
+							that.avatar = imageBaseUrl + res.data
+							that.OPEN_NOTIFICATION('修改成功')
+							that.CLOSE_MODAL()
+						})
+					// that.avatar = that.avatarUrl
 				}
 			}
 			this.SET_MODALCFG(modalOption)
@@ -119,7 +165,35 @@ export default {
 				title: '修改密码',					//模态框的标题
 				onSuccess: function(_this){		//点击确认的逻辑
 					//发送请求 
-					console.log(_this.modifyPsw)
+					// console.log(_this.modifyPswOld, _this.modifyPswNew)
+					
+					if(_this.modifyPswOld.length < 6) {
+						alert('密码不少于6位')
+						return false
+					}
+					if(_this.modifyPswNew.length < 6) {
+						alert('新密码不能少于6位')
+						return false
+					}
+					if( _this.modifyPswConfirm != _this.modifyPswNew ){
+						alert('两次密码输入必须一致')
+						return false
+					}
+					that.SET_LOADING()
+					let data = {...that.userInfo,password: _this.modifyPswOld, password1: _this.modifyPswNew}
+					console.log(data)
+					__modifyPsw(data).then( res => {
+						that.SET_LOADING()
+						console.log(res)
+						if(!res.result) {
+							alert(res.message)
+						}
+						else {
+							that.OPEN_NOTIFICATION('修改成功')
+							that.CLOSE_MODAL()
+							// alert(res.message)
+						}
+					})
 				}
 			}
 			this.SET_MODALCFG(modalOption)
@@ -151,6 +225,24 @@ export default {
 			}
 			this.SET_MODALCFG(modalOption)
 		},
+		//退出登录
+		_loginOut () {
+			this.OPEN_MODAL()
+			let that = this
+			let modalOption = {
+				modalFor: 'loginOut',				//模态框用来做什么  参考modal.vue
+				title: '退出登录',					//模态框的标题
+				onSuccess: function(){		//点击确认的逻辑
+					__loginOut().then( res => {					//退出登录要发请求？
+						alert('退出登录成功')
+						console.log(res)
+					}).then( () => {
+						that.CLOSE_MODAL()
+					})
+				}
+			}
+			this.SET_MODALCFG(modalOption)
+		}
 	}
 }
 
