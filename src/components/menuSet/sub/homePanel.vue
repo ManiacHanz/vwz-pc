@@ -58,7 +58,7 @@ export default {
   },
   created () {
   	// if(!this.homePanelList) {//这里可能不需要这个
-  	console.log({...this.userInfo})
+  	// console.log({...this.userInfo})
 			__getHomePanel({...this.userInfo})
   			.then( res => {
   			// console.log(res.data)
@@ -338,6 +338,7 @@ export default {
 		font-weight: bold;
 		color: #333333;
 		margin-bottom: 4px;
+		.ellipsis();
 	}
 	.content {
 		font-size: 13px;

@@ -21,12 +21,20 @@ export const __getListPanel = (data) => fetch('/site/news_datas', data, 'POST')
 
 export const __getUserPanel = (data) => fetch('/site/service_datas', data, 'POST')
 
+// 获取列表文章
+export const __getArtList = (data) => fetch('/site/get_article', data, 'POST')
 
 // 获取图标	
 export const __getImgUrl = (data) => fetch('/site/icon_datas', data, 'POST')
 
 // 获取主题
 export const __getTheme = (data) => fetch('/site/get_themes', data, 'POST')
+
+// 获取文章列表
+export const __getArticalList = (data) => fetch('/site/gets_article', data, 'POST')
+
+// 获取文章详情
+export const __getArticalDetail = (data) => fetch('/site/article_detail', data, 'POST')
 
 /**
  * 获取首页默认地址

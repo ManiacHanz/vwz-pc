@@ -11,8 +11,8 @@ Vue.use(Vuex)
 
 const state = {
 	userInfo: {
-		uid: 'USERSSbQ9qkU',   //用户ID
-		token: '7ae889227c8adbeea5fdb6645747f4f9'								// token
+		// uid: 'USERjIMHXdT1',   //用户ID
+		// token: 'd09eebd0ab5fb9acbfa676789b89a14'								// token
 	},
 	avatarUrl: '',		//头像地址
 	logoUrl: '',      //LOGO 地址
@@ -73,6 +73,7 @@ const state = {
 	listPanelList: '',
 	userPanelList: '',
 	temporaryPanelList: '',     //临时手机面板的数据
+	editorContent: '',						//富文本的内容
 	test:'1',		//测试用
 }
 

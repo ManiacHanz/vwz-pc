@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import {mapState, mapMutations} from 'vuex'
 export default {
 
   name: 'VueUEditor',
@@ -21,6 +22,11 @@ export default {
         return {};
       }
     }
+  },
+  computed: {
+    ...mapState([
+        'editorContent'
+      ])
   },
   created () {
     if (window.UE !== undefined) {
@@ -42,6 +48,9 @@ export default {
     }
   },
   methods: {
+    ...mapMutations([
+        'SET_EDITORCONTENT'
+      ]),
     insertScriptTag () {
       let editorScriptTag = document.getElementById('editorScriptTag');
       let configScriptTag = document.getElementById('configScriptTag');
@@ -96,9 +105,14 @@ export default {
       }
     },
     editorReady (editorInstance) {
-      editorInstance.setContent('你可以在这里初始化编辑器的初始内容。');
-      editorInstance.addListener('contentChange', () => {
-        console.log('编辑器内容发生了变化：', editorInstance.getContent());
+      let that = this
+      editorInstance.setContent(that.editorContent);
+      // editorInstance.addListener('contentChange', () => {
+      //   console.log('编辑器内容发生了变化：', editorInstance.getContent());
+      // });
+      editorInstance.addListener('blur', () => {
+        console.log('编辑器失焦：', editorInstance.getContent());
+        that.SET_EDITORCONTENT(editorInstance.getContent())
       });
     }
   },

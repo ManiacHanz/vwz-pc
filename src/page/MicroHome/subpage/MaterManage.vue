@@ -3,16 +3,19 @@
 		<div class="inner-box">
 			<div class="top-bar">
 				<div class="search">
-					<input type="text" name="search" placeholder="标题/作者">
-					<a role="button"></a>
+					<input type="text" name="search" placeholder="标题/作者" v-model="search">
+					<a role="button" @click="_searchArticle"></a>
 				</div>
 				<div class="new-btn" @click="goEdit()">新建文章</div>
 			</div>
-			<div class="list">
+			<div class="list" v-if="listData.length>0">
 				<material-table :listData="listData" :toggleDisplay="_toggleDisplay" :delArticle="_delArticle"></material-table>	
 			</div>
-			<div class="page">
-				<pagination :getPageNum="getPageNum"></pagination>
+			<div class="page" v-if="listData">
+				<pagination :getPageNum="getPageNum" :totalPage="totalPage"></pagination>
+			</div>
+			<div class="noData" v-if="!listData.length">
+				<p>暂时还没有文章素材，快来新建吧！</p>
 			</div>
 		</div>
 	</div>
@@ -22,16 +25,13 @@
 <script>
 import Vue from 'vue'
 import {mapState, mapMutations} from 'vuex'
-	//引入列表组件
-	import materialTable from '../../../components/list/materialTable.vue'
-	import Pagination from '../../../components/common/Pagination'
-	//引入数据组件
-	import { 
-		materialArticleData,
-		// materialPicData,
-		// materialRecordData,
-		// materialVideoData
-	} from '../../../../static/data/materialData.js'
+
+import {__getArticalList} from 'service/getData'
+import {__modifyDisplay, __delArticle} from 'service/sendData'
+
+//引入列表组件
+import materialTable from '../../../components/list/materialTable.vue'
+import Pagination from '../../../components/common/Pagination'
 	export default {
 		components: {
 			materialTable,
@@ -41,6 +41,9 @@ import {mapState, mapMutations} from 'vuex'
 			return {
 				nowIndex: 0,
 				nowType:'文章',
+				totalPage: '',
+				search: '',
+				nowPage: '',
 				listData: []
 				// 这里tabs应该要改成对象的数组，没方便选择的时候发送标记，或者选择下标发送
 				// tabs: [
@@ -64,26 +67,159 @@ import {mapState, mapMutations} from 'vuex'
 				
 			}
 		},
+		computed: {
+			...mapState([
+					'userInfo'
+				])
+		},
+		created () {
+			let data = {
+				...this.userInfo,
+				page: 1,
+				search: '',
+			}
+			console.log(data)
+			__getArticalList(data)
+				.then( res => {
+					console.log(res)
+					if(!res) {
+						alert('网络请求失败，请检查网络或稍后重试')
+						return false
+					}
+					if(!res.result) {
+						alert(res.message)
+						return false
+					}
+					this.listData = res.data.data
+					this.totalPage = res.data.totalpage
+				})
+		},
+		mounted() {
+			// this.listData = materialArticleData()
+			
+		},
 		methods: {
 			...mapMutations([
-					'OPEN_MODAL','SET_MODALCFG'
+					'OPEN_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION','CLOSE_MODAL'
 				]),
 			goEdit() {
-				this.$router.push('/artedit?id=123')
+				this.$router.push('/artedit')
 			},
 			getPageNum ( pagenum ) {
 				//获取页码数据  应该作为props传给子组件 这里的参数就是分页的插件穿回来的页码数 在这里进行请求数据 然后敷给listData
 				console.log(pagenum)
+				this.nowPage = pagenum
+				let data = {
+					...this.userInfo,
+					page: pagenum,
+					// search: '',
+				}
+				// console.log(data)
+				__getArticalList(data)
+					.then( res => {
+						console.log(res)
+						if(!res) {
+							alert('网络请求失败，请检查网络或稍后重试')
+							return false
+						}
+						if(!res.result) {
+							alert(res.message)
+							return false
+						}
+						this.listData = res.data.data
+						this.totalPage = res.data.totalpage
+					})
 			},
 			getListData () {
 
 			},
+			_searchArticle () {						//搜索
+				this.SET_LOADING()
+				let data = {
+					...this.userInfo,
+					page:1,
+					search: this.search.trim(),
+				}
+				__getArticalList(data)
+					.then( res => {
+						this.SET_LOADING()
+						console.log(res)
+						if(!res) {
+							alert('网络请求失败，请检查网络或稍后重试')
+							return false
+						}
+						if(!res.result) {
+							alert(res.message)
+							return false
+						}
+						this.listData = res.data.data
+						this.totalPage = res.data.totalpage
+					})
+			},
 			_toggleDisplay (id, index) {
 				//console.log(id, index)		//由子组件传回来的id 和 当前页listdata的 index  id用于传输后台数据 index改变前台展示
-				if (!this.listData[index].display) {
-					this.listData[index].display = 1
+				if (!this.listData[index].display) {    // diaplay 0 是 显示  1 是隐藏
+					this.OPEN_MODAL()
+					let that = this
+					let modalOption = {
+						modalFor: 'hideArticle',				//模态框用来做什么  参考modal.vue
+						title: '温馨提示',					//模态框的标题
+						onSuccess: function(_this){		//点击确认的逻辑
+							//发送请求 
+							// console.log(_this.projectNameInput)
+							that.SET_LOADING()
+
+							let data = {
+								...that.userInfo,
+								id,
+								display: 1
+							}
+							__modifyDisplay(data)
+								.then( res => {
+									that.SET_LOADING()
+									console.log(res)
+									if(!res.result) {
+										alert(res.message)
+										return false
+									}
+									that.listData[index].display = 1
+									that.OPEN_NOTIFICATION('修改成功')
+									that.CLOSE_MODAL()
+								})
+						}
+					}
+					this.SET_MODALCFG(modalOption)				
 				} else {
-					this.listData[index].display = 0
+					this.OPEN_MODAL()
+					let that = this
+					let modalOption = {
+						modalFor: 'showArticle',				//模态框用来做什么  参考modal.vue
+						title: '温馨提示',					//模态框的标题
+						onSuccess: function(_this){		//点击确认的逻辑
+							//发送请求 
+							// console.log(_this.projectNameInput)
+							that.SET_LOADING()
+
+							let data = {
+								...that.userInfo,
+								id,
+								display: 0
+							}
+							__modifyDisplay(data)
+								.then( res => {
+									that.SET_LOADING()
+									console.log(res)
+									if(!res.result) {
+										alert(res.message)
+										return false
+									}
+									that.listData[index].display = 0
+									that.OPEN_NOTIFICATION('修改成功')
+									that.CLOSE_MODAL()
+								})
+						}
+					}
+					this.SET_MODALCFG(modalOption)
 				}
 			},
 			_delArticle (id, index) {
@@ -93,7 +229,42 @@ import {mapState, mapMutations} from 'vuex'
 					modalFor: 'delArticle',				//模态框用来做什么  参考modal.vue
 					title: '温馨提示',					//模态框的标题
 					onSuccess: function(){		//点击确认的逻辑
-						alert(id, index)
+						that.SET_LOADING()
+						let data = {
+							...that.userInfo,
+							ids: id,
+						}
+						__delArticle(data)
+							.then(res => {
+								that.SET_LOADING()
+								console.log(res)
+								if(!res.result) {
+									alert(res.message)
+									return false
+								}
+								that.OPEN_NOTIFICATION('删除成功')
+								that.CLOSE_MODAL()
+							})
+							.then( () => {
+								let data = {
+									...that.userInfo,
+									page: that.nowPage,
+									search: '',
+								}
+								__getArticalList(data)
+									.then( res => {
+										if(!res) {
+											alert('网络请求失败，请检查网络或稍后重试')
+											return false
+										}
+										if(!res.result) {
+											alert(res.message)
+											return false
+										}
+										that.listData = res.data.data
+										that.totalPage = res.data.totalpage
+									})
+							})
 					}
 				}
 				this.SET_MODALCFG(modalOption)
@@ -117,13 +288,10 @@ import {mapState, mapMutations} from 'vuex'
 			// 	}
 			// }
 		},
-		mounted() {
-			this.listData = materialArticleData()
-		}
 	}
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 	.mater-manage .tabs {
 		display: flex;
 		justify-content: flex-start;
@@ -182,6 +350,11 @@ import {mapState, mapMutations} from 'vuex'
 		border-radius: 7px;
 		cursor: pointer;
 	}
-	
+	.noData {
+		padding-top: 100px;
+		text-align: center;
+		font-size: 16px;
+		color: #999;
+	}
 	
 </style>

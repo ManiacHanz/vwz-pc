@@ -6,12 +6,12 @@
           <div class="content-title">{{item.title}}</div>
           <div class="content-info">
             <p class="author">{{item.author}}</p>
-            <p class="content-time">更新于{{item.time}}</p>
+            <p class="content-time">更新于{{item.updateTime}}</p>
           </div>
           <div class="content-img">
-            <img class="thumbnail" :src="item.thumbnail">
+            <img class="thumbnail" :src="imgBaseUrl+item.cover">
           </div>
-          <div class="content-detail">{{item.content}}</div>
+          <div class="content-detail">{{item.described}}</div>
           <a class="mask" target="_blank" href="#/sample">预览文章</a>
         </div>
         <ul class="btns">
@@ -19,9 +19,9 @@
             <span></span>
             编辑
           </li>
-          <li class="show-btn" :class="[item.display?'isShow':'']" @click="_toggleDisplay(item.id, index)">
+          <li class="show-btn" :class="[!item.display?'isShow':'']" @click="_toggleDisplay(item.id, index)">
             <span></span>
-            {{item.display?'已显示':'已隐藏'}}
+            {{!item.display?'已显示':'已隐藏'}}
           </li>
           <li class="del-btn" @click="_delArticle(item.id, index)">
             <span></span>
@@ -34,17 +34,39 @@
 </template>
 
 <script>
+import {mapState, mapMutations} from 'vuex'
+
+import {u_transTime} from 'config/mUtils'
+import {imageBaseUrl} from 'config/env'
+import {__getArticalDetail} from 'service/getData'
+
 export default {
   data() {
     return {
-      
+      imgBaseUrl: imageBaseUrl,
     }
   },
+  computed: {
+    ...mapState([
+        'userInfo'
+      ])
+  },
   props:['listData','toggleDisplay','delArticle'],
+  mounted () {
+    // this.time = u_transTime(this.$props.updateTime)
+  },
   methods: {
     // 点击编辑 进路由 传入参数
     _goEdit(id) {
       this.$router.push( {name:'ArticleEdit', params:{id} } )
+      // let data = {
+      //   ...this.userInfo,
+      //   id
+      // }
+      // __getArticalDetail(data)
+      //   .then(res => {
+      //      console.log(res)
+      //   })
     },
     _toggleDisplay (id, index) {
       this.toggleDisplay(id,index)
@@ -60,13 +82,16 @@ export default {
   .table .listUl{
     color: #333333;
     display: flex;
-    justify-content: space-between;
+    // justify-content: space-between;
     flex-wrap: wrap;
   }
   .table .listUl>li {
     width: 300px;
     border: 1px solid #dddddd;
     margin-bottom: 30px;
+    &:not(:nth-child(3n)){
+      margin-right: 12px;
+    }
   }
   .table .content {
     height: 300px;
@@ -99,8 +124,10 @@ export default {
     font-size: 14px;
   }
   .table .content-img {
-    max-height: 160px;
+    height: 160px;
     overflow: hidden;
+    background-position: 0 -690px;
+    background-color: #ececec;
   }
   .table .content-img img {
     width: 100%;
@@ -109,7 +136,7 @@ export default {
     font-size: 14px;
     color: #999999;
     height: 40px;
-    overflow: height;
+    overflow: hidden;
   }
   .table .mask {
     font-size: 16px;

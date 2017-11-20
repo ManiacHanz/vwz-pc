@@ -34,6 +34,20 @@
 						<p>确认删除后，图片将被删除！</p>
 					</div>
 				</section>
+				<section class="del-article" v-if="modalCfg.modalFor==='showArticle'">
+					<div class="alert"></div>
+					<div class="tip">
+						<p>显示文章确认</p>
+						<p>确认显示后，在文章选择列表中将被显示！</p>
+					</div>
+				</section>
+				<section class="del-article" v-if="modalCfg.modalFor==='hideArticle'">
+					<div class="alert"></div>
+					<div class="tip">
+						<p>隐藏文章确认</p>
+						<p>确认隐藏后，在文章选择列表中将被隐藏！</p>
+					</div>
+				</section>
 				<section class="del-article" v-if="modalCfg.modalFor==='delArticle'">
 					<div class="alert"></div>
 					<div class="tip">
@@ -221,7 +235,7 @@
 </template>
 
 <script>
-import {imageBaseUrl} from 'config/env'
+import {imageBaseUrl, localUrl} from 'config/env'
 
 import { __sendBase64 } from 'service/sendData'
 import {__getImgUrl} from 'service/getData'
@@ -256,7 +270,7 @@ export default {
     	logoBack: { backgroundImage: 'url(/static/img/logo.png)' },
     	avatarBack: { backgroundImage: 'url(/static/img/avatar.png)' },
     	//二维码地址
-    	QRLink: 'https://mp.weixin.qq.com/advanced/selfmenu?action...',
+    	QRLink: '',
     	articleList: '',
     	//修改密码
     	modifyPswOld: '',
@@ -359,6 +373,7 @@ export default {
 							})
 						})
   			}
+
   		}
   	}
 
@@ -366,11 +381,11 @@ export default {
   mounted () {
 		//初始化列表数据  这里应该放在watch里面做
 		this.articleList = materialArticleData()
-		
+		this.QRLink = localUrl + '?id=' + this.userInfo.uid
   },
   methods: {
   	...mapMutations([
-  			'CLOSE_MODAL','SET_LOGO','SET_AVATAR','SET_LOADING'
+  			'CLOSE_MODAL','SET_LOGO','SET_AVATAR','SET_LOADING','OPEN_NOTIFICATION'
   		]),
   	selectIcon (index) {
   		this.selectedIcon = index
@@ -513,8 +528,8 @@ export default {
   	},
   	// 剪贴板回调
   	onCopySuccess () {
-  		alert('复制成功！')
   		this.CLOSE_MODAL()
+  		this.OPEN_NOTIFICATION('复制成功！')
   	},
   	onCopyFail () {
   		alert('复制失败')
@@ -526,8 +541,6 @@ export default {
 		//确认按钮
 		confirm() {
 			this.modalCfg.onSuccess(this)
-			// 这里后面不能放在这
-			// this.CLOSE_MODAL()
 		}
   }
 }

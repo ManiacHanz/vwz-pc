@@ -52,7 +52,10 @@
 						<img :src="imgBaseUrl+backValue" v-show="backValue">
 						<div>
 							<input type="file" hidden="hidden" id="backUploader" @change="_backUploaderChange" accept=".png, .jpg, .jpeg">
-							<div class="btn" @click="_uploaderTrigger('backUploader')">上传图片</div>
+							<div>
+                <span class="btn" @click="_uploaderTrigger('backUploader')">上传图片</span>
+                <span class="btn" @click="_clearBack" style="background-color: #eee;color:#777">清空背景图</span>
+              </div>
 							<p>背景图建议尺寸672*324</p>
 						</div>
 						
@@ -121,6 +124,7 @@ import {imageBaseUrl} from 'config/env'
 
 import {u_viewPick, u_getDate, jsonStringify} from 'config/mUtils'
 import {__sendHomePanel, __sendListPanel, __sendUserPanel, __sendBase64} from 'service/sendData.js'
+import {__getArtList} from 'service/getData'
 
 export default {
 
@@ -267,13 +271,14 @@ export default {
 					modalFor: 'userIcon',				//模态框用来做什么  参考modal.vue
 					title: '请选择以下图标',					//模态框的标题
 					onSuccess: function(_this){		//选择图标的路径
-						alert(_this.userIconList[_this.selectedIcon])
+						//alert(_this.userIconList[_this.selectedIcon])
 						that.iconValue = _this.userIconList[_this.selectedIcon].replace(that.imgBaseUrl, '')
             if(!_this.selectedIcon) {
               alert('请选择图标')
               return
             }
             that.formCfg.inputList[1].value = that.iconValue
+            that.CLOSE_MODAL()
 					}
 				}
 				this.SET_MODALCFG(modalOption)
@@ -283,13 +288,14 @@ export default {
           modalFor: 'menuIcon',       //模态框用来做什么  参考modal.vue
           title: '请选择以下图标',         //模态框的标题
           onSuccess: function(_this){   //选择图标的路径
-            alert(_this.menuIconList[_this.selectedIcon])
+            // alert(_this.menuIconList[_this.selectedIcon])
             that.iconValue = _this.menuIconList[_this.selectedIcon].replace(that.imgBaseUrl, '')
             if(!_this.selectedIcon) {
               alert('请选择图标')
               return
             }
             that.formCfg.inputList[1].value = that.iconValue
+            that.CLOSE_MODAL()
           }
         }
         this.SET_MODALCFG(modalOption)
@@ -301,16 +307,41 @@ export default {
 		_backUploaderChange (e) {
 			const that = this
       u_viewPick(e.target).then( ({base64, type}) => {
-        // if(rst.base64) {
-        //   that.backValue = rst.base64
-        // }
-        // else {
-          that.backValue = base64
-        // }
+        let data = {
+          ...that.userInfo,
+          datas: base64,
+          type: 'd',
+          suffix: type,
+        }
+        __sendBase64(data)
+          .then( res => {
+            if(!res){
+              alert('网络错误，请检查网络或稍后再试')
+              return false
+            }
+            if(!res.result) {
+              alert(res.message)
+              return false
+            }
+            that.backValue = res.data
+          })
       })
 		},
+    //清空背景图
+    _clearBack () {
+      this.backValue = ''
+    },
   	// 从素材库
   	_pickFromLib () {
+      let data = {
+        ...this.userInfo,
+        page:1,
+        search: '',
+      }
+      __getArtList( data )
+        .then( res => {
+          
+        })
 			this.OPEN_MODAL()
 			let that = this
       let linkInput = document.querySelector('#linkInput')
@@ -326,9 +357,6 @@ export default {
 			this.SET_MODALCFG(modalOption)
   	},
   	//banner更改 
-  	// _addClick () {
-  	// 	document.querySelector('#bannerAddBtn').click()
-  	// },
   	_bannerAdd (e) {
   		let that = this
 			let newFormCfg = Object.assign({},this.formCfg)
@@ -339,10 +367,10 @@ export default {
           suffix: type,
           type: 'd',
         }
-        // that.SET_LOADING()
+        that.SET_LOADING()
         __sendBase64(data)
           .then( res => {
-            // that.SET_LOADING()
+            that.SET_LOADING()
             console.log(res)
             if(!res){
               alert('网络错误，请检查网络或稍后再试')
@@ -356,9 +384,10 @@ export default {
             // newFormCfg.inputList[0].imglist.push(base64)
             newFormCfg.inputList[1].value.push('')
             newFormCfg.inputList[2].value.push('')
+            that.UPDATE_FORMCFG(newFormCfg)
+            that.selectedIndex = newFormCfg.inputList[0].imglist.length -1
           })
-        that.UPDATE_FORMCFG(newFormCfg)
-        that.selectedIndex = newFormCfg.inputList[0].imglist.length -1
+        
       })
   	},
   	_bannerDel (index) {
@@ -373,6 +402,7 @@ export default {
 					newFormCfg.inputList[2].value.splice(index, 1)
   				that.UPDATE_FORMCFG(newFormCfg)
   				that.selectedIndex = 0
+          that.CLOSE_MODAL()
   			}
   		}
   		this.SET_MODALCFG(modalOption)
@@ -435,7 +465,8 @@ export default {
         let newInputList = [
           {key:'userlist0',type:'setName',value:''},
           {key:'userlist0',type: 'setIcon', value: ''},
-          {key:'userlist0',type: 'setLink', value: ''}
+          {key:'userlist0',type: 'setLink', value: ''},
+          {key:'userlist0',type: 'setLinkType', value: ''}
         ]
         this.UPDATE_FORMCFG({inputList:newInputList})
       }
@@ -444,17 +475,28 @@ export default {
       if (this.formCfg.formFor ==='contentlist'){
         if(this.listPanelList.content.length> 1) {
           const index = this.formCfg.inputList[0].key.substring(11)
-          console.log(index)
+          // console.log(index)
           let that = this
-
           let modalOption = { 
             modalFor: 'delList',
             title: '温馨提示',
             onSuccess: function() {
+              /*
+                要有个临时数据，当上传成功以后再用临时数据去覆盖掉源数据
+               */
               that.SET_LOADING()
-              that.listPanelList.content.splice(index, 1)
-              //这里直接修改了源数据 不知道会不会错，没有用temporary数据
-              __sendListPanel(jsonStringify({...that.userInfo,...that.listPanelList})).then( res =>{
+              let oContent = [...that.listPanelList.content]
+              oContent.splice(index, 1)
+              let payload = {
+                _interface: 'list',
+                obj: {
+                  ...that.userInfo,
+                  content: oContent,
+                }
+              }
+              that.SAVE_TEMPORARYLIST(payload)
+              // console.log(that.temporaryPanelList)
+              __sendListPanel(jsonStringify(that.temporaryPanelList)).then( res =>{
                 console.log(res)
                 that.SET_LOADING()
                 if(!res){
@@ -466,11 +508,12 @@ export default {
                   return false
                 }
                 that.OPEN_NOTIFICATION('删除成功')
-                //that.SAVE_LISTPANELLIST(that.temporaryPanelList)     //在把临时数据存到  展示的数据里
+                that.CLEAR_FORMCFG()        //清除右边表单配置
+                that.SET_MOBILE_ACTIVE('')  //清除左边手机面板配置
+                that.CLOSE_MODAL()
+                that.SAVE_LISTPANELLIST(that.temporaryPanelList)     //在把临时数据存到  展示的数据里
               })
-              that.CLEAR_FORMCFG()        //清除右边表单配置
-              that.SET_MOBILE_ACTIVE('')  //清除左边手机面板配置
-              that.CLOSE_MODAL()
+              
             }
           }
           this.SET_MODALCFG(modalOption)
@@ -488,8 +531,35 @@ export default {
             modalFor: 'delList',
             title: '温馨提示',
             onSuccess: function() {
-              that.userPanelList.content.splice(index, 1)
-              that.CLEAR_FORMCFG()
+              that.SET_LOADING()
+
+              let oContent = [...that.userPanelList.content]
+              oContent.splice(index, 1)
+              let payload = {
+                _interface: 'user',
+                obj: {
+                  ...that.userInfo,
+                  content: oContent,
+                }
+              }
+              that.SAVE_TEMPORARYLIST(payload)
+              __sendUserPanel(jsonStringify(that.temporaryPanelList)).then( res =>{
+                console.log(res)
+                that.SET_LOADING()
+                if(!res){
+                  alert('网络错误，请检查网络或稍后再试')
+                  return false
+                }
+                if(!res.result) {
+                  alert(res.message)
+                  return false
+                }
+                that.OPEN_NOTIFICATION('删除成功')
+                that.SAVE_USERPANELLIST(that.temporaryPanelList)     //在把临时数据存到  展示的数据里
+                that.CLEAR_FORMCFG()        //清除右边表单配置
+                that.SET_MOBILE_ACTIVE('')  //清除左边手机面板配置
+                that.CLOSE_MODAL()
+              })
             }
           }
           this.SET_MODALCFG(modalOption)
@@ -500,8 +570,135 @@ export default {
         }
       }
       else if(this.formCfg.formFor ==='menubtn') {
+        /*
+          删除按钮有几种情况
+            1、五条数据都有 删除其中一个，就把当前的数据清空
+            2、五条数据有4条数据有，有一个空的
+              a.点击到空的 提示不能删这个
+              b.点击到另个有的，直接删除这个 把type改成2
+            3、五条数据中有3条有数据，有2个都是空的
+              此时点击也要他能删除
+         */
         let index = this.mobileActive.substring(7)
         let that = this
+        if (this.homePanelList.button.length === 5) {
+          let situation = 0
+          for(let i in this.homePanelList.button) {
+            if(this.homePanelList.button[i].title == ''){
+              situation++
+            }
+          }
+          // console.log('situation:',situation)
+          if(situation == 0){
+            //五条都有数据
+            // 这里还要判断是不是再次点击的空的
+             
+            let modalOption = { 
+              modalFor: 'delBtn',
+              title: '温馨提示',
+              onSuccess: function() {
+                that.SET_LOADING()
+                const emptyBtn = {
+                  title: '',
+                  icon: '',
+                  link: '',
+                  type: '',
+                }
+                let oButton = [...that.homePanelList.button]
+                oButton.splice(index, 1, emptyBtn)
+                let oHomePanelList = Object.assign({},that.homePanelList,{ button: oButton})
+                let data = {
+                  ...that.userInfo,
+                  ...oHomePanelList,
+                }
+                __sendHomePanel (jsonStringify(data)).then( res =>{
+                  that.SET_LOADING()
+                  if(!res){
+                    alert('网络错误，请检查网络或稍后再试')
+                    return false
+                  }
+                  if(!res.result) {
+                    alert(res.message)
+                    return false
+                  }
+                  that.OPEN_NOTIFICATION('删除成功')
+                  that.SAVE_HOMEPANELLIST(oHomePanelList)   //在把临时数据存到  展示的数据里
+                  that.CLEAR_FORMCFG()        //清除右边表单配置
+                  that.SET_MOBILE_ACTIVE('')  //清除左边手机面板配置
+                  that.CLOSE_MODAL()
+                })
+              }
+            }
+            this.SET_MODALCFG(modalOption)
+            this.OPEN_MODAL()
+          }
+          else if(situation == 1 || situation == 2) {
+            //有一个空位
+            if(this.homePanelList.button[index].title=='') {
+              alert('空内容不能删除')
+              return false
+            }
+            let modalOption = { 
+              modalFor: 'delBtn',
+              title: '温馨提示',
+              onSuccess: function() {
+                that.SET_LOADING()
+                const emptyBtn = {
+                  title: '',
+                  icon: '',
+                  link: '',
+                  type: '',
+                }
+                let oButton = [...that.homePanelList.button]
+                oButton.splice(1, 2, emptyBtn)
+                let oHomePanelList = Object.assign({},that.homePanelList,{ button: oButton})
+                let data = {
+                  ...that.userInfo,
+                  ...oHomePanelList,
+                }
+                __sendHomePanel (jsonStringify(data)).then( res =>{
+                  that.SET_LOADING()
+                  if(!res){
+                    alert('网络错误，请检查网络或稍后再试')
+                    return false
+                  }
+                  if(!res.result) {
+                    alert(res.message)
+                    return false
+                  }
+                  that.OPEN_NOTIFICATION('删除成功')
+                  that.SAVE_HOMEPANELLIST(oHomePanelList)   //在把临时数据存到  展示的数据里
+                  that.SET_MENUBTN_STYLE()
+                  that.CLEAR_FORMCFG()        //清除右边表单配置
+                  that.SET_MOBILE_ACTIVE('')  //清除左边手机面板配置
+                  that.CLOSE_MODAL()
+                })
+              }
+            }
+            this.SET_MODALCFG(modalOption)
+            this.OPEN_MODAL()
+          }
+          // else if(situation == 2) {
+          //   const emptyBtn = {
+          //     title: '',
+          //     icon: '',
+          //     link: '',
+          //     type: '',
+          //   }
+          //   let oButton = [...this.homePanelList.button]
+          //   oButton.splice(1, 2, emptyBtn)
+          //   let oHomePanelList = Object.assign({},this.homePanelList,{ button: oButton})
+          //   let data = {
+          //     ...this.userInfo,
+          //     ...oHomePanelList,
+          //   }
+          //   that.CLEAR_FORMCFG()        //清除右边表单配置
+          //   that.SET_MOBILE_ACTIVE('')  //清除左边手机面板配置
+          //   this.SAVE_HOMEPANELLIST(oHomePanelList)
+          //   this.SET_MENUBTN_STYLE()
+          // }
+        }
+        /**
         if (this.homePanelList.button.length === 5) {
           if(this.homePanelList.button[1].title == '' && this.homePanelList.button[2].title == '') {
             let modalOption = { 
@@ -555,6 +752,7 @@ export default {
             this.SET_MODALCFG(modalOption)
             this.OPEN_MODAL()
         }
+        */
       }
       
     },
@@ -998,7 +1196,7 @@ export default {
               return false
             }
             that.OPEN_NOTIFICATION()
-            this.SAVE_LISTPANELLIST(this.temporaryPanelList)     //在把临时数据存到  展示的数据里
+            that.SAVE_LISTPANELLIST(that.temporaryPanelList)     //在把临时数据存到  展示的数据里
           })
           // alert('提交给后台  整个列表面板的数据')
           // this.SAVE_LISTPANELLIST(this.temporaryPanelList)
@@ -1008,23 +1206,40 @@ export default {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
           }
+          that.SET_LOADING()
           content = [...this.userPanelList.content]
           index = this.formCfg.inputList[0].key.substring(8)
           temporaryObj = {
             icon:this.iconValue,
             link: this.linkValue,
             title: this.nameValue,
+            linkType: this.linkTypeValue,
           }
           content.splice(index, 1, temporaryObj)
           payload = {
-            _interface: 'list',
+            _interface: 'user',
             obj:{
-              banner: this.userPanelList.banner,
+              ...this.userInfo,
               content
             }
           }
           this.SAVE_TEMPORARYLIST(payload)
-          alert('提交给后台  整个用户面板的数据')
+          console.log(jsonStringify(that.temporaryPanelList))
+          __sendUserPanel(jsonStringify(that.temporaryPanelList))
+            .then( res => {
+              that.SET_LOADING()
+              if(!res){
+                alert('网络错误，请检查网络或稍后再试')
+                return false
+              }
+              if(!res.result) {
+                alert(res.message)
+                return false
+              }
+              that.OPEN_NOTIFICATION()
+              that.SAVE_USERPANELLIST(that.temporaryPanelList) 
+            })
+          // alert('提交给后台  整个用户面板的数据')
 
           this.SAVE_USERPANELLIST(this.temporaryPanelList)
           break;
@@ -1039,6 +1254,7 @@ export default {
               return
             }
           }
+          that.SET_LOADING()
           let button = [...this.homePanelList.button]
           index = this.formCfg.inputList[0].key.substring(7)
           temporaryObj = {
@@ -1053,14 +1269,28 @@ export default {
           payload = {
             _interface: 'home',
             obj:{
+              ...this.userInfo,
               button:button
             }
           }
           this.SAVE_TEMPORARYLIST(payload)
-          alert('提交给后台  整个用户面板的数据')
-
-          this.SAVE_HOMEPANELLIST(this.temporaryPanelList)
-          this.SET_MENUBTN_STYLE()
+          // alert('提交给后台  整个用户面板的数据')
+          __sendHomePanel(jsonStringify(that.temporaryPanelList))
+            .then( res => {
+              that.SET_LOADING()
+              if(!res){
+                alert('网络错误，请检查网络或稍后再试')
+                return false
+              }
+              if(!res.result) {
+                alert(res.message)
+                return false
+              }
+              that.OPEN_NOTIFICATION()
+              that.SAVE_HOMEPANELLIST(that.temporaryPanelList)     //在把临时数据存到  展示的数据里
+              that.SET_MENUBTN_STYLE()
+            })
+          // this.SAVE_HOMEPANELLIST(this.temporaryPanelList)
           break;
   		}
   	}
@@ -1181,6 +1411,7 @@ export default {
 		margin-right: 10px;
 	}
 	.btn {
+    display: inline-block;
 		width: 100px;
 		height: 30px;
 		line-height: 30px;
@@ -1188,6 +1419,7 @@ export default {
 		border: 1px solid @borderGrey;
 		background: #ffffff;
 		cursor: pointer;
+    margin-right: 8px;
 		&:hover {
 			border-color: @borderActiveGrey;
 		}

@@ -3,6 +3,7 @@
 import Vue from 'vue'
 
 import {
+	SAVE_USERINFO,
 	SET_LOGO,
 	SET_AVATAR,
 	SAVE_MOBILECFG,
@@ -18,6 +19,7 @@ import {
 	OPEN_NOTIFICATION,
 	CLOSE_NOTIFICATION,
 	SET_LOADING,
+	SET_EDITORCONTENT,
 	SAVE_HOMEPANELLIST,
 	SAVE_LISTPANELLIST,
 	SAVE_USERPANELLIST,
@@ -25,6 +27,10 @@ import {
 } from './mutation-types.js'
 
 export default {
+	//保存uid,token
+	[SAVE_USERINFO] (state, obj) {
+		state.userInfo = Object.assign({}, obj)
+	},
 	//设置LOGO
 	[SET_LOGO] (state, value) {
 		state.logoUrl = value
@@ -133,5 +139,9 @@ export default {
 	[SET_LOADING] (state, text) {
 		state.isShowLoading = !state.isShowLoading
 		text? state.loadingText = text : state.loadingText = ''
-	}
+	},
+	// 设置富文本的内容
+	[SET_EDITORCONTENT] (state, str) {
+		state.editorContent = str
+	},
 }

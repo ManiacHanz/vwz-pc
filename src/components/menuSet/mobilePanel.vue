@@ -10,7 +10,7 @@
 				<ul :class="menubtnStyle">
 					<li :class="[mobileActive==='menubtn'+index?'active':'', item.icon==''?mobileColorStyle: '']" v-for="(item, index) in homePanelList.button" @click="switchPanel(item, index)">
 						<div class="icon">
-							<img v-show="item.icon != ''" :src="item.icon"></img>
+							<img v-show="item.icon != ''" :src="imgBaseUrl + item.icon"></img>
 						</div>
 						<p :class="mobileColorStyle">{{ item.title }}</p>
 					</li>
@@ -18,9 +18,9 @@
 			</div>
 		</div>
 		<div class="theme">
-			 <div @click="SET_MOBILE_COLOR('blue')" title="点击可以切换主题哟~">主题1</div>
-			 <div @click="SET_MOBILE_COLOR('dark')" title="点击可以切换主题哟">主题2</div>
-			 <div @click="SET_MOBILE_COLOR('green')" title="点击可以切换主题哟">主题3</div>
+			 <div @click="_changeTheme('blue')" title="点击可以切换主题哟~">主题1</div>
+			 <div @click="_changeTheme('dark')" title="点击可以切换主题哟">主题2</div>
+			 <div @click="_changeTheme('green')" title="点击可以切换主题哟">主题3</div>
 			 期待更多主题...
 		</div>
 	</div>
@@ -30,8 +30,12 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import {__getHomePanel} from 'service/getData.js'
-import {jsonParse} from 'config/mUtils'
+import {__getHomePanel, __getTheme} from 'service/getData.js'
+import {__sendTheme, __sendHomePanel} from 'service/sendData'
+import {jsonParse, jsonStringify} from 'config/mUtils'
+
+import {imageBaseUrl} from 'config/env.js'
+
 
 //引入手机页面的3个模板页
 import homePanel from './sub/homePanel.vue'
@@ -55,6 +59,8 @@ export default {
     	mobileCfg:'',    //手机配置,
     	// menuBtnIconList: ['/static/img/menuicon_01.png','','/static/img/menuicon_02.png','/static/img/menuicon_03.png'],   //按钮图标的默认配置
     	// menubtnStyle: 'type1',
+    	timer: '',
+    	imgBaseUrl: imageBaseUrl,
     }
   },
   computed: {
@@ -63,8 +69,7 @@ export default {
   		])
   },
   created () {
-  	console.log({...this.userInfo})
-
+  	// console.log({...this.userInfo})
   	__getHomePanel({...this.userInfo})
   		.then( res => {
   			if (!res) {
@@ -83,7 +88,11 @@ export default {
   		.then( ()=> {
 				// this.SET_MENUBTN_STYLE ()
   		})
-  	
+  	__getTheme({...this.userInfo})
+  		.then( res => {
+  			//console.log(res.data) //主题配色
+  		  this.SET_MOBILE_COLOR(res.data)
+  		})
   },
   mounted () {
   	//保证加载完成再渲染数据
@@ -128,10 +137,27 @@ export default {
   	updateInputList (arr) {
 
   	},
+  	//修改主题
+  	_changeTheme (theme) {
+  		const that = this
+  		this.SET_MOBILE_COLOR(theme)
+  		clearTimeout(this.timer)
+  		this.timer = setTimeout(function(){
+  			// 尽量减少请求次数
+  			// console.log(theme)
+  			// let data = {
+  			// 	...that.userInfo,
+  			// 	theme,
+  			// }
+  			// __sendTheme(data)
+  			// 	.then( res => {
+  			// 		console.log(res)
+  			// 	})
+  		},10000)
+  	},
   	switchPanel (item, index) {
   		/*
   			默认的3个按钮是有type值的，但是没有link值
-
   		 */
 
   		//改变面板显示
@@ -180,15 +206,36 @@ export default {
 	          link: '',
 	          type: '',
   				}
-  				this.homePanelList.button.splice(1,0,obj)
-  				this.homePanelList = Object.assign({},...this.homePanelList,this.homePanelList.button)
-  				alert('发送请求覆盖掉homePanelList')
-  				this.SAVE_HOMEPANELLIST(this.homePanelList)
-  				this.SET_MENUBTN_STYLE()
+  				let oButton = [...this.homePanelList.button]
+  				// console.log(this.homePanelList.button)
+  				oButton.splice(1,0,obj)
+  				let oHomePanelList = Object.assign({},this.homePanelList,{ button: oButton})
+  				// console.log(oHomePanelList)
+  				let data = {
+  					...this.userInfo,
+  					...oHomePanelList,
+  				}
+  				// console.log(jsonStringify(data))
+  				__sendHomePanel(jsonStringify(data))			//3个面板的数据要转化
+  					.then( res => {
+  						if(!res){
+  							alert('网络请求失败，请检查网络后刷新页面')
+  							return false
+  						}
+  						if(!res.result) {
+  							alert(res.message)
+  							return false
+  						}
+  						this.SAVE_HOMEPANELLIST(oHomePanelList)
+  						this.SET_MENUBTN_STYLE()
+  					})
+  				
+  				// this.homePanelList = 
+  				// alert('发送请求覆盖掉homePanelList')
+  				// this.SAVE_HOMEPANELLIST(this.homePanelList)
+  				// this.SET_MENUBTN_STYLE()
   			}
   		}
-			
-  		
   	}
   }
 }

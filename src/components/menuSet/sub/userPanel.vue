@@ -43,7 +43,7 @@ export default {
    created () {
   	__getUserPanel({...this.userInfo})
 			.then( res => {
-			// console.log(res.data.banner)
+			  console.log(res.data)
   			if (!res.result) {
   				alert(res.message)
   				return false
@@ -108,11 +108,31 @@ export default {
 
 <style lang="less" scoped>
 @import '../../../style/variety.less';
-
-
+@import '../../../style/common.less';
+::-webkit-scrollbar {
+	width: 6px;
+	height: 16px;  
+  background-color: #F5F5F5;  
+}
+//滚动条背景
+::-webkit-scrollbar-track  
+{  
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);  
+    border-radius: 10px;  
+    background-color: #F5F5F5;  
+}  
+  
+/*定义滑块 内阴影+圆角*/  
+::-webkit-scrollbar-thumb  
+{  
+    border-radius: 10px;  
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);  
+    background-color: @borderActiveGrey;  
+} 
 .user-panel {
 	height: 448px;
-	overflow: hidden;
+	// overflow: hidden;
+	overflow-y: auto;
 }
 .top {
 	height: 90px;
@@ -166,7 +186,12 @@ export default {
 		width: 30px;
 		height: 30px;
 		margin-right: 16px;
-	  vertical-align: middle;
+	  vertical-align: 8px;
+	}
+	span {
+		display: inline-block;
+		width: 180px;
+		.ellipsis();
 	}
 }
 .dark {

@@ -13,8 +13,10 @@ let baseUrl = 'http://192.168.100.15:8080/lltrvl';
 
 const imageBaseUrl = 'http://192.168.100.15:8080/lltrvl'; 
 
+const localUrl = 'http://192.168.100.24:80'
+
 let routerMode = 'history';
-let imgBaseUrl = 'http://images.cangdu.org/';
+// let imgBaseUrl = 'http://images.cangdu.org/';
 
 
 if (process.env.NODE_ENV == 'development') {
@@ -27,6 +29,7 @@ if (process.env.NODE_ENV == 'development') {
 export {
 	baseUrl,
 	imageBaseUrl,
+	localUrl,
 	routerMode,
 	imgBaseUrl,
 }

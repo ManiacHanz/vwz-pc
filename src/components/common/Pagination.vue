@@ -1,7 +1,7 @@
 <template>
 	<div class="pagination">
 		<div class="btn prev" v-show="this.nowPage != 1" @click="changePage(-1)"></div>
-		<div class="page-num">{{nowPage}} / {{totalPage}}</div>
+		<div class="page-num">{{nowPage}} / {{this.$props.totalPage}}</div>
 		<div class="btn next" v-show="this.nowPage != this.totalPage" @click="changePage(+1)"></div>
 		<div class="skip-page">
 			<input type="tel" min="1" step="0" v-model="goToPage">
@@ -18,11 +18,10 @@ export default {
   data () {
     return {
     	nowPage: 1, //当前页数
-    	totalPage: '',   //总页数
     	goToPage: '',    //输入框要跳转的页数
     }
   },
-  props: ["getPageNum"],		//传的函数
+  props: ["getPageNum","totalPage"],		//传的函数
   mounted () {
   	this.init()
   },
@@ -42,7 +41,7 @@ export default {
   methods: {
   	init () {
   			//初始化页数
-  			this.totalPage = 9
+  			// this.totalPage = 9
   	},
   	changePage (num) {
   		//左右翻页

@@ -25,6 +25,7 @@ export const u_viewPick = (input, option) => {
                 return pic
             }).then(pic=>{
                 // console.log(pic.type)
+                // reject(err)
                 resolve(pic)
             })
         })
@@ -65,10 +66,20 @@ export const u_getDate = () => {
     let month = (time.getMonth() + 1 )< 10? '0'+ time.getMonth() + 1 : time.getMonth() + 1
     let date = time.getDate() < 10? '0' +time.getDate(): time.getDate()
     let hour = time.getHours() < 10? '0' + time.getHours() : time.getHours()
-    let minute = time.getMinutes()
-    return year + '-' + month + '-' + date + ' ' + hour + '-' + minute
+    let minute = time.getMinutes() < 10? '0' +time.getMinutes() : time.getMinutes()
+    return year + '-' + month + '-' + date + ' ' + hour + ':' + minute
 }
 
+/*
+    转换时间戳
+ */
+export const u_transTime = (time) => {
+    let newTime = new Date(time);
+    var year = newTime.getFullYear()
+    var month = (newTime.getMonth() + 1 )< 10? '0'+ newTime.getMonth() + 1 : newTime.getMonth() + 1
+    var date = newTime.getDate() < 10? '0' +newTime.getDate(): newTime.getDate()
+    return year + '-' + month + '-' + date
+}
 /*
     处理掉返回数据的引号
  */
@@ -140,7 +151,7 @@ export const setStore = (name, content) => {
 	if (typeof content !== 'string') {
 		content = JSON.stringify(content);
 	}
-	window.localStorage.setItem(name, content);
+	window.sessionStorage.setItem(name, content);
 }
 
 /**
@@ -148,7 +159,7 @@ export const setStore = (name, content) => {
  */
 export const getStore = name => {
 	if (!name) return;
-	return window.localStorage.getItem(name);
+	return window.sessionStorage.getItem(name);
 }
 
 /**

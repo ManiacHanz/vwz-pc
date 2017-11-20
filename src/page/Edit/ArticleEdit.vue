@@ -13,9 +13,9 @@
         <div class="left">
           <p>文章封面图</p>
           <div class="pic-btn" :class="{active: activeName === 'picBtn' || hoverName === 'picBtn' }" 
-          @click.left="switchActive('picBtn')" @mouseenter="switchHover('picBtn')" @mouseleave="switchHover('')">
+          @click.left="switchActive('picBtn')" @mouseenter="switchHover('picBtn')" @mouseleave="switchHover('')" @blur="_clearActive()">
             <div class="backimg" @click="_uploaderTrigger('coverUploader')">
-              <img :src="coverSrc" v-show="coverSrc" style="width:100%;height:100%;background: #fff;">
+              <img :src="imgBaseUrl+coverSrc" v-show="coverSrc" style="width:100%;height:100%;background: #fff;">
             </div>
             <input type="file" id="coverUploader" @change="_coverChange" hidden="hidden">
             <p>图片建议尺寸260X160</p>
@@ -24,28 +24,28 @@
         <div class="mid">
           <form>
             <div class="title">
-              <input type="text" name="title" placeholder="这里输入标题"
+              <input type="text" name="title" placeholder="这里输入标题，不超过20个字" maxlength="20" 
               :class="{active: activeName === 'titleInput' || hoverName === 'titleInput' }" 
-              @click.left="switchActive('titleInput')" v-model="titleValue">
+              @click.left="switchActive('titleInput')" v-model="titleValue" @blur="_clearActive()">
             </div>
             <div class="author">
-              <input type="text" name="author" placeholder="这里输入作者"
+              <input type="text" name="author" placeholder="这里输入作者，不超过8个字" maxlength="8" 
               :class="{active: activeName === 'authorInput' || hoverName === 'authorInput' }" 
-              @click.left="switchActive('authorInput')" v-model="authorValue">
+              @click.left="switchActive('authorInput')" v-model="authorValue" @blur="_clearActive()">
             </div>
             <div class="decribe">
-              <input type="text" name="decribe" placeholder="这里输入描述，不超过40字"
+              <input type="text" name="decribe" placeholder="这里输入描述，不超过40字" maxlength="40" 
               :class="{active: activeName === 'decribeInput' || hoverName === 'decribeInput' }" 
-              @click.left="switchActive('decribeInput')" v-model="describeValue">
+              @click.left="switchActive('decribeInput')" v-model="describeValue" @blur="_clearActive()">
             </div>
             <div class="ueditor">
                <VueUEditor style="margin-bottom:30px;"></VueUEditor>
             </div>
             <div class="copy">
               <p>网页版权信息</p>
-              <input type="text" name="copy" placeholder="这里输入网站版权信息"
+              <input type="text" name="copy" placeholder="这里输入网站版权信息，不超过40字" maxlength="40" 
               :class="{active: activeName === 'copyInput' || hoverName === 'copyInput' }" 
-              @click.left="switchActive('copyInput')" v-model="copyValue">
+              @click.left="switchActive('copyInput')" v-model="copyValue" @blur="_clearActive()">
             </div>
           </form>
 
@@ -74,46 +74,66 @@
     </div>
     <div class="footer">
       <div class="inner">
-        <a role="button">保存</a>
+        <a role="button" @click="_submit">保存</a>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import {mapState, mapMutations} from 'vuex'
+
+import {imageBaseUrl} from 'config/env'
 import {u_viewPick} from 'config/mUtils'
+import {__getArticalDetail} from 'service/getData'
+import {__sendBase64, __editArticle} from 'service/sendData'
 
 import VueUEditor from '../../components/editor/VueUEditor' //富文本
+
 
 export default {
   data() {
     return {
+      imgBaseUrl: imageBaseUrl,
       activeArr: ['picBtn'], //会改变样式的数组
       activeName: '',    //表单当前激活的样式的名称
       hoverName: '',   //表单鼠标悬停时的样式名称
       liActiveName: '',
       liHoverName: '',
-      params:'',
-      coverSrc: '',
+      params:'',        // 通过get参数获取文章的id
+      coverSrc: '',       //封面图
       titleValue: '',    //标题输入框的值
       authorValue: '',    //作者输入框的值
       describeValue: '',    //描述输入框的值
       copyValue: '',    //版权输入框的值
+
     }
   },
   components: {
     VueUEditor
   },
-  
+  computed: {
+    ...mapState([
+        'userInfo','editorContent'
+      ])
+  },
   mounted() {
     this.$nextTick(() => {        //保证ueditor这些都加载结束
-      this.init()
+     
     })
   },
   methods: {
+    ...mapMutations([
+        'SET_LOADING','SET_EDITORCONTENT'
+      ]),
     init() {
       //初始化时要判断是新建进来的还是编辑进来的 从而判断输入框里是否传值
-      this.params = this.$route.params.id
+      if (this.$route.params.id){
+        this.params = this.$route.params.id
+      }
+      else {
+        this.params = ''
+      }
     },
     historyBack () {
       window.history.back()
@@ -136,17 +156,62 @@ export default {
       let idSelector = "#"+ id
       document.querySelector(idSelector).click()
     },
+    _clearActive () {
+      this.activeName = ''
+    },
     _coverChange (e) {
       const that = this
-      u_viewPick(e.target, undefined, 1).then(rst=>{
+      u_viewPick(e.target).then(({base64, type})=>{
+        that.SET_LOADING()
+        let data = {
+          ...that.userInfo,
+          datas: base64,
+          type: 'd',
+          suffix: type,
+        }
+        __sendBase64(data)
+          .then( res => {
+            that.SET_LOADING()
+            that.coverSrc = res.data
+          })
         // if(rst.base64) {
         //   that.coverSrc = rst.base64
         // }
         // else {
-          that.coverSrc = rst
+          // that.coverSrc = rst
         // }
         // console.table(rst)
       })
+    },
+    //保存发布文章
+    _submit () {
+      let title = this.titleValue
+      let author = this.authorValue
+      let described = this.describeValue
+      let content = this.editorContent
+      let copyright = this.copyValue
+      let cover = this.coverSrc
+      let id = this.params
+      let data = {
+        ...this.userInfo,
+        title,
+        author,
+        described,
+        content,
+        copyright,
+        cover,
+      }
+      if(id) {
+        Object.defineProperty(data, 'id', {
+          value: id,
+          enumerable: true
+        }) 
+      }
+      console.log(data)
+      __editArticle(data)
+        .then(res => {
+          console.log(res)
+        })
     },
   },
   watch: {
@@ -161,7 +226,29 @@ export default {
   // }
   beforeRouteEnter(to, from ,next) {
     // console.log("before...")
-    next()
+    next( vm => {
+      // console.log(vm.params)
+      vm.init()
+      // 要用id来请求 是编辑还是新建
+      if(vm.params == '') {
+        return 
+      }
+      let data = {
+        ...vm.userInfo,
+        id: vm.params,
+      }
+      const that = vm
+      __getArticalDetail(data)
+        .then( res => {
+          console.log(res)
+          that.coverSrc = res.data.cover
+          that.titleValue = res.data.title
+          that.authorValue = res.data.author
+          that.describeValue = res.data.described
+          that.copyValue = res.data.copyright
+          that.SET_EDITORCONTENT(res.data.content)
+        })
+    })
   },
   beforeRouteLeave (to,from,next) {
     this.coverSrc = ''
@@ -169,6 +256,7 @@ export default {
     this.authorValue = ''
     this.describeValue = ''
     this.copyValue = ''
+    this.SET_EDITORCONTENT('')
     next()
   }
 }

@@ -30,6 +30,7 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
+import {setStore, getStore} from 'config/mUtils.js'
 
 import Header from './components/common/Header'
 import modal from './components/common/modal'
@@ -38,6 +39,12 @@ import loading from './components/loading/loading'
 
 export default {
   name: 'app',
+  data: function() {
+    return {
+      uid: '',
+      token: '',
+    }
+  },
   components: {
     'my-header': Header,
     modal,
@@ -48,6 +55,22 @@ export default {
     ...mapState([
         'isShowNotification','isShowLoading','loadingText','showNotificationText'
       ]),
+  },
+  created () {
+    setStore('uid', 'USERjIMHXdT1')
+    setStore('token', 'd09eebd0ab5fb9acbfa676789b89a14')
+    
+    this.uid = getStore('uid')
+    this.token = getStore('token')
+    this.SAVE_USERINFO({uid:this.uid, token: this.token})
+  },
+  mounted () {
+    
+  },
+  methods: {
+    ...mapMutations([
+        'SAVE_USERINFO'
+      ])
   }
 }
 </script>

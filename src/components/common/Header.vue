@@ -41,7 +41,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import {__loginOut, __modifyPsw, __sendBase64} from 'service/sendData'
+import {__loginOut, __modifyPsw, __sendBase64, __modifyProjectName} from 'service/sendData'
 import {imageBaseUrl} from 'config/env'
 export default {
 	data: function () {
@@ -207,7 +207,25 @@ export default {
 				title: '修改项目名称',					//模态框的标题
 				onSuccess: function(_this){		//点击确认的逻辑
 					//发送请求 
-					console.log(_this.projectNameInput)
+					// console.log(_this.projectNameInput)
+					that.SET_LOADING()
+
+					let data = {
+						...that.userInfo,
+						name: _this.projectNameInput,
+					}
+					__modifyProjectName(data)
+						.then( res => {
+
+							that.SET_LOADING()
+							console.log(res)
+							if(!res.result) {
+								alert(res.message)
+								return false
+							}
+							that.OPEN_NOTIFICATION('修改成功')
+							that.CLOSE_MODAL()
+						})
 				}
 			}
 			this.SET_MODALCFG(modalOption)
@@ -233,11 +251,17 @@ export default {
 				modalFor: 'loginOut',				//模态框用来做什么  参考modal.vue
 				title: '退出登录',					//模态框的标题
 				onSuccess: function(){		//点击确认的逻辑
-					__loginOut().then( res => {					//退出登录要发请求？
-						alert('退出登录成功')
-						console.log(res)
-					}).then( () => {
+					// 清楚sessionStorage   跳转到登录页
+					sessionStorage.clear()
+					// location.href = ''
+					let data = {
+						...that.userInfo
+					}
+					__loginOut(data).then( res => {					//退出登录要发请求？
+						// alert('退出登录成功')
+						// console.log(res)
 						that.CLOSE_MODAL()
+						console.log(res)
 					})
 				}
 			}
