@@ -69,7 +69,7 @@ import Pagination from '../../../components/common/Pagination'
 		},
 		computed: {
 			...mapState([
-					'userInfo'
+					'userInfo','shouldListUpdate'
 				])
 		},
 		created () {
@@ -98,9 +98,36 @@ import Pagination from '../../../components/common/Pagination'
 			// this.listData = materialArticleData()
 			
 		},
+		watch: {
+			shouldListUpdate: function(newVal){
+				if(newVal){
+					let data = {
+						...this.userInfo,
+						page: 1,
+						// search: '',
+					}
+					// console.log(data)
+					__getArticalList(data)
+						.then( res => {
+							console.log(res)
+							if(!res) {
+								alert('网络请求失败，请检查网络或稍后重试')
+								return false
+							}
+							if(!res.result) {
+								alert(res.message)
+								return false
+							}
+							this.listData = res.data.data
+							this.totalPage = res.data.totalpage
+						})
+					this.TOGGLE_LISTDATAUPDATE()
+				}
+			}
+		},
 		methods: {
 			...mapMutations([
-					'OPEN_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION','CLOSE_MODAL'
+					'OPEN_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION','CLOSE_MODAL','TOGGLE_LISTDATAUPDATE'
 				]),
 			goEdit() {
 				this.$router.push('/artedit')

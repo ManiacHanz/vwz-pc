@@ -183,10 +183,10 @@
 				<section class="pick-article" v-if="modalCfg.modalFor==='pickArticle'">
 					<div class="top">
 						<div class="search">
-							<input type="text" name="" placeholder="标题/作者" maxlength="20">
-							<a role="button"></a>
+							<input type="text" name="" placeholder="标题/作者" maxlength="20" v-model="search">
+							<a role="button" @click="_searchArticle"></a>
 						</div>
-						<div class="add-btn">新建文章</div>
+						<div class="add-btn" @click="goEdit">新建文章</div>
 					</div>
 					<div class="body">
 						<div class="panel-head">
@@ -200,13 +200,13 @@
 									<input type="radio" name="articleChoose" :key="item.id" :value="item.id" v-model="articlePicked">
 									<span class="title">{{item.title}}</span>
 									<span class="author">{{item.author}}</span>
-									<span class="time">{{item.time}}</span>
+									<span class="time">{{item.updateTime}}</span>
 								</li>
 							</ul>
 						</div>
 					</div>
 					<div class="pagination">
-						<pagination :getPageNum="getPageNum"></pagination>
+						<pagination :getPageNum="getPageNum" :totalPage="totalPage"></pagination>
 					</div>
 				</section>
 				<section class="QR-code" v-if="modalCfg.modalFor==='QRcode'">
@@ -252,6 +252,7 @@ import QrcodeVue from 'qrcode.vue';
 Vue.use(VueClipboard)
 
 import { mapState, mapMutations } from 'vuex'
+import {__getArtList} from 'service/getData'
 
 import Pagination from './Pagination'
 
@@ -271,7 +272,12 @@ export default {
     	avatarBack: { backgroundImage: 'url(/static/img/avatar.png)' },
     	//二维码地址
     	QRLink: '',
+    	// 文章列表
     	articleList: '',
+    	totalPage: '',
+			search: '',
+			nowPage: '',
+
     	//修改密码
     	modifyPswOld: '',
   		modifyPswNew:'',
@@ -373,20 +379,57 @@ export default {
 							})
 						})
   			}
-
+  			else if (this.modalCfg.modalFor == 'pickArticle') {
+  				let data = {
+						...this.userInfo,
+						page: 1,
+						search: '',
+					}
+  				this._getArticleData(data)
+  			}
   		}
   	}
 
   },
   mounted () {
 		//初始化列表数据  这里应该放在watch里面做
-		this.articleList = materialArticleData()
+		// this.articleList = materialArticleData()
 		this.QRLink = localUrl + '?id=' + this.userInfo.uid
   },
   methods: {
   	...mapMutations([
   			'CLOSE_MODAL','SET_LOGO','SET_AVATAR','SET_LOADING','OPEN_NOTIFICATION'
   		]),
+  	_getArticleData (data) {
+  		this.SET_LOADING()
+  		__getArtList(data)
+				.then( res => {
+					console.log(res)
+  				this.SET_LOADING()
+					if(!res) {
+						alert('网络请求失败，请检查网络或稍后重试')
+						return false
+					}
+					if(!res.result) {
+						alert(res.message)
+						return false
+					}
+					this.articleList = res.data.data
+					this.totalPage = res.data.totalpage
+				})
+  	},
+  	_searchArticle () {						//搜索
+			let data = {
+				...this.userInfo,
+				page:1,
+				search: this.search.trim(),
+			}
+			this._getArticleData(data)
+		},
+		goEdit() {
+			this.CLOSE_MODAL()
+			this.$router.push('/artedit')
+		},	
   	selectIcon (index) {
   		this.selectedIcon = index
   	},
@@ -537,6 +580,27 @@ export default {
   	getPageNum ( pagenum ) {
 			//获取页码数据  应该作为props传给子组件 这里的参数就是分页的插件穿回来的页码数 在这里进行请求数据 然后敷给listData
 			console.log(pagenum)
+			this.nowPage = pagenum
+			let data = {
+				...this.userInfo,
+				page: pagenum,
+				// search: '',
+			}
+			// console.log(data)
+			__getArtList(data)
+				.then( res => {
+					console.log(res)
+					if(!res) {
+						alert('网络请求失败，请检查网络或稍后重试')
+						return false
+					}
+					if(!res.result) {
+						alert(res.message)
+						return false
+					}
+					this.articleList = res.data.data
+					this.totalPage = res.data.totalpage
+				})
 		},
 		//确认按钮
 		confirm() {
@@ -882,7 +946,7 @@ export default {
 		.panel-body {
 			ul {
 				height: 320px;
-				overflow-y: scroll;
+				// overflow-y: scroll;
 			}
 			li {
 				height: 39px;

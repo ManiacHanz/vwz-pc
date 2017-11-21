@@ -14,6 +14,8 @@ const state = {
 		// uid: 'USERjIMHXdT1',   //用户ID
 		// token: 'd09eebd0ab5fb9acbfa676789b89a14'								// token
 	},
+	showLeftIndex: 0,				//左侧的样式和名称配置
+	showRightContent: '菜单配置',
 	avatarUrl: '',		//头像地址
 	logoUrl: '',      //LOGO 地址
 	hasNew: false,    //是否更新了
@@ -74,6 +76,7 @@ const state = {
 	userPanelList: '',
 	temporaryPanelList: '',     //临时手机面板的数据
 	editorContent: '',						//富文本的内容
+	shouldListUpdate: false,						// 文章管理列表是否需要更新
 	test:'1',		//测试用
 }
 

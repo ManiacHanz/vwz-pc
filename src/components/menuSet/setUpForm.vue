@@ -333,18 +333,10 @@ export default {
     },
   	// 从素材库
   	_pickFromLib () {
-      let data = {
-        ...this.userInfo,
-        page:1,
-        search: '',
-      }
-      __getArtList( data )
-        .then( res => {
-          
-        })
+      
 			this.OPEN_MODAL()
 			let that = this
-      let linkInput = document.querySelector('#linkInput')
+      // let linkInput = document.querySelector('#linkInput')
 			let modalOption = {
 				modalFor: 'pickArticle',				//模态框用来做什么  参考modal.vue
 				title: '选择文章',					//模态框的标题
@@ -352,6 +344,8 @@ export default {
 					that.linkValue = _this.articlePicked
           // that._linkBlur()
           that.linkTypeValue = 1
+          that.CLOSE_MODAL()
+          that.OPEN_NOTIFICATION('添加文章成功')
 				}
 			}
 			this.SET_MODALCFG(modalOption)

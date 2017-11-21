@@ -6,7 +6,7 @@
 <template>
 	<div class="leftmenu">
 		<ul>
-			<li v-for="(item, index) in menuList" :class="{active:index == nowIndex}" 
+			<li v-for="(item, index) in menuList" :class="{active:index == showLeftIndex}" 
 			@click="toggleMenus(index,item.type)">
 				<i></i>
 				{{ item.type }}
@@ -18,6 +18,7 @@
 
 
 <script type="text/javascript">
+import {mapState, mapMutations} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -41,10 +42,29 @@
 				]
 			}
 		},
+		computed: {
+			...mapState([
+					'showRightContent','showLeftIndex'
+				])
+		},
+		watch: {
+			// showRightContent: function(newVal) {
+			// 	if(newVal == '菜单配置') {
+			// 		this.nowIndex == 0
+			// 	}
+			// 	else if (newVal == '文章管理') {
+			// 		this.nowIndex == 1
+			// 	}
+			// }
+		},
 		methods: {
+			...mapMutations([
+					'SWITCH_MENUTYPE'
+				]),
 			toggleMenus(index,type) {
 				this.nowIndex = index
-				this.$emit('switchType',type)
+				// this.$emit('switchType',type)
+				this.SWITCH_MENUTYPE({str:type,index})
 			}
 		}
 	}

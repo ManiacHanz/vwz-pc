@@ -1,5 +1,5 @@
 <template>
-	<div v-if="this.$props.contentBody==='菜单配置'">
+<!-- 	<div v-if="this.$props.contentBody==='菜单配置'">
 		<MenuSet></MenuSet>
 	</div>
 	<div v-else-if="this.$props.contentBody==='数据分析'">
@@ -13,10 +13,18 @@
 	</div>
 	<div v-else-if="this.$props.contentBody==='回收管理'">
 		<RecoverManage></RecoverManage>
+	</div> -->
+
+	<div v-if="this.showRightContent==='菜单配置'">
+		<MenuSet></MenuSet>
+	</div>
+	<div v-else-if="this.showRightContent==='文章管理'">
+		<MaterManage></MaterManage>
 	</div>
 </template>
 
 <script>
+import {mapState, mapMutations} from 'vuex'
 	import MenuSet from './MenuSet'
 	import DataAnalysis from './DataAnalysis'
 	import MaterManage from './MaterManage'
@@ -36,7 +44,12 @@
 			UserManage,
 			RecoverManage
 		},
-		props:['contentBody']
+		props:['contentBody'],
+		computed: {
+			...mapState([
+					'showRightContent'
+				])
+		}
 	}
 </script>
 

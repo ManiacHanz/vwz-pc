@@ -58,7 +58,7 @@ export default {
   },
   created () {
     setStore('uid', 'USERjIMHXdT1')
-    setStore('token', 'd09eebd0ab5fb9acbfa676789b89a14')
+    setStore('token', '5329a8fa947b9ab5fd5d10a931f5d94c')
     
     this.uid = getStore('uid')
     this.token = getStore('token')

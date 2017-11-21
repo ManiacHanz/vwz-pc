@@ -4,7 +4,7 @@
       <div class="top-nav">
         <div class="back" @click="historyBack()"></div>
         <ul class="nav">
-          <li @click="historyBack()">文章管理</li>
+          <li @click="_toMaterManage">文章管理</li>
           &nbsp;  >
           <li>文章编辑</li>
         </ul>
@@ -124,7 +124,7 @@ export default {
   },
   methods: {
     ...mapMutations([
-        'SET_LOADING','SET_EDITORCONTENT'
+        'SET_LOADING','SET_EDITORCONTENT','SWITCH_MENUTYPE','TOGGLE_LISTDATAUPDATE'
       ]),
     init() {
       //初始化时要判断是新建进来的还是编辑进来的 从而判断输入框里是否传值
@@ -137,6 +137,11 @@ export default {
     },
     historyBack () {
       window.history.back()
+    },
+    _toMaterManage () {
+      this.$router.push('/microhome')
+      this.SWITCH_MENUTYPE({str:'文章管理',index: 1})
+
     },
     switchActive (name) {
       //用来改变激活的元素的边框样式
@@ -185,6 +190,26 @@ export default {
     },
     //保存发布文章
     _submit () {
+      if(this.titleValue.trim() == '') {
+        alert('请输入文章的标题')
+        return false
+      }
+      if(this.authorValue.trim() == '') {
+        alert('请输入文章的作者')
+        return false
+      }
+      if(this.describeValue.trim() == '') {
+        alert('请输入文章的描述')
+        return false
+      }
+      if(this.editorContent.trim() == '') {
+        alert('请输入文章的内容')
+        return false
+      }
+      if(this.coverSrc.trim() == '') {
+        alert('请配置文章的封面图')
+        return false
+      }
       let title = this.titleValue
       let author = this.authorValue
       let described = this.describeValue
@@ -211,6 +236,13 @@ export default {
       __editArticle(data)
         .then(res => {
           console.log(res)
+          if(!res.result) {
+            alert(res.message)
+            return false
+          }
+          this.$router.push('/microhome')
+          this.SWITCH_MENUTYPE({str:'文章管理',index: 1})
+          this.TOGGLE_LISTDATAUPDATE()
         })
     },
   },
@@ -411,6 +443,7 @@ export default {
   // width:100%;
   height: 76px;
   border-top: 1px solid #dedede;
+  z-index:9999;
   position: fixed;
   bottom: 0;
   left: 0;

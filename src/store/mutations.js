@@ -4,6 +4,7 @@ import Vue from 'vue'
 
 import {
 	SAVE_USERINFO,
+	SWITCH_MENUTYPE,
 	SET_LOGO,
 	SET_AVATAR,
 	SAVE_MOBILECFG,
@@ -24,12 +25,18 @@ import {
 	SAVE_LISTPANELLIST,
 	SAVE_USERPANELLIST,
 	SAVE_TEMPORARYLIST,
+	TOGGLE_LISTDATAUPDATE,
 } from './mutation-types.js'
 
 export default {
 	//保存uid,token
 	[SAVE_USERINFO] (state, obj) {
 		state.userInfo = Object.assign({}, obj)
+	},
+	// 改变右边内容展示的板块
+	[SWITCH_MENUTYPE] (state, payload) {
+		state.showRightContent = payload.str
+		state.showLeftIndex = payload.index
 	},
 	//设置LOGO
 	[SET_LOGO] (state, value) {
@@ -144,4 +151,8 @@ export default {
 	[SET_EDITORCONTENT] (state, str) {
 		state.editorContent = str
 	},
+	// 控制是否文章管理需要更新
+	[TOGGLE_LISTDATAUPDATE] (state) {
+		state.shouldListUpdate = !state.shouldListUpdate
+	}
 }
