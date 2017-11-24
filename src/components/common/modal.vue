@@ -196,11 +196,11 @@
 						</div>
 						<div class="panel-body">
 							<ul>
-								<li v-for="(item, index) in articleList" :key="item.id">
+								<li v-for="(item, index) in articleList" :key="item.id" v-if="item.display==0">
 									<input type="radio" name="articleChoose" :key="item.id" :value="item.id" v-model="articlePicked">
 									<span class="title">{{item.title}}</span>
 									<span class="author">{{item.author}}</span>
-									<span class="time">{{item.updateTime}}</span>
+									<span class="time">{{item.operateTimeStr}}</span>
 								</li>
 							</ul>
 						</div>
@@ -241,8 +241,7 @@ import { __sendBase64 } from 'service/sendData'
 import {__getImgUrl} from 'service/getData'
 import {u_viewPick} from 'config/mUtils'
 
-//引入数据组件
-	import { materialArticleData } from '../../../static/data/materialData.js'
+
 
 //剪贴板
 import Vue from 'vue'
@@ -253,6 +252,7 @@ Vue.use(VueClipboard)
 
 import { mapState, mapMutations } from 'vuex'
 import {__getArtList} from 'service/getData'
+import {getStore} from 'config/mUtils'
 
 import Pagination from './Pagination'
 
@@ -394,7 +394,8 @@ export default {
   mounted () {
 		//初始化列表数据  这里应该放在watch里面做
 		// this.articleList = materialArticleData()
-		this.QRLink = localUrl + '?id=' + this.userInfo.uid
+		// this.QRLink = localUrl + '?uid=' + this.userInfo.uid + '&name=' + getStore('name')
+		this.QRLink = 'http://192.168.100.24/abc.html' + '?uid=' + this.userInfo.uid + '&name=' + getStore('name')
   },
   methods: {
   	...mapMutations([

@@ -49,7 +49,7 @@ export default new Router({
       component: WifiPortal
     },
     {
-      path: '/sample',
+      path: '/sample/:id',
       name: 'Sample',
       component: Sample
     },

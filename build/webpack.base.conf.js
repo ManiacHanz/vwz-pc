@@ -26,6 +26,7 @@ module.exports = {
       'service': resolve('src/service'),
       'config': resolve('src/config'),
       'components': resolve('src/components'),
+      'static': resolve('static')
     }
   },
   module: {

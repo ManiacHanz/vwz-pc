@@ -6,13 +6,13 @@
           <div class="content-title">{{item.title}}</div>
           <div class="content-info">
             <p class="author">{{item.author}}</p>
-            <p class="content-time">更新于{{item.updateTime}}</p>
+            <p class="content-time">更新于 {{item.operateTimeStr}}</p>
           </div>
           <div class="content-img">
             <img class="thumbnail" :src="imgBaseUrl+item.cover">
           </div>
           <div class="content-detail">{{item.described}}</div>
-          <a class="mask" target="_blank" href="#/sample">预览文章</a>
+          <a class="mask" target="_blank" :href="'#/sample/' +item.id">预览文章</a>
         </div>
         <ul class="btns">
           <li class="edit-btn" @click="_goEdit(item.id)">

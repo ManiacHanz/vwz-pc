@@ -58,8 +58,9 @@ export default {
   },
   created () {
     setStore('uid', 'USERjIMHXdT1')
-    setStore('token', '5329a8fa947b9ab5fd5d10a931f5d94c')
-    
+    setStore('token', '8b613651c49c7f2b35a4f746e1bc8f7d')
+    setStore('name','微网站')
+
     this.uid = getStore('uid')
     this.token = getStore('token')
     this.SAVE_USERINFO({uid:this.uid, token: this.token})

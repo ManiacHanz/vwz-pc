@@ -273,7 +273,7 @@ export default {
 					onSuccess: function(_this){		//选择图标的路径
 						//alert(_this.userIconList[_this.selectedIcon])
 						that.iconValue = _this.userIconList[_this.selectedIcon].replace(that.imgBaseUrl, '')
-            if(!_this.selectedIcon) {
+            if(_this.selectedIcon==undefined) {
               alert('请选择图标')
               return
             }
@@ -290,7 +290,7 @@ export default {
           onSuccess: function(_this){   //选择图标的路径
             // alert(_this.menuIconList[_this.selectedIcon])
             that.iconValue = _this.menuIconList[_this.selectedIcon].replace(that.imgBaseUrl, '')
-            if(!_this.selectedIcon) {
+            if(_this.selectedIcon==undefined) {
               alert('请选择图标')
               return
             }
@@ -1255,7 +1255,7 @@ export default {
             icon:this.iconValue,
             link: this.linkValue,
             title: this.titleValue,
-            type:'',
+            type: this.typeValue,
           }
           button.splice(index, 1, temporaryObj)
           // {button:button}

@@ -39,6 +39,7 @@
               @click.left="switchActive('decribeInput')" v-model="describeValue" @blur="_clearActive()">
             </div>
             <div class="ueditor">
+              <!-- //:ueditorConfig="{serverUrl:'http://localhost:8080/lulang/testffs/controller'}" -->
                <VueUEditor style="margin-bottom:30px;"></VueUEditor>
             </div>
             <div class="copy">

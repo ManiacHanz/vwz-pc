@@ -1,11 +1,11 @@
 <template>
 	<div class="mobile-panel" v-if="homePanelList">
 		<div class="mobile">
-			<transition name="panel-fade" mode="out-in">
+			<!-- <transition name="panel-fade" mode="out-in"> -->
 			<home-panel v-if="showPanel==='home'"></home-panel>
 			<list-panel v-else-if="showPanel==='list'"></list-panel>
 			<user-panel v-else-if="showPanel==='user'"></user-panel>
-			</transition>
+			<!-- </transition> -->
 			<div class="menubtn" v-if="homePanelList.button" :class='mobileColorStyle'>
 				<ul :class="menubtnStyle">
 					<li :class="[mobileActive==='menubtn'+index?'active':'', item.icon==''?mobileColorStyle: '']" v-for="(item, index) in homePanelList.button" @click="switchPanel(item, index)">
@@ -72,6 +72,7 @@ export default {
   	// console.log({...this.userInfo})
   	__getHomePanel({...this.userInfo})
   		.then( res => {
+  			console.log(jsonParse(res.data))
   			if (!res) {
   				alert('网络请求失败，请检查网络后刷新页面')
   				return false
@@ -145,14 +146,14 @@ export default {
   		this.timer = setTimeout(function(){
   			// 尽量减少请求次数
   			// console.log(theme)
-  			// let data = {
-  			// 	...that.userInfo,
-  			// 	theme,
-  			// }
-  			// __sendTheme(data)
-  			// 	.then( res => {
-  			// 		console.log(res)
-  			// 	})
+  			let data = {
+  				...that.userInfo,
+  				theme,
+  			}
+  			__sendTheme(data)
+  				.then( res => {
+  					console.log(res)
+  				})
   		},10000)
   	},
   	switchPanel (item, index) {

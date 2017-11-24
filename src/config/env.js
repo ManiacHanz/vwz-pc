@@ -8,12 +8,12 @@
  */
 
 
-let baseUrl = 'http://192.168.100.15:8080/lltrvl'; 
+let baseUrl = 'http://192.168.100.2:8089/lltrvl'; 
 // let baseUrl = 'http://localhost:4000'; 
 
-const imageBaseUrl = 'http://192.168.100.15:8080/lltrvl'; 
+const imageBaseUrl = 'http://192.168.100.2:8089/lltrvl'; 
 
-const localUrl = 'http://192.168.100.24:80'
+const localUrl = 'http://192.168.100.24:12345/#/home'
 
 let routerMode = 'history';
 // let imgBaseUrl = 'http://images.cangdu.org/';
