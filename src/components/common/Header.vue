@@ -2,10 +2,10 @@
 	<div class="header">
 		<div class="inner-box">
 			<div class="img" @click="changeLogo" title="点击可以切换Logo图">
-				<img :src="[logo==''?'/static/img/logo.png':logo]">
+				<img :src="[logoUrl==''?'/static/img/logo.png':imgBaseUrl+logoUrl]">
 			</div>
 			<div class="account" :class="[hasNew?'getnew':'']">
-				<img class="avatar " :src="[avatar!=''?avatar:'/static/img/avatar.png']">
+				<img class="avatar " :src="[avatarUrl!=''?imgBaseUrl+avatarUrl:'/static/img/avatar.png']">
 				<ul>
 					<li class="check" @click="checkQrCode">
 						<span></span>
@@ -43,12 +43,14 @@
 import { mapState, mapMutations } from 'vuex'
 import {__loginOut, __modifyPsw, __sendBase64, __modifyProjectName} from 'service/sendData'
 import {imageBaseUrl} from 'config/env'
+import {setStore} from 'config/mUtils'
 export default {
 	data: function () {
 		return {
 			logo: '',
 			avatar: '',
 			nowIndex:0,
+			imgBaseUrl: imageBaseUrl,
 			list: [
 				// {
 				// 	title:'微网站',
@@ -71,7 +73,7 @@ export default {
 	},
 	computed: {
 		...mapState([
-				'avatarUrl','logoUrl','hasNew','userInfo'
+				'avatarUrl','logoUrl','avatarUrl','hasNew','userInfo'
 			]),
 	},
 	mounted () {
@@ -79,8 +81,7 @@ export default {
 	},
 	methods: {
 		...mapMutations([
-				'OPEN_NOTIFICATION','OPEN_MODAL','CLOSE_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION'
-
+				'OPEN_NOTIFICATION','OPEN_MODAL','CLOSE_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION','SET_LOGO','SET_AVATAR'
 			]),
 		toggleTabs(index) {
 			this.nowIndex = index
@@ -113,6 +114,8 @@ export default {
 								return false
 							}
 							that.logo = imageBaseUrl + res.data
+							setStore('logo',res.data)
+							that.SET_LOGO(res.data)
 							that.OPEN_NOTIFICATION('修改成功')
 							that.CLOSE_MODAL()
 						})
@@ -148,6 +151,8 @@ export default {
 								return false
 							}
 							that.avatar = imageBaseUrl + res.data
+							setStore('headimg',res.data)
+							that.SET_AVATAR(res.data)
 							that.OPEN_NOTIFICATION('修改成功')
 							that.CLOSE_MODAL()
 						})

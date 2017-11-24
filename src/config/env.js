@@ -8,10 +8,10 @@
  */
 
 
-let baseUrl = 'http://192.168.100.2:8089/lltrvl'; 
+let baseUrl = 'http://192.168.100.179:8080/lltrvl'; 
 // let baseUrl = 'http://localhost:4000'; 
 
-const imageBaseUrl = 'http://192.168.100.2:8089/lltrvl'; 
+const imageBaseUrl = 'http://192.168.100.179:8080/lltrvl'; 
 
 const localUrl = 'http://192.168.100.24:12345/#/home'
 

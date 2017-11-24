@@ -60,16 +60,17 @@ export default {
   },
   created () {
     // setStore('uid', 'USERjIMHXdT1')
-    // setStore('token', '9a09a4badd1595dad4189e788d51a82b')
+    // setStore('token', 'dc75a1635757e096d139d6a160b929de')
     // setStore('name','微网站')
+    // setStore('headimg','/webfrontres/TourismPc/img/header1.jpg')
+    // setStore('logo','/fileresource/imgs/USERjIMHXdT1/1511522404344.jpeg')
 
     this.uid = getStore('uid')
     this.token = getStore('token')
     this.SAVE_USERINFO({uid:this.uid, token: this.token})
-    let logoUrl = this.imgBaseUrl + getStore('logo')
-    this.SET_LOGO(logoUrl)
-    let avatarUrl = this.imgBaseUrl + getStore('headimg')
-    this.SET_AVATAR(avatarUrl)
+    
+    this.SET_LOGO(getStore('logo'))
+    this.SET_AVATAR(getStore('headimg'))
   },
   mounted () {
     

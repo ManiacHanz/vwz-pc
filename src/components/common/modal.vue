@@ -262,6 +262,7 @@ export default {
 
   data () {
     return {
+    	imgBaseUrl: imageBaseUrl,
     	// 这里应该是去接口调到他的图标列表 再添加进来 用数组的concat方法
     	menuIconList: [],
     	plateIconList: [],
@@ -297,7 +298,7 @@ export default {
   },
   computed: {
   	...mapState([
-  			'isShowModal','modalCfg','mobileColorStyle','userInfo'
+  			'isShowModal','modalCfg','mobileColorStyle','userInfo','logoUrl','avatarUrl',
   		])
   },
   watch: {
@@ -316,6 +317,12 @@ export default {
   			let data = {
 					...this.userInfo,
 					type: 'a',
+				}
+				if(this.modalCfg.modalFor == 'logo') {
+					this.logoBack = Object.assign({},{backgroundImage: 'url('+this.imgBaseUrl+this.logoUrl+')'})
+				}
+				if(this.modalCfg.modalFor == 'avatar') {
+					this.avatarBack = Object.assign({},{backgroundImage: 'url('+this.imgBaseUrl+this.avatarUrl+')'})
 				}
   			if(this.modalCfg.modalFor == 'plateIcon') {
 					__getImgUrl(data)
