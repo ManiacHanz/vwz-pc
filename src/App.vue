@@ -31,6 +31,7 @@
 <script>
 import {mapState, mapMutations} from 'vuex'
 import {setStore, getStore} from 'config/mUtils.js'
+import {imageBaseUrl} from 'config/env'
 
 import Header from './components/common/Header'
 import modal from './components/common/modal'
@@ -43,6 +44,7 @@ export default {
     return {
       uid: '',
       token: '',
+      imgBaseUrl: imageBaseUrl,
     }
   },
   components: {
@@ -57,20 +59,24 @@ export default {
       ]),
   },
   created () {
-    setStore('uid', 'USERjIMHXdT1')
-    setStore('token', '8b613651c49c7f2b35a4f746e1bc8f7d')
-    setStore('name','微网站')
+    // setStore('uid', 'USERjIMHXdT1')
+    // setStore('token', '9a09a4badd1595dad4189e788d51a82b')
+    // setStore('name','微网站')
 
     this.uid = getStore('uid')
     this.token = getStore('token')
     this.SAVE_USERINFO({uid:this.uid, token: this.token})
+    let logoUrl = this.imgBaseUrl + getStore('logo')
+    this.SET_LOGO(logoUrl)
+    let avatarUrl = this.imgBaseUrl + getStore('headimg')
+    this.SET_AVATAR(avatarUrl)
   },
   mounted () {
     
   },
   methods: {
     ...mapMutations([
-        'SAVE_USERINFO'
+        'SAVE_USERINFO','SET_LOGO','SET_AVATAR',
       ])
   }
 }

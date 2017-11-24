@@ -18,10 +18,10 @@
 			</div>
 		</div>
 		<div class="theme">
-			 <div @click="_changeTheme('blue')" title="点击可以切换主题哟~">主题1</div>
-			 <div @click="_changeTheme('dark')" title="点击可以切换主题哟">主题2</div>
-			 <div @click="_changeTheme('green')" title="点击可以切换主题哟">主题3</div>
-			 期待更多主题...
+			 <div @click="_changeTheme('blue')" title="点击可以切换主题哟~" :class="[mobileColorStyle === 'blue'? 'active' : '']">主题1</div>
+			 <div @click="_changeTheme('dark')" title="点击可以切换主题哟" :class="[mobileColorStyle === 'dark'? 'active' : '']">主题2</div>
+			 <div @click="_changeTheme('green')" title="点击可以切换主题哟" :class="[mobileColorStyle === 'green'? 'active' : '']">主题3</div>
+			 <div class="submitTheme" @click="_submitTheme">确认主题</div>
 		</div>
 	</div>
 		
@@ -116,7 +116,7 @@ export default {
   },
   methods: {
   	...mapMutations([
-  			'SET_SHOWPANEL','SET_MOBILE_COLOR','UPDATE_FORMCFG','SET_MOBILE_ACTIVE','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE'
+  			'SET_SHOWPANEL','SET_MOBILE_COLOR','UPDATE_FORMCFG','SET_MOBILE_ACTIVE','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE','SET_LOADING','OPEN_NOTIFICATION'
   		]),
   	
   	//初始化菜单配置的样式 这里要通过数组的长度来判断  有3个按钮就传4位
@@ -142,6 +142,7 @@ export default {
   	_changeTheme (theme) {
   		const that = this
   		this.SET_MOBILE_COLOR(theme)
+  		/**   延时发送主题配置
   		clearTimeout(this.timer)
   		this.timer = setTimeout(function(){
   			// 尽量减少请求次数
@@ -155,6 +156,26 @@ export default {
   					console.log(res)
   				})
   		},10000)
+  		*/
+  	},
+  	// 确认主题
+  	_submitTheme () {
+  		this.SET_LOADING()
+  		const that = this
+  		let data = {
+  				...this.userInfo,
+  				theme: this.mobileColorStyle,
+  			}
+			__sendTheme(data)
+				.then( res => {
+  				this.SET_LOADING()
+					console.log(res)
+					if(!res.result) {
+						alert(res.message)
+						return false
+					}
+					this.OPEN_NOTIFICATION('主题修改成功')
+				})
   	},
   	switchPanel (item, index) {
   		/*
@@ -202,8 +223,8 @@ export default {
   			this.UPDATE_FORMCFG(option)
   			if (this.menubtnStyle === 'type1') {
   				let obj = {
-  					title: '',
-	          icon: '',
+  					title: '菜单名称',
+	          icon: '/fileresource/imgs/system/icon/menuicon_03_dark.png',
 	          link: '',
 	          type: '',
   				}
@@ -404,6 +425,7 @@ export default {
 		line-height: 28px;
 		margin: 8px 10px;
 		cursor: pointer;
+		position: relative;
 		&:nth-child(1) {
 			background: #25c4da;
 		}
@@ -413,6 +435,30 @@ export default {
 		&:nth-child(3) {
 			background: #08c2ae;
 		}
+
+		&.active::after {
+			content: '';
+			display: block;
+			width:44px;
+			height: 26px;
+			border: 1px solid @lightBlue;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+	}
+	.submitTheme {
+		color: #333;
+		width: 74px;
+	  height: 26px;
+	  line-height: 26px;
+	  text-align: center;
+	  border: 1px solid #dedede;
+	  background: #ffffff;
+	  cursor: pointer;
+	  &:hover {
+	  	border-color: #888;
+	  }
 	}
 }
 </style>

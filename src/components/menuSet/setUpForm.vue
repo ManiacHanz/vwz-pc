@@ -342,7 +342,7 @@ export default {
 				title: '选择文章',					//模态框的标题
 				onSuccess: function(_this){		//点击确认的逻辑
 					that.linkValue = _this.articlePicked
-          // that._linkBlur()
+          that._linkBlur()        // 直接选择不会触发失焦事件 所以这里要手动触发一个
           that.linkTypeValue = 1
           that.CLOSE_MODAL()
           that.OPEN_NOTIFICATION('添加文章成功')
@@ -629,7 +629,7 @@ export default {
           else if(situation == 1 || situation == 2) {
             //有一个空位
             if(this.homePanelList.button[index].title=='') {
-              alert('空内容不能删除')
+              alert('空白菜单不能删除，但手机上不会显示，填写内容后可删除')
               return false
             }
             let modalOption = { 

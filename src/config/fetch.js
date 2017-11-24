@@ -53,6 +53,7 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 			// }
 			return responseJson
 		} catch (error) {
+			alert('网络请求错误，请检查网络或稍后再试')
 			throw new Error(error)
 		}
 	} else {
