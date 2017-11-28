@@ -9,6 +9,7 @@
 			<div class="content" id="content" v-html="detail.content">
 				<!-- {{detail.content}} -->
 			</div>
+      <div class="copy-right">{{detail.copyright}}</div>
 		</div>
 	</div>
 </template>
@@ -68,7 +69,7 @@ export default {
   min-height: 100%;
 	margin: 0 auto;
   background: #fff;
-  padding: 40px 100px 120px;
+  padding: 40px 100px 0;
 }
 .title {
   color: #000;
@@ -100,5 +101,11 @@ export default {
     margin: 8px auto;
     max-width: 100%;
   }
+}
+.copy-right {
+  color: #999;
+  text-align: center;
+  margin-top: 60px;
+  padding-bottom: 40px;
 }
 </style>

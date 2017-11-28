@@ -170,6 +170,37 @@ export const removeStore = name => {
 	window.localStorage.removeItem(name);
 }
 
+/*
+    根据中、英文字节长度分别控制Input的值   参数分别为 
+    vue里的watch里
+    newValue  oldValue  限制的长度  和绑定的data值（字符串）
+ */
+export const getInputLen = (str, old, length, data, _this) => {
+    let len = 0;  
+    for (let i=0; i<str.length; i++) {   
+        let c = str.charCodeAt(i);   
+        if(len<(length-1)){
+        // 单字节加1 双字节加2  
+            if ((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {   
+                len++;   
+            }   
+            else {   
+                len+=2;   
+            }   
+        }
+        else if(len == (length-1)) {
+            if((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {
+                len++
+            }
+            else {
+                _this[data] = old
+            }
+        }
+        else if (len>=length) {
+            _this[data] = _this[data].substr(0,i)
+        }
+    }   
+}
 /**
  * 获取style样式
  */

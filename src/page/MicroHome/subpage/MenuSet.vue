@@ -4,7 +4,7 @@
       <div class="icon"></div>
       <div class="char">
         <p>温馨提示</p>
-        菜单编辑完成后需点击“保存并发布”才能同步到手机。
+        菜单编辑完成后需点击“保存并发布”，然后可通过“个人中心--查看效果”访问微信网页。
       </div>
     </div>
     <div class="body">
@@ -43,8 +43,8 @@ export default {
   .alert .icon {
     width: 34px;
     height: 36px;
-    background: url('/static/img/sprite.png') no-repeat -17px -336px;
-    background-size: 225px 1000px;
+    background: url('/static/img/tips.png') no-repeat;
+    background-position-y: 3px; 
     margin-right: 10px;
   }
   .alert .char p:last-of-type{

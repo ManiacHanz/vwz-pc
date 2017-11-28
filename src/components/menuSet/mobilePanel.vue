@@ -8,7 +8,9 @@
 			<!-- </transition> -->
 			<div class="menubtn" v-if="homePanelList.button" :class='mobileColorStyle'>
 				<ul :class="menubtnStyle">
-					<li :class="[mobileActive==='menubtn'+index?'active':'', item.icon==''?mobileColorStyle: '']" v-for="(item, index) in homePanelList.button" @click="switchPanel(item, index)">
+					<li :class="[mobileActive==='menubtn'+index?'active':'', item.icon==''?mobileColorStyle: '']" 
+						v-for="(item, index) in homePanelList.button" 
+						@click="switchPanel(item, index)">
 						<div class="icon">
 							<img v-show="item.icon != ''" :src="imgBaseUrl + item.icon"></img>
 						</div>
@@ -44,7 +46,7 @@ import userPanel from './sub/userPanel.vue'
 
 
 // 模拟手机首页配置数据 
-import { mobileHomeCfg } from '../../../static/data/mobileHomeCfg.js'
+// import { mobileHomeCfg } from '../../../static/data/mobileHomeCfg.js'
 
 export default {
 
@@ -61,6 +63,7 @@ export default {
     	// menubtnStyle: 'type1',
     	timer: '',
     	imgBaseUrl: imageBaseUrl,
+    	testMenuBtnData: [ {},{},{}],
     }
   },
   computed: {
@@ -283,6 +286,7 @@ export default {
 	border-top: 1px solid #dddddd;
 	&.dark {
 		background-color: @dark_back;
+		border-color: @dark_border;
 		li.active:after {
 			border-color: @dark_lightFont;
 		}
@@ -292,7 +296,8 @@ export default {
 	}
 	ul {
 		display: flex;
-		justify-content: space-between;
+		justify-content: space-around;
+		// justify-content: space-between;
 	}
 	li {
 		flex-grow: 1;

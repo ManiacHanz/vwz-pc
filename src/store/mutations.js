@@ -26,6 +26,7 @@ import {
 	SAVE_USERPANELLIST,
 	SAVE_TEMPORARYLIST,
 	TOGGLE_LISTDATAUPDATE,
+	SET_SHOWREDDOT,
 } from './mutation-types.js'
 
 export default {
@@ -154,5 +155,14 @@ export default {
 	// 控制是否文章管理需要更新
 	[TOGGLE_LISTDATAUPDATE] (state) {
 		state.shouldListUpdate = !state.shouldListUpdate
+	},
+	// 控制是否显示最后更新的红色圆点
+	[SET_SHOWREDDOT] (state, bool) {
+		if(!bool) {
+			state.showRedDot = true
+		}
+		else {
+			state.showRedDot = false
+		}
 	}
 }

@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <div class="loading-box" v-if="isShowLoading">
+    <!-- <div class="loading-box" v-if="isShowLoading">
       <loading>
         <p v-if="loadingText">{{loadingText}}</p>
       </loading>
-    </div>
+    </div> -->
     <div style="background:#fff;border-bottom: 1px solid #dddddd">
       <div class="myhead">
         <my-header></my-header>
@@ -59,9 +59,9 @@ export default {
       ]),
   },
   created () {
-    // setStore('uid', 'USERjIMHXdT1')
-    // setStore('token', 'dc75a1635757e096d139d6a160b929de')
-    // setStore('name','微网站')
+    setStore('uid', 'USERjIMHXdT1')
+    setStore('token', 'cf08de05dd353ff842667c4e0991a41b')
+    setStore('name','测试微网站名称') 
     // setStore('headimg','/webfrontres/TourismPc/img/header1.jpg')
     // setStore('logo','/fileresource/imgs/USERjIMHXdT1/1511522404344.jpeg')
 

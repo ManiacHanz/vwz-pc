@@ -1,4 +1,5 @@
 <template>
+	<!-- <div class="home-panel" :class="mobileColorStyle" v-if="homePanelList && !homePanelList.button[0].link"> -->
 	<div class="home-panel" :class="mobileColorStyle" v-if="homePanelList">
 		<section class="banner swiper-container" :class="[mobileActive==='homebanner'?'active':'']" id="Swiper1"
 		@click.left="setUpModule('','homebanner')">
@@ -27,6 +28,9 @@
 			</div>
 		</section>
 	</div>
+	<!-- <div v-else-if="homePanelList && homePanelList.button[0].link">
+		<iframe class="homeIframe" :src="homePanelLink" scrolling="no" width="100%" height="448px"></iframe>
+	</div> -->
 </template>
 
 <script>
@@ -49,6 +53,7 @@ export default {
     return {
     	mobileCfg:'',    //手机配置,
     	imgBaseUrl: imageBaseUrl,
+    	homePanelLink: '',
     }
   },
   computed: {
@@ -70,9 +75,8 @@ export default {
 	  			// console.log(jres)
   				this.SAVE_HOMEPANELLIST(jres)
   				this.SET_MENUBTN_STYLE()
+  				this.homePanelLink = this.homePanelList.button[0].link
   		})
-  	
-  	
   },
   mounted () {
 		// 初始化轮播 
@@ -287,6 +291,7 @@ export default {
 		position: relative;
 		img {
 			width: 100%;
+			height: 100%;
 		}
 		p {
 			color: #ffffff;
@@ -302,7 +307,7 @@ export default {
 			background: rgba(0, 0, 0, 0.5);
 			span {
 				display: inline-block;
-				width: 250px;
+				width: 240px;
 				overflow: hidden;
 				text-overflow:ellipsis;
 				white-space: nowrap;
@@ -529,5 +534,9 @@ export default {
 			background: @green_plate3;
 		}
 	}
+}
+.homeIframe {
+	height: 448px;
+	overflow: hidden;
 }
 </style>

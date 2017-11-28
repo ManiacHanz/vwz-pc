@@ -237,6 +237,7 @@ export default {
 		position: relative;
 		img {
 			width: 100%;
+			height: 100%;
 		}
 		p {
 			color: #ffffff;
@@ -252,7 +253,7 @@ export default {
 			background: rgba(0, 0, 0, 0.5);
 			span {
 				display: inline-block;
-				width: 250px;
+				width: 240px;
 				overflow: hidden;
 				text-overflow:ellipsis;
 				white-space: nowrap;

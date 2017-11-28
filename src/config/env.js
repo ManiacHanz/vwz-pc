@@ -7,11 +7,11 @@
  * 
  */
 
-
-let baseUrl = 'http://192.168.100.179:8080/lltrvl'; 
+let baseUrl = 'http://120.26.59.145:8080/micweb'; 
+// let baseUrl = 'http://192.168.100.179:8080/lltrvl'; 
 // let baseUrl = 'http://localhost:4000'; 
-
-const imageBaseUrl = 'http://192.168.100.179:8080/lltrvl'; 
+const imageBaseUrl = 'http://120.26.59.145:8080/micweb'; 
+// const imageBaseUrl = 'http://192.168.100.179:8080/lltrvl'; 
 
 const localUrl = 'http://192.168.100.24:12345/#/home'
 

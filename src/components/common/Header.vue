@@ -6,8 +6,10 @@
 			</div>
 			<div class="account" :class="[hasNew?'getnew':'']">
 				<img class="avatar " :src="[avatarUrl!=''?imgBaseUrl+avatarUrl:'/static/img/avatar.png']">
+				<div class="red-dot" v-show="showRedDot"></div>
 				<ul>
 					<li class="check" @click="checkQrCode">
+						<div class="red-dot" v-show="showRedDot"></div>
 						<span></span>
 						查看效果
 					</li>
@@ -25,7 +27,7 @@
 					</li>
 					<li class="login-out" @click="_loginOut">
 						<span></span>
-						退出
+						安全退出
 					</li>
 				</ul>
 			</div>
@@ -73,7 +75,7 @@ export default {
 	},
 	computed: {
 		...mapState([
-				'avatarUrl','logoUrl','avatarUrl','hasNew','userInfo'
+				'avatarUrl','logoUrl','avatarUrl','hasNew','userInfo','showRedDot'
 			]),
 	},
 	mounted () {
@@ -81,7 +83,7 @@ export default {
 	},
 	methods: {
 		...mapMutations([
-				'OPEN_NOTIFICATION','OPEN_MODAL','CLOSE_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION','SET_LOGO','SET_AVATAR'
+				'OPEN_NOTIFICATION','OPEN_MODAL','CLOSE_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION','SET_LOGO','SET_AVATAR','SET_SHOWREDDOT'
 			]),
 		toggleTabs(index) {
 			this.nowIndex = index
@@ -237,6 +239,7 @@ export default {
 		},
 		// 查看二维码
 		checkQrCode () {
+			this.SET_SHOWREDDOT('false')
 			this.OPEN_MODAL()
 			let that = this
 			let modalOption = {
@@ -323,6 +326,15 @@ export default {
 	background: #f1f4f9;
 	margin: 14px 0;
 	position: relative;
+	&>.red-dot {
+		width:6px;
+		height: 6px;
+		border-radius: 50%;
+		position: absolute;
+		top: -2px;
+		right: -2px;
+		background: #f00;
+	}
 	&.getnew:after {
 		content: '';
 		display: block;
@@ -378,13 +390,13 @@ export default {
 				background-position: -62px -110px;
 			}
 			&.modify-psw span{
-				background-position: -143px -110px;
+				background-position: -144px -110px;
 			}
 			&.modify-ava span{
 				background-position: -226px -110px;
 			}
 			&.login-out span{
-				background-position: -310px -110px;
+				background-position: -312px -110px;
 			}
 			&.modify-title span {
 		 		background: url('/static/img/project_icon_white.png') no-repeat center ;
@@ -401,20 +413,20 @@ export default {
 			background-position: -62px -62px;
 		}
 		&.modify-psw span{
-			background-position: -143px -62px;
+			background-position: -145px -62px;
 		}
 		&.modify-ava span{
 			background-position: -226px -62px;
 		}
 		&.login-out span{
-			background-position: -310px -62px;
+			background-position: -311px -62px;
 		}
 		&.modify-title span {
 	 		background: url('/static/img/project_icon.png') no-repeat center ;
 	 	}
  	}
- 	
 }
+
 a {
 	padding: 0 20px;
 	display: inline-block;
@@ -424,7 +436,16 @@ a {
 a:visited {
 	color:#333333;
 }
-.account {
-	
+.check {
+	position: relative;
+	.red-dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background:#f00;
+		position: absolute;
+		right: 15px;
+		top: 12px;
+	}
 }
 </style>

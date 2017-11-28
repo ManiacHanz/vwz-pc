@@ -77,6 +77,7 @@ const state = {
 	temporaryPanelList: '',     //临时手机面板的数据
 	editorContent: '',						//富文本的内容
 	shouldListUpdate: false,						// 文章管理列表是否需要更新
+	showRedDot: false,         //是否显示表示更新的圆点
 	test:'1',		//测试用
 }
 

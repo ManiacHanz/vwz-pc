@@ -141,7 +141,7 @@
 						<input type="file" name="" hidden="hidden" value="选择LOGO" id="logoUploadBtn" @change="logoChange" accept=".png, .jpg, .jpeg">
 						<div class="pick-logo" @click="_uploaderTrigger('logoUploadBtn')">选择LOGO</div>
 						<p>LOGO必须是jpg或者png格式图片；</p>
-						<p>新LOGO不允许涉及政治敏感与色情</p>
+						<p>新LOGO不允许涉及政治敏感、暴力与色情</p>
 					</div>
 				</section>
 				<section class="modify-avatar" v-if="modalCfg.modalFor==='avatar'">
@@ -153,7 +153,7 @@
 						<input type="file" name="" hidden="hidden" value="选择头像" id="avatarUploadBtn" @change="avatarChange" accept=".png, .jpg, .jpeg">
 						<div class="pick-avatar" @click="_uploaderTrigger('avatarUploadBtn')">选择头像</div>
 						<p>头像必须是jpg或者png格式图片；</p>
-						<p>新头像不允许涉及政治敏感与色情</p>
+						<p>新头像不允许涉及政治敏感、暴力与色情</p>
 					</div>
 				</section>
 				<section class="modify-psw" v-if="modalCfg.modalFor==='password'">
@@ -402,7 +402,7 @@ export default {
 		//初始化列表数据  这里应该放在watch里面做
 		// this.articleList = materialArticleData()
 		// this.QRLink = localUrl + '?uid=' + this.userInfo.uid + '&name=' + getStore('name')
-		this.QRLink = 'http://192.168.100.24/abc.html' + '?uid=' + this.userInfo.uid + '&name=' + getStore('name')
+		this.QRLink = 'http://120.26.59.145:8080/micro/abc.html' + '?uid=' + this.userInfo.uid + '&name=' + getStore('name')
   },
   methods: {
   	...mapMutations([

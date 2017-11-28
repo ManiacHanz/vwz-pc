@@ -17,9 +17,10 @@
 							菜单名称
 						</div>
 						<div>
-							<input type="text" name="" maxlength="8" v-model="titleValue">
+              <!-- @input="_changeLength($event, 8)" -->
+							<input type="text" name="" v-model="titleValue" >
 							<p class="alert"></p>
-							<div class="tip">输入字数不超过8个汉字</div>
+							<div class="tip">输入字数不超过4个汉字或8个英文</div>
 						</div>
 					</div>
 					<div class="link-input input-box" v-if="item.type==='setLink'" :key="selectedIndex?selectedIndex:item.key">
@@ -65,9 +66,9 @@
 							标题
 						</div>
 						<div>
-							<input type="text" name="" maxlength="20" v-model="nameValue" :key="selectedIndex?selectedIndex:item.key" @blur="_nameBlur">
+							<input type="text" name="" v-model="nameValue" :key="selectedIndex?selectedIndex:item.key" @blur="_nameBlur">
 							<p class="alert"></p>
-							<div class="tip">输入字数不超过20个汉字</div>
+							<div class="tip">输入字数不超过20个汉字或40个英文</div>
 						</div>
 					</div>
 					<div class="summary-input input-box" v-if="item.type==='setSummary'">
@@ -75,9 +76,9 @@
 							摘要
 						</div>
 						<div>
-							<input type="text" name="" maxlength="54" v-model="summaryValue">
+							<input type="text" name="" v-model="summaryValue">
 							<p class="alert"></p>
-							<div class="tip">输入字数不超过54个汉字</div>
+							<div class="tip">输入字数不超过54个汉字或108个英文</div>
 						</div>
 					</div>
 					<div class="multi-pic-uploader" v-if="item.type==='setMultiPicUploader'">
@@ -103,8 +104,8 @@
 								<li class="add" v-if="item.imglist.length<3" @click="_uploaderTrigger('listPicAdd')"></li>
 							</ul>
 							<input type="file" id="listPicAdd" @change="_listPicAdd" hidden="hidden" accept=".png, .jpg, .jpeg">
-							<p class="alert" style="color: #f00">缩略图不可传两张</p>
-							<p style="color: #888">缩略图只可以上传一张或者三张，建议尺寸324x240</p>
+							<!-- <p class="alert" style="color: #f00">缩略图不可传两张</p> -->
+							<p style="color: #888;margin-top: 6px;">缩略图只可以上传一张或者三张，建议尺寸324x240</p>
 						</div>
 						
 					</div>
@@ -122,7 +123,7 @@ import { mapState, mapMutations } from 'vuex'
 
 import {imageBaseUrl} from 'config/env'
 
-import {u_viewPick, u_getDate, jsonStringify} from 'config/mUtils'
+import {u_viewPick, u_getDate, jsonStringify, getInputLen} from 'config/mUtils'
 import {__sendHomePanel, __sendListPanel, __sendUserPanel, __sendBase64} from 'service/sendData.js'
 import {__getArtList} from 'service/getData'
 
@@ -222,11 +223,20 @@ export default {
   		this.nameValue = this._getInputVal(this.formCfg.inputList, 'type', 'setName', 'value')[val]
 			this.linkValue = this._getInputVal(this.formCfg.inputList, 'type', 'setLink', 'value')[val]
   	},
-
+    /*以下是监测中英文输入的不同长度*/
+    titleValue: function(newValue,oldValue) {
+      getInputLen(newValue,oldValue,8,'titleValue',this)
+    },
+    nameValue: function(newValue,oldValue) {
+      getInputLen(newValue,oldValue,40,'nameValue',this)
+    },
+    summaryValue: function(newValue,oldValue) {
+      getInputLen(newValue,oldValue,108,'summaryValue',this)
+    },
   },
   methods: {
   	...mapMutations([
-  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR','SAVE_TEMPORARYLIST','SET_MOBILE_ACTIVE','SAVE_USERPANELLIST','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE','SAVE_LISTPANELLIST','CLEAR_FORMCFG','SET_LOADING','OPEN_NOTIFICATION','CLOSE_MODAL'
+  			'UPDATE_FORMCFG','OPEN_MODAL','SET_MODALCFG','SET_SOMEARR','SAVE_TEMPORARYLIST','SET_MOBILE_ACTIVE','SAVE_USERPANELLIST','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE','SAVE_LISTPANELLIST','CLEAR_FORMCFG','SET_LOADING','OPEN_NOTIFICATION','CLOSE_MODAL','SET_SHOWREDDOT'
   		]),
   	selectPic (index) {
   		this.selectedIndex = index
@@ -240,6 +250,15 @@ export default {
   			}
   		}
   	},
+    // 根据中英文改变maxlength
+    /*
+    _changeLength (e) {
+      let truelength = getInputLen(this.titleValue)
+      let oldLen = this.this.titleValue.length
+      if(truelength>8) {
+        this.titleValue = this.titleValue.substring(0, this.titleValue.length-1)
+      }
+    },*/
   	// 按钮触发器input file
   	_uploaderTrigger (id) {
   		let idSelector = "#"+ id
@@ -875,6 +894,7 @@ export default {
           })
           // alert('提交给后台  整个主页面板的数据')
           this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
+          this.SET_SHOWREDDOT()
   				break;
   			case 'introduce':
   			//首屏intro
@@ -916,6 +936,7 @@ export default {
           // console.log(this.temporaryPanelList)
           // alert('提交给后台  整个主页面板的数据')
           // this.SAVE_HOMEPANELLIST(this.temporaryPanelList)    //
+          this.SET_SHOWREDDOT()
   				break;
   			//首屏内容4个板块
   			case 'temp_0':
@@ -959,6 +980,7 @@ export default {
           })
           // alert('提交给后台  整个主页面板的数据')
           // this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
+          this.SET_SHOWREDDOT()
   				break;
   			case 'temp_1':
           if(!this.titleValue || !this.linkValue || !this.iconValue) {
@@ -1001,6 +1023,7 @@ export default {
           })
           // alert('提交给后台  整个主页面板的数据')
           // this.SAVE_HOMEPANELLIST(this.temporaryPanelList)    
+          this.SET_SHOWREDDOT()
   				break;
   			case 'temp_2':
           if(!this.titleValue || !this.linkValue || !this.iconValue) {
@@ -1043,6 +1066,7 @@ export default {
           })
           // alert('提交给后台  整个主页面板的数据')
           // this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
+          this.SET_SHOWREDDOT()
   				break;
   			case 'temp_3':
           if(!this.titleValue || !this.linkValue || !this.titleValue) {
@@ -1085,6 +1109,7 @@ export default {
           }) 
           // alert('提交给后台  整个主页面板的数据')
           // this.SAVE_HOMEPANELLIST(this.temporaryPanelList)  
+          this.SET_SHOWREDDOT()
   				break;
   			//list页banner
   			case 'listbanner': 
@@ -1153,6 +1178,7 @@ export default {
           })
           // alert('提交给后台  整个列表面板的数据')
           // this.SAVE_LISTPANELLIST(this.temporaryPanelList)  
+          this.SET_SHOWREDDOT()
   				break;
   			case 'contentlist':
           if(!this.nameValue || !this.linkValue || !this.formCfg.inputList[1].imglist.length) {
@@ -1194,6 +1220,7 @@ export default {
           })
           // alert('提交给后台  整个列表面板的数据')
           // this.SAVE_LISTPANELLIST(this.temporaryPanelList)
+          this.SET_SHOWREDDOT()
           break;
         case 'userlist':
           if(!this.nameValue || !this.linkValue || !this.formCfg.inputList[1].value) {
@@ -1235,7 +1262,8 @@ export default {
             })
           // alert('提交给后台  整个用户面板的数据')
 
-          this.SAVE_USERPANELLIST(this.temporaryPanelList)
+          // this.SAVE_USERPANELLIST(this.temporaryPanelList)
+          this.SET_SHOWREDDOT()
           break;
         case 'menubtn':
           if(!this.titleValue) {
@@ -1285,6 +1313,7 @@ export default {
               that.SET_MENUBTN_STYLE()
             })
           // this.SAVE_HOMEPANELLIST(this.temporaryPanelList)
+          this.SET_SHOWREDDOT()
           break;
   		}
   	}
@@ -1310,16 +1339,18 @@ export default {
 	.remove, .add {
 		padding-left: 26px;
 		cursor: pointer;
+    display: inline-block;
 	}
 	.remove {
 		color: #ff0000;
 		margin-right: 20px;
-		background: url('/static/img/sprite.png') no-repeat left center;
-		background-position: -102px -904px;
+		background: url('/static/img/del.png') no-repeat left center;
+		// background-position: -102px -904px;
 	}
 	.add {
-		background: url('/static/img/sprite.png') no-repeat left center;
-		background-position: -102px -932px;
+		background: url('/static/img/add.png') no-repeat left center;
+    background-size: 16px;
+		// background-position: -102px -932px;
 	}
 }
 
@@ -1459,8 +1490,8 @@ export default {
 			right: -10px;
 			top: -10px;
 			background: url("/static/img/del.png") no-repeat;
-      background-size: 20px;
-			// background-position: -103px -901px;
+      background-size: 16px;
+			background-position: 2px 2px;
 			z-index: 10;
 		}
 	}
@@ -1502,8 +1533,8 @@ export default {
 				right: -10px;
 				top: -10px;
 				background: url("/static/img/del.png") no-repeat;
-        background-size: 20px;
-				// background-position: -103px -901px;
+        background-size: 16px;
+        background-position: 2px 2px;
 				z-index: 10;
 			}
 		}

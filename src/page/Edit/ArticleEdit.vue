@@ -24,17 +24,17 @@
         <div class="mid">
           <form>
             <div class="title">
-              <input type="text" name="title" placeholder="这里输入标题，不超过20个字" maxlength="20" 
+              <input type="text" name="title" placeholder="这里输入标题，不超过20个汉字或40个英文" maxlength="20" 
               :class="{active: activeName === 'titleInput' || hoverName === 'titleInput' }" 
               @click.left="switchActive('titleInput')" v-model="titleValue" @blur="_clearActive()">
             </div>
             <div class="author">
-              <input type="text" name="author" placeholder="这里输入作者，不超过8个字" maxlength="8" 
+              <input type="text" name="author" placeholder="这里输入作者，不超过8个汉字或16个英文" maxlength="8" 
               :class="{active: activeName === 'authorInput' || hoverName === 'authorInput' }" 
               @click.left="switchActive('authorInput')" v-model="authorValue" @blur="_clearActive()">
             </div>
             <div class="decribe">
-              <input type="text" name="decribe" placeholder="这里输入描述，不超过40字" maxlength="40" 
+              <input type="text" name="decribe" placeholder="这里输入描述，不超过40汉字或80个英文" maxlength="40" 
               :class="{active: activeName === 'decribeInput' || hoverName === 'decribeInput' }" 
               @click.left="switchActive('decribeInput')" v-model="describeValue" @blur="_clearActive()">
             </div>
@@ -51,7 +51,7 @@
           </form>
 
         </div>
-        <div class="right">
+        <!-- <div class="right">
           <p>多媒体素材</p>
           <ul>
             <li :class="{active: liActiveName === 'addPic' || liHoverName === 'addPic'}"
@@ -70,7 +70,7 @@
               视频
             </li>
           </ul>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="footer">
@@ -85,7 +85,7 @@
 import {mapState, mapMutations} from 'vuex'
 
 import {imageBaseUrl} from 'config/env'
-import {u_viewPick} from 'config/mUtils'
+import {u_viewPick, getInputLen} from 'config/mUtils'
 import {__getArticalDetail} from 'service/getData'
 import {__sendBase64, __editArticle} from 'service/sendData'
 
@@ -122,6 +122,18 @@ export default {
     this.$nextTick(() => {        //保证ueditor这些都加载结束
      
     })
+  },
+  watch: {
+    /*以下是监测中英文输入的不同长度*/
+    titleValue: function(newValue,oldValue) {
+      getInputLen(newValue,oldValue,40,'titleValue',this)
+    },
+    authorValue: function(newValue,oldValue) {
+      getInputLen(newValue,oldValue,16,'authorValue',this)
+    },
+    describeValue: function(newValue,oldValue) {
+      getInputLen(newValue,oldValue,80,'describeValue',this)
+    },
   },
   methods: {
     ...mapMutations([
@@ -335,6 +347,8 @@ export default {
 .left {
   background: #f8f8f8;
   padding-top: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
   width: 262px;
   border-right: 1px solid #dddddd;
   &>p {
@@ -369,7 +383,7 @@ export default {
 }
 .mid {
   flex-grow: 1;
-  padding: 30px 94px;
+  padding: 30px 120px;
   .title, .author, .copy, .decribe {
     margin-bottom: 30px;
     input {
@@ -444,7 +458,7 @@ export default {
   // width:100%;
   height: 76px;
   border-top: 1px solid #dedede;
-  z-index:9999;
+  z-index:998;
   position: fixed;
   bottom: 0;
   left: 0;
