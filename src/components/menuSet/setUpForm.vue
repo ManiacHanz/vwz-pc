@@ -28,7 +28,7 @@
 							页面地址
 						</div>
 						<div>
-							<input type="text" name="" maxlength="" v-model="linkValue" @blur="_linkBlur" @input="linkTypeValue = 0" id="linkInput" placeholder="请输入完整的网页地址  http://www...">
+							<input type="text" name="" maxlength="" v-model="linkValue" @blur="_linkBlur" @input="linkTypeValue = 0" id="linkInput" placeholder="第三方网站请输入完整的网页地址  http://www...">
 							<p class="alert"></p>
 							<div class="tip">
 								<div>输入第三方跳转网页</div>

@@ -402,7 +402,8 @@ export default {
 		//初始化列表数据  这里应该放在watch里面做
 		// this.articleList = materialArticleData()
 		// this.QRLink = localUrl + '?uid=' + this.userInfo.uid + '&name=' + getStore('name')
-		this.QRLink = 'http://120.26.59.145:8080/micro/abc.html' + '?uid=' + this.userInfo.uid + '&name=' + getStore('name')
+		// this.QRLink = 'http://120.26.59.145:8080/micro/abc.html' + '?uid=' + this.userInfo.uid + '&name=' + getStore('name')
+		this.QRLink = 'http://192.168.100.24/micportal/mobile/abc.html' + '?uid=' + this.userInfo.uid
   },
   methods: {
   	...mapMutations([

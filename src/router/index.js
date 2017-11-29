@@ -32,6 +32,7 @@ export default new Router({
       path: '/artedit',
       name: 'ArticleEdit',
       component: ArticleEdit,
+      meta: {noKeepAlive:true}
     },
     {
       path: '/postcard',

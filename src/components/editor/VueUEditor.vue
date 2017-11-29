@@ -25,6 +25,10 @@ export default {
       default: function () {
         return {};
       }
+    },
+    content: {
+      type: String,
+      default: '123',
     }
   },
   computed: {
@@ -32,16 +36,25 @@ export default {
         'editorContent'
       ])
   },
-  created () {
-    if (window.UE !== undefined) {
-      // 如果全局对象存在，说明编辑器代码已经初始化完成，直接加载编辑器
-      this.scriptTagStatus = 2;
-      this.initEditor();
-    } else {
-      // 如果全局对象不存在，说明编辑器代码还没有加载完成，需要加载编辑器代码
-      this.insertScriptTag();
-    }
+
+  mounted () {
+    // console.log('ch-mounted...:',this.$props.content)
   },
+  created () {
+    setTimeout(()=>{
+      // console.log(this.editorContent)
+      if (window.UE !== undefined) {
+        // 如果全局对象存在，说明编辑器代码已经初始化完成，直接加载编辑器
+        this.scriptTagStatus = 2;
+        this.initEditor();
+      } else {
+        // 如果全局对象不存在，说明编辑器代码还没有加载完成，需要加载编辑器代码
+        this.insertScriptTag();
+      }
+    },200)
+    
+  },
+  
   data () {
     return {
     	 // 为了避免麻烦，每个编辑器实例都用不同的 id
@@ -100,12 +113,19 @@ export default {
         // Vue 异步执行 DOM 更新，这样一来代码执行到这里的时候可能 template 里面的 script 标签还没真正创建
         // 所以，我们只能在 nextTick 里面初始化 UEditor
         this.$nextTick(() => {
-          console.log('ueconfig:',this.ueditorConfig)
+          // console.log(this.editorContent)
           this.instance = window.UE.getEditor(this.randomId, this.ueditorConfig);
           // 绑定事件，当 UEditor 初始化完成后，将编辑器实例通过自定义的 ready 事件交出去
           this.instance.addListener('ready', () => {
             this.editorReady(this.instance);
           });
+          this.instance.addListener('afterSetContent', () => {
+            if(this.editorContent && !this.instance.getContent()){
+              console.log('set失败.')
+
+              // this.instance.setContent(that.editorContent);
+            }
+          })
         });
       }
     },
@@ -115,8 +135,9 @@ export default {
       // editorInstance.addListener('contentChange', () => {
       //   console.log('编辑器内容发生了变化：', editorInstance.getContent());
       // });
+      
       editorInstance.addListener('blur', () => {
-        console.log('编辑器失焦：', editorInstance.getContent());
+        // console.log('编辑器失焦：', editorInstance.getContent());
         that.SET_EDITORCONTENT(editorInstance.getContent())
       });
     }
@@ -125,9 +146,9 @@ export default {
     // 组件销毁的时候，要销毁 UEditor 实例
     if (this.instance !== null && this.instance.destroy) {
       this.instance.destroy();
+      // console.log(this.instance)
     }
   },
-
 };
 </script>
 

@@ -138,6 +138,7 @@ export default {
     color: #999999;
     height: 40px;
     overflow: hidden;
+    word-break: break-all;
   }
   .table .mask {
     font-size: 16px;

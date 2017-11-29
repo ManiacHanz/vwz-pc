@@ -230,6 +230,7 @@ export default {
 								alert(res.message)
 								return false
 							}
+							setStore('name',_this.projectNameInput)
 							that.OPEN_NOTIFICATION('修改成功')
 							that.CLOSE_MODAL()
 						})
@@ -266,9 +267,11 @@ export default {
 						...that.userInfo
 					}
 					__loginOut(data).then( res => {					//退出登录要发请求？
-						// alert('退出登录成功')
+						
 						// console.log(res)
 						that.CLOSE_MODAL()
+						alert('退出登录成功')
+						location.href = '../login/page/login.html'
 						console.log(res)
 					})
 				}

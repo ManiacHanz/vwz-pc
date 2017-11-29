@@ -40,7 +40,7 @@
             </div>
             <div class="ueditor">
               <!-- //:ueditorConfig="{serverUrl:'http://localhost:8080/lulang/testffs/controller'}" -->
-               <VueUEditor style="margin-bottom:30px;"></VueUEditor>
+               <VueUEditor style="margin-bottom:30px;" :content="content"></VueUEditor>
             </div>
             <div class="copy">
               <p>网页版权信息</p>
@@ -107,7 +107,7 @@ export default {
       authorValue: '',    //作者输入框的值
       describeValue: '',    //描述输入框的值
       copyValue: '',    //版权输入框的值
-
+      content: '',   //继承的值
     }
   },
   components: {
@@ -118,7 +118,32 @@ export default {
         'userInfo','editorContent'
       ])
   },
+  created (){
+    // console.log('fa-created...')
+    this.init()
+      // 要用id来请求 是编辑还是新建
+      if(this.params == '') {
+        return 
+      }
+      let data = {
+        ...this.userInfo,
+        id: this.params,
+      }
+      const that = this
+      __getArticalDetail(data)
+        .then( res => {
+          console.log(res)
+          that.coverSrc = res.data.cover
+          that.titleValue = res.data.title
+          that.authorValue = res.data.author
+          that.describeValue = res.data.described
+          that.copyValue = res.data.copyright
+          that.SET_EDITORCONTENT(res.data.content)
+          that.content = res.data.content
+        })
+  },
   mounted() {
+    // console.log('fa-mounted...')
     this.$nextTick(() => {        //保证ueditor这些都加载结束
      
     })
@@ -271,8 +296,11 @@ export default {
   // }
   beforeRouteEnter(to, from ,next) {
     // console.log("before...")
+    
+    /* // 最后执行-。-
     next( vm => {
-      // console.log(vm.params)
+
+      // console.log('beforeRouteEnter')
       vm.init()
       // 要用id来请求 是编辑还是新建
       if(vm.params == '') {
@@ -294,6 +322,8 @@ export default {
           that.SET_EDITORCONTENT(res.data.content)
         })
     })
+    */
+    next()
   },
   beforeRouteLeave (to,from,next) {
     this.coverSrc = ''

@@ -20,8 +20,11 @@
       </transition>
       <transition name="router-fade" mode="out-in">
         <keep-alive>
-          <router-view></router-view>
+          <router-view v-if="!$route.meta.noKeepAlive"></router-view>
         </keep-alive>
+      </transition>
+      <transition name="router-fade" mode="out-in">
+          <router-view v-if="$route.meta.noKeepAlive"></router-view>
       </transition>
     </div>
     <modal></modal>
@@ -59,11 +62,9 @@ export default {
       ]),
   },
   created () {
-    setStore('uid', 'USERjIMHXdT1')
-    setStore('token', 'cf08de05dd353ff842667c4e0991a41b')
-    setStore('name','测试微网站名称') 
-    // setStore('headimg','/webfrontres/TourismPc/img/header1.jpg')
-    // setStore('logo','/fileresource/imgs/USERjIMHXdT1/1511522404344.jpeg')
+    setStore('uid', 'USERDGcfrI6i')
+    setStore('token', 'b6ba57161d5f69514ac1829315e0b740')
+    // setStore('name','测试微网站名称') 
 
     this.uid = getStore('uid')
     this.token = getStore('token')
@@ -100,8 +101,8 @@ export default {
 .notification {
   width: 280px;
   margin: 0 auto;
-  position: absolute;
-  top: -1px;
+  position: fixed;
+  top: 0px;
   left: calc( 50vw - 140px );
 }
 /*transition的动画*/

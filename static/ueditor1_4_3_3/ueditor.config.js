@@ -36,7 +36,7 @@
 
         //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的重新定义
         , toolbars: [
-        ['undo', 'redo','|', 'fontsize' ,'forecolor', 'backcolor','|','bold', 'italic', 'underline',  'strikethrough', 'horizontal','|','simpleupload', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter'],
+        ['undo', 'redo','|', 'fontsize' ,'forecolor', 'backcolor','|','bold', 'italic', 'underline',  'strikethrough', 'horizontal','|','simpleupload'],
         [ 'customstyle', 'paragraph','|','justifyleft', 'justifycenter', 'justifyright', 'justifyjustify',
            '|','rowspacingtop', 'rowspacingbottom', 'lineheight', '|', 'insertorderedlist', 'insertunorderedlist',],
           ]
@@ -188,7 +188,7 @@
 
         //fontsize
         //字号
-        //,'fontsize':[10, 11, 12, 14, 16, 18, 20, 24, 36]
+        ,'fontsize':[ 12, 14, 16, 18, 20, ]
 
         //paragraph
         //段落格式 值留空时支持多语言自动识别，若配置，则以配置值为准
@@ -215,12 +215,13 @@
         //label 显示的名字也是用来标识不同类型的标识符，注意这个值每个要不同，
         //style 添加的样式
         //每一个对象就是一个自定义的样式
-        //,'customstyle':[
-        //    {tag:'h1', name:'tc', label:'', style:'border-bottom:#ccc 2px solid;padding:0 4px 0 0;text-align:center;margin:0 0 20px 0;'},
-        //    {tag:'h1', name:'tl',label:'', style:'border-bottom:#ccc 2px solid;padding:0 4px 0 0;margin:0 0 10px 0;'},
-        //    {tag:'span',name:'im', label:'', style:'font-style:italic;font-weight:bold'},
-        //    {tag:'span',name:'hi', label:'', style:'font-style:italic;font-weight:bold;color:rgb(51, 153, 204)'}
-        //]
+        ,'customstyle':[
+           // {tag:'h1', name:'tc', label:'', style:'border-bottom:#ccc 2px solid;padding:0 4px 0 0;text-align:center;margin:0 0 20px 0;'},
+           // {tag:'h1', name:'tl',label:'', style:'border-bottom:#ccc 2px solid;padding:0 4px 0 0;margin:0 0 10px 0;'},
+           // {tag:'span',name:'im', label:'', style:'font-style:italic;font-weight:bold'},
+           // {tag:'span',name:'hi', label:'', style:'font-style:italic;font-weight:bold;color:rgb(51, 153, 204)'}
+           {tag:'img', style:'display:block;margin: 4px auto;'}
+        ]
 
         //打开右键菜单功能
         //,enableContextMenu: true
@@ -245,7 +246,7 @@
         //,elementPathEnabled : true
 
         //wordCount
-        //,wordCount:true          //是否开启字数统计
+        ,wordCount:false          //是否开启字数统计
         //,maximumWords:10000       //允许的最大字符数
         //字数统计提示，{#count}代表当前字数，{#leave}代表还可以输入多少字符数,留空支持多语言自动切换，否则按此配置显示
         //,wordCountMsg:''   //当前已输入 {#count} 个字符，您还可以输入{#leave} 个字符
@@ -272,7 +273,7 @@
 
         //autoHeightEnabled
         // 是否自动长高,默认true
-        //,autoHeightEnabled:true
+        ,autoHeightEnabled:false
 
         //scaleEnabled
         //是否可以拉伸长高,默认true(当开启时，自动长高失效)
@@ -297,23 +298,23 @@
 
         //autotypeset
         //自动排版参数
-        //,autotypeset: {
-        //    mergeEmptyline: true,           //合并空行
-        //    removeClass: true,              //去掉冗余的class
-        //    removeEmptyline: false,         //去掉空行
-        //    textAlign:"left",               //段落的排版方式，可以是 left,right,center,justify 去掉这个属性表示不执行排版
-        //    imageBlockLine: 'center',       //图片的浮动方式，独占一行剧中,左右浮动，默认: center,left,right,none 去掉这个属性表示不执行排版
-        //    pasteFilter: false,             //根据规则过滤没事粘贴进来的内容
-        //    clearFontSize: false,           //去掉所有的内嵌字号，使用编辑器默认的字号
-        //    clearFontFamily: false,         //去掉所有的内嵌字体，使用编辑器默认的字体
-        //    removeEmptyNode: false,         // 去掉空节点
-        //    //可以去掉的标签
-        //    removeTagNames: {标签名字:1},
-        //    indent: false,                  // 行首缩进
-        //    indentValue : '2em',            //行首缩进的大小
-        //    bdc2sb: false,
-        //    tobdc: false
-        //}
+        ,autotypeset: {
+           mergeEmptyline: true,           //合并空行
+           removeClass: true,              //去掉冗余的class
+           removeEmptyline: false,         //去掉空行
+           textAlign:"left",               //段落的排版方式，可以是 left,right,center,justify 去掉这个属性表示不执行排版
+           imageBlockLine: 'center',       //图片的浮动方式，独占一行剧中,左右浮动，默认: center,left,right,none 去掉这个属性表示不执行排版
+           pasteFilter: false,             //根据规则过滤没事粘贴进来的内容
+           clearFontSize: false,           //去掉所有的内嵌字号，使用编辑器默认的字号
+           clearFontFamily: false,         //去掉所有的内嵌字体，使用编辑器默认的字体
+           removeEmptyNode: false,         // 去掉空节点
+           //可以去掉的标签
+           // removeTagNames: {标签名字:1},
+           // indent: false,                  // 行首缩进
+           // indentValue : '2em',            //行首缩进的大小
+           // bdc2sb: false,
+           // tobdc: false
+        }
 
         //tableDragable
         //表格是否可以拖拽
@@ -395,7 +396,7 @@
 			header: [],
 			hr:     [],
 			i:      ['class', 'style'],
-			img:    ['src', 'alt', 'title', 'width', 'height', 'id', '_src', 'loadingclass', 'class', 'data-latex'],
+			img:    ['src', 'alt', 'title', 'width', 'height', 'id', '_src', 'loadingclass', 'class', 'data-latex','style'],
 			ins:    ['datetime'],
 			li:     ['class', 'style'],
 			mark:   [],

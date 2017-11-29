@@ -6921,6 +6921,7 @@ var fillCharReg = new RegExp(domUtils.fillChar, 'g');
                     //设置默认字体和字号
                     //font-family不能呢随便改，在safari下fillchar会有解析问题
                     'body{margin:8px;font-family:sans-serif;font-size:16px;}' +
+                    'img{max-width:100%;}' +
                     //设置段落间距
                     'p{margin:5px 0;}</style>' +
                     ( options.iframeCssUrl ? '<link rel=\'stylesheet\' type=\'text/css\' href=\'' + utils.unhtml(options.iframeCssUrl) + '\'/>' : '' ) +
@@ -11005,6 +11006,9 @@ UE.commands['imagefloat'] = {
                             pN = img.parentNode;
                             domUtils.setStyle(img, 'float', '');
                             domUtils.removeAttributes(img,'align');
+                            /*添加*/
+                            img.style.marginLeft = "auto";
+                            img.style.marginRight = "auto";
                             tmpNode = img;
                             while (pN && domUtils.getChildCount(pN, function (node) {
                                 return !domUtils.isBr(node) && !domUtils.isWhitespace(node);
@@ -23908,7 +23912,7 @@ UE.plugin.register('autoupload', function (){
 
 // plugins/autosave.js
 UE.plugin.register('autosave', function (){
-
+    /**/return false
     var me = this,
         //无限循环保护
         lastSaveTime = new Date(),
@@ -24515,7 +24519,7 @@ UE.plugin.register('simpleupload', function (){
               var allowFiles = me.getOpt('imageAllowFiles');
 
               me.focus();
-              me.execCommand('inserthtml', '<img class="loadingclass" id="' + loadingId + '" src="' + me.options.themePath + me.options.theme +'/images/spacer.gif" title="' + (me.getLang('simpleupload.loading') || '') + '" >');
+              me.execCommand('inserthtml', '<img class="loadingclass" style="max-width:100%" id="' + loadingId + '" src="' + me.options.themePath + me.options.theme +'/images/spacer.gif" title="' + (me.getLang('simpleupload.loading') || '') + '" >');
 
               /!* 判断后端配置是否没有加载成功 *!/
               if (!me.getOpt('imageActionName')) {
