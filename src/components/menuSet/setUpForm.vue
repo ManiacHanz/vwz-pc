@@ -820,6 +820,10 @@ export default {
   	_submit () {
 			// 保存并发布就是转化成需要发送的数据 ，给模态框确认的时候只需要通过这个来判断发送给哪个接口 就行了
       let that = this
+      // linkValue的三个匹配值 分别给网页 http:// https://  素材库新增文章ARTI  默认文章moren..
+      const urlReg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+/
+      const artReg = /^(ARTI)\w{8}$/
+      const defaultReg = /^(morenGEvd8TWd)|(morenv7XZazgx)|(morenqcs2itbp)$/
   		if( !this.formCfg || this.formCfg.formFor == '') {
         alert('请选择修改板块')
   			return false
@@ -847,6 +851,11 @@ export default {
           for (let i in this.formCfg.inputList[2].value) {
             if(this.formCfg.inputList[2].value[i] == '') {
               alert('轮播图片的页面地址不能为空，否则不会在手机页面上展示')
+              return false
+              break
+            }
+            if( !urlReg.test(this.formCfg.inputList[2].value[i]) && !artReg.test(this.formCfg.inputList[2].value[i]) && !defaultReg.test(this.formCfg.inputList[2].value[i])) {
+              alert('请输入正确的http/https开头的网址，或从素材库中选择文章')
               return false
               break
             }
@@ -902,6 +911,10 @@ export default {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
           }
+          if( !urlReg.test(this.linkValue) && !artReg.test(this.linkValue) && !defaultReg.test(this.linkValue)) {
+            alert('请输入正确的http/https开头的网址，或从素材库中选择文章')
+            return false
+          }
           this.SET_LOADING()
   				let intro = {
   					title: this.nameValue,
@@ -943,6 +956,10 @@ export default {
           if(!this.titleValue || !this.linkValue || !this.iconValue) {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
+          }
+          if( !urlReg.test(this.linkValue) && !artReg.test(this.linkValue) && !defaultReg.test(this.linkValue)) {
+            alert('请输入正确的http/https开头的网址，或从素材库中选择文章')
+            return false
           }
           this.SET_LOADING()
 
@@ -987,6 +1004,10 @@ export default {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
           }
+          if( !urlReg.test(this.linkValue) && !artReg.test(this.linkValue) && !defaultReg.test(this.linkValue)) {
+            alert('请输入正确的http/https开头的网址，或从素材库中选择文章')
+            return false
+          }
           this.SET_LOADING()
 
   				tempObj = {
@@ -1030,6 +1051,10 @@ export default {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
           }
+          if( !urlReg.test(this.linkValue) && !artReg.test(this.linkValue) && !defaultReg.test(this.linkValue)) {
+            alert('请输入正确的http/https开头的网址，或从素材库中选择文章')
+            return false
+          }
           this.SET_LOADING()
 
   				tempObj = {
@@ -1072,6 +1097,10 @@ export default {
           if(!this.titleValue || !this.linkValue || !this.titleValue) {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
+          }
+          if( !urlReg.test(this.linkValue) && !artReg.test(this.linkValue) && !defaultReg.test(this.linkValue)) {
+            alert('请输入正确的http/https开头的网址，或从素材库中选择文章')
+            return false
           }
           this.SET_LOADING()
 
@@ -1137,6 +1166,11 @@ export default {
               return false
               break
             }
+            if( !urlReg.test(this.formCfg.inputList[2].value[i]) && !artReg.test(this.formCfg.inputList[2].value[i]) && !defaultReg.test(this.formCfg.inputList[2].value[i])) {
+              alert('请输入正确的http/https开头的网址，或从素材库中选择文章')
+              return false
+              break
+            }
           }
           that.SET_LOADING()
   				banner = new Array
@@ -1185,6 +1219,10 @@ export default {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
           }
+          if( !urlReg.test(this.linkValue) && !artReg.test(this.linkValue) && !defaultReg.test(this.linkValue)) {
+            alert('请输入正确的http/https开头的网址，或从素材库中选择文章')
+            return false
+          }
           that.SET_LOADING()
           content = [...this.listPanelList.content]
           let index = this.formCfg.listIndex
@@ -1226,6 +1264,10 @@ export default {
           if(!this.nameValue || !this.linkValue || !this.formCfg.inputList[1].value) {
             alert('表单配置项不能为空,否则不会在手机页面上展示')
             return
+          }
+          if( !urlReg.test(this.linkValue) && !artReg.test(this.linkValue) && !defaultReg.test(this.linkValue)) {
+            alert('请输入正确的http/https开头的网址，或从素材库中选择文章')
+            return false
           }
           that.SET_LOADING()
           content = [...this.userPanelList.content]
@@ -1276,6 +1318,13 @@ export default {
               return
             }
           }
+          if( this.linkValue ) {
+            if( !urlReg.test(this.linkValue) && !artReg.test(this.linkValue) && !defaultReg.test(this.linkValue)) {
+              alert('配置第三方网页请输入正确的http/https开头的网址')
+              return false
+            }
+          }
+          
           that.SET_LOADING()
           let button = [...this.homePanelList.button]
           index = this.formCfg.inputList[0].key.substring(7)

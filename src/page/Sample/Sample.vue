@@ -71,8 +71,10 @@ export default {
 <style lang="less" scoped>
 .box {
   // min-height: calc(~'100vh - 60px');
+  word-break: break-all;
 }
 .inner-box {
+  word-break: break-all;
 	width: 670px;
   min-height: 100%;
 	margin: 0 auto;
