@@ -1402,7 +1402,7 @@ export default {
 	img {
 		width: 28px;
 		height: 28px;
-		vertical-align: middle;
+		vertical-align: bottom;
 		background: #dedede;
 		padding: 2px;
 		margin-right: 6px;
@@ -1450,6 +1450,7 @@ export default {
 		}
 	}
 	p {
+    margin-top: 4px;
 		width: 300px;
 		text-align:left;
 		color: #999999;

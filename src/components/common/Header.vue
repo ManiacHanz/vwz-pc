@@ -182,6 +182,10 @@ export default {
 						alert('新密码不能少于6位')
 						return false
 					}
+					if(_this.modifyPswNew == _this.modifyPswOld) {
+						alert('新密码不能和旧密码相同')
+						return false
+					}
 					if( _this.modifyPswConfirm != _this.modifyPswNew ){
 						alert('两次密码输入必须一致')
 						return false

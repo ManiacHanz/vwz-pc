@@ -266,7 +266,7 @@ export default {
 	}
 }
 .detail li {
-	border-top: 1px solid @borderGrey;
+	// border-top: 1px solid @borderGrey;
 	border-bottom: 1px solid @borderGrey;
 	cursor: pointer;
 	position: relative;
@@ -281,6 +281,9 @@ export default {
 		top: 0;
 		left: 0;
 	}
+	&:last-of-type {
+		border-bottom: none;
+	}
 }
 
 .dark {
@@ -289,7 +292,7 @@ export default {
 		border-color: @dark_lightFont;
 	}
 	.detail li {
-		border-top-color: @dark_border;
+		// border-top-color: @dark_border;
 		border-bottom-color: @dark_border;
 		&.active:after {
 			border-color: @dark_lightFont;

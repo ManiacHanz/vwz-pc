@@ -153,6 +153,7 @@
 						<input type="file" name="" hidden="hidden" value="选择头像" id="avatarUploadBtn" @change="avatarChange" accept=".png, .jpg, .jpeg">
 						<div class="pick-avatar" @click="_uploaderTrigger('avatarUploadBtn')">选择头像</div>
 						<p>头像必须是jpg或者png格式图片；</p>
+						<p>推荐使用150*150像素的正方形图片</p>
 						<p>新头像不允许涉及政治敏感、暴力与色情</p>
 					</div>
 				</section>
@@ -165,6 +166,7 @@
 					<div>
 						<span>新密码：</span>
 						<input type="password" name="newPassword" v-model="modifyPswNew" maxlength="12">
+						<p class="alert" v-show="newPasswordAlert2">新密码不能和旧密码相同</p>
 						<p class="alert" v-show="newPasswordAlert">新密码少于6位/新密码不能包含特殊字符/新密码多于12位</p>
 						<p>密码为6-12位，必须为数字或大小写字母及其组合</p>
 					</div>
@@ -183,7 +185,7 @@
 				<section class="pick-article" v-if="modalCfg.modalFor==='pickArticle'">
 					<div class="top">
 						<div class="search">
-							<input type="text" name="" placeholder="标题/作者" maxlength="20" v-model="search">
+							<input type="text" name="" placeholder="标题/作者" maxlength="20" v-model="search" @keyup.enter="_searchArticle">
 							<a role="button" @click="_searchArticle"></a>
 						</div>
 						<div class="add-btn" @click="goEdit">新建文章</div>
@@ -285,6 +287,7 @@ export default {
   		modifyPswConfirm:'',
     	oldPasswordAlert: false,
     	newPasswordAlert: false,
+    	newPasswordAlert2: false,
     	//项目名称
     	projectNameInput: '',
 
@@ -303,6 +306,11 @@ export default {
   },
   watch: {
   	modifyPswNew: function(newVal, old) {
+  		if(newVal == this.modifyPswOld) {
+  			this.newPasswordAlert2 = true
+  		}else {
+  			this.newPasswordAlert2 = false
+  		}
   		if(newVal.length<6) {
   			this.newPasswordAlert = true
   		}
@@ -403,7 +411,8 @@ export default {
 		// this.articleList = materialArticleData()
 		// this.QRLink = localUrl + '?uid=' + this.userInfo.uid + '&name=' + getStore('name')
 		// this.QRLink = 'http://120.26.59.145:8080/micro/abc.html' + '?uid=' + this.userInfo.uid + '&name=' + getStore('name')
-		this.QRLink = 'http://192.168.100.24/micportal/mobile/abc.html' + '?uid=' + this.userInfo.uid
+		this.QRLink = 'http://vwz.ctibet.cn:8080/micportal/mobile/abc.html' + '?uid=' + this.userInfo.uid
+		this.projectNameInput = getStore('name')
   },
   methods: {
   	...mapMutations([
@@ -635,7 +644,9 @@ export default {
 .dialog {
 	width: 850px;
 	height: 580px;
-	margin: 130px auto 0;
+	position: absolute;
+	top: calc(~'50% - 290px');
+	margin: 0 auto ;
 	background: #fff;
 	position: relative;
 }
@@ -654,8 +665,9 @@ export default {
 		width: 24px;
 		height: 24px;
 		margin: 13px 0;
-		background: url('/static/img/icon_1.png') no-repeat;
-		background-position: -64px -613px;
+		background: url('/static/img/close.png') no-repeat;
+		// background-position: -64px -613px;
+		background-size: 24px;
 		cursor: pointer;
 		transition: all 0.3s;
 		&:hover {

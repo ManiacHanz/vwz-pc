@@ -4,7 +4,7 @@
       <div class="icon"></div>
       <div class="char">
         <p>温馨提示</p>
-        菜单编辑完成后需点击“保存并发布”，然后可通过“个人中心--查看效果”访问微信网页。
+        <p>菜单编辑完成后需点击“保存并发布”，然后可通过“个人中心--查看效果”访问微信网页。</p>
       </div>
     </div>
     <div class="body">
@@ -34,20 +34,26 @@ export default {
 @import '../../../style/variety.less';
 
 .alert {
-    height: 34px;
+    height: 36px;
     background: @menuSetBackColor;
     padding:  16px 30px 18px;
     display: flex;
     border-top: 1px solid @borderGrey;
   }
   .alert .icon {
-    width: 34px;
+    width: 36px;
     height: 36px;
     background: url('/static/img/tips.png') no-repeat;
-    background-position-y: 3px; 
+    // background-position-y: 2px; 
+    background-size: 36px;
     margin-right: 10px;
   }
-  .alert .char p:last-of-type{
+  .alert .char {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .alert .char p:first-of-type{
     color: #aaaaaa;
   }
   .body {

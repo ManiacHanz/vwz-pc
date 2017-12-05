@@ -320,8 +320,8 @@ export default {
 	}
 }
 .introduce {
-	height: 86px;
-	border-top: 1px solid #dddddd;
+	height: 87px;
+	// border-top: 1px solid #dddddd;
 	border-bottom: 1px solid #dddddd;
 	padding: 6px 8px;
 	cursor: pointer;
@@ -517,7 +517,6 @@ export default {
 		}
 	}
 	.plate {
-		background: @green_back;
 		&>div.active:after {
 			border: 2px solid @green_font;
 		}

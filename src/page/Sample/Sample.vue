@@ -39,6 +39,14 @@ export default {
   	// console.log(data)
   	__getArticalDetail(data)
   		.then(res=>{
+        if(!res) {
+          alert('网络请求失败，请检查网络或稍后重试')
+          return false
+        }
+        if(!res.result) {
+          alert(res.message)
+          return
+        }
   			console.log(res)
   			this.detail = Object.assign({},res.data)
   			const oContent = document.querySelector('.content')

@@ -62,8 +62,8 @@ export default {
       ]),
   },
   created () {
-    setStore('uid', 'USERDGcfrI6i')
-    setStore('token', 'b6ba57161d5f69514ac1829315e0b740')
+    // setStore('uid', 'USERDGcfrI6i')
+    // setStore('token', 'b6ba57161d5f69514ac1829315e0b740')
     // setStore('name','测试微网站名称') 
 
     this.uid = getStore('uid')

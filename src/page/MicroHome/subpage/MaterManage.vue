@@ -3,7 +3,7 @@
 		<div class="inner-box">
 			<div class="top-bar">
 				<div class="search">
-					<input type="text" name="search" placeholder="标题/作者" v-model="search">
+					<input type="text" name="search" placeholder="标题/作者" v-model="search" @keyup.13="_searchArticle">
 					<a role="button" @click="_searchArticle"></a>
 				</div>
 				<div class="new-btn" @click="goEdit()">新建文章</div>
@@ -319,6 +319,8 @@ import Pagination from '../../../components/common/Pagination'
 </script>
 
 <style lang="less" scoped>
+
+
 	.mater-manage .tabs {
 		display: flex;
 		justify-content: flex-start;
@@ -376,6 +378,9 @@ import Pagination from '../../../components/common/Pagination'
 		text-align: center;
 		border-radius: 7px;
 		cursor: pointer;
+		&.hover {
+			background: #008ec4;
+		}
 	}
 	.noData {
 		padding-top: 100px;

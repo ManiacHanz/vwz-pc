@@ -24,17 +24,17 @@
         <div class="mid">
           <form>
             <div class="title">
-              <input type="text" name="title" placeholder="这里输入标题，不超过20个汉字或40个英文" maxlength="20" 
+              <input type="text"  v-model="titleValue" name="title" placeholder="这里输入标题，不超过20个汉字或40个英文"
               :class="{active: activeName === 'titleInput' || hoverName === 'titleInput' }" 
-              @click.left="switchActive('titleInput')" v-model="titleValue" @blur="_clearActive()">
+              @click.left="switchActive('titleInput')" @blur="_clearActive()">
             </div>
             <div class="author">
-              <input type="text" name="author" placeholder="这里输入作者，不超过8个汉字或16个英文" maxlength="8" 
+              <input type="text" name="author" placeholder="这里输入作者，不超过8个汉字或16个英文" 
               :class="{active: activeName === 'authorInput' || hoverName === 'authorInput' }" 
               @click.left="switchActive('authorInput')" v-model="authorValue" @blur="_clearActive()">
             </div>
             <div class="decribe">
-              <input type="text" name="decribe" placeholder="这里输入描述，不超过40汉字或80个英文" maxlength="40" 
+              <input type="text" name="decribe" placeholder="这里输入描述，不超过40汉字或80个英文"
               :class="{active: activeName === 'decribeInput' || hoverName === 'decribeInput' }" 
               @click.left="switchActive('decribeInput')" v-model="describeValue" @blur="_clearActive()">
             </div>
@@ -44,7 +44,7 @@
             </div>
             <div class="copy">
               <p>网页版权信息</p>
-              <input type="text" name="copy" placeholder="这里输入网站版权信息，不超过40字" maxlength="40" 
+              <input type="text" name="copy" placeholder="这里输入网站版权信息，不超过40汉字或者80个英文"
               :class="{active: activeName === 'copyInput' || hoverName === 'copyInput' }" 
               @click.left="switchActive('copyInput')" v-model="copyValue" @blur="_clearActive()">
             </div>
@@ -158,6 +158,9 @@ export default {
     },
     describeValue: function(newValue,oldValue) {
       getInputLen(newValue,oldValue,80,'describeValue',this)
+    },
+    copyValue: function(newValue,oldValue) {
+      getInputLen(newValue,oldValue,80,'copyValue',this)
     },
   },
   methods: {
@@ -284,12 +287,7 @@ export default {
         })
     },
   },
-  watch: {
-    //监测参数的变化来发送请求
-    params(val, oldval){
-      // console.log(val, oldval)
-    }
-  },
+ 
   //如果是动态参数 /edit/:id就会触发这个
   // beforeRouteUpdate(to, from ,next) {
   //   console.log("before...")
