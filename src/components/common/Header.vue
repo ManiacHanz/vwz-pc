@@ -5,7 +5,7 @@
 				<img :src="[logoUrl==''?'/static/img/logo.png':imgBaseUrl+logoUrl]">
 			</div>
 			<div class="account" :class="[hasNew?'getnew':'']">
-				<img class="avatar " :src="[avatarUrl!=''?imgBaseUrl+avatarUrl:'/static/img/avatar.png']">
+				<img class="avatar " :src="[avatarUrl?imgBaseUrl+avatarUrl:'/static/img/avatar.png']">
 				<div class="red-dot" v-show="showRedDot"></div>
 				<ul>
 					<li class="check" @click="checkQrCode">
@@ -75,7 +75,7 @@ export default {
 	},
 	computed: {
 		...mapState([
-				'avatarUrl','logoUrl','avatarUrl','hasNew','userInfo','showRedDot'
+				'avatarUrl','logoUrl','hasNew','userInfo','showRedDot'
 			]),
 	},
 	mounted () {

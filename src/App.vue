@@ -104,6 +104,7 @@ export default {
   position: fixed;
   top: 0px;
   left: calc( 50vw - 140px );
+  z-index: 11;
 }
 /*transition的动画*/
 .router-fade-enter-active, .router-fade-leave-active {

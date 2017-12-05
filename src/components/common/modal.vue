@@ -305,6 +305,13 @@ export default {
   		])
   },
   watch: {
+  	modifyPswOld: function(newVal, old) {
+  		if(newVal == this.modifyPswNew) {
+  			this.newPasswordAlert2 = true
+  		}else {
+  			this.newPasswordAlert2 = false
+  		}
+  	},
   	modifyPswNew: function(newVal, old) {
   		if(newVal == this.modifyPswOld) {
   			this.newPasswordAlert2 = true

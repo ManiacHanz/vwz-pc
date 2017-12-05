@@ -127,9 +127,13 @@ import Pagination from '../../../components/common/Pagination'
 		},
 		methods: {
 			...mapMutations([
-					'OPEN_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION','CLOSE_MODAL','TOGGLE_LISTDATAUPDATE'
+					'OPEN_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION','CLOSE_MODAL','TOGGLE_LISTDATAUPDATE','userInfo'
 				]),
 			goEdit() {
+				if(!this.userInfo.uid && !this.userInfo.token) {
+					alert('登录错误，请返回登录页面重新登录')
+					return false
+				}
 				this.$router.push('/artedit')
 			},
 			getPageNum ( pagenum ) {

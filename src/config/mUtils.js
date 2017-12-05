@@ -4,7 +4,7 @@
 import lrz from 'lrz'
 export const u_viewPick = (input, option) => {
     let _default = {
-        width: 300,
+        width: 400,
         quality: 0.7,
         maxSize: 100000,
     }
