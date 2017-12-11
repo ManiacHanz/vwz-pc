@@ -40,7 +40,7 @@ img {
 	margin-right: 8px;
 }
 .right {
-	flex-grow: 1;
+	// flex-grow: 1;
 	height: 56px;
 	.title {
 		height: 38px;

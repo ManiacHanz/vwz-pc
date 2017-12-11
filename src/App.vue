@@ -5,12 +5,15 @@
         <p v-if="loadingText">{{loadingText}}</p>
       </loading>
     </div> -->
-    <div style="background:#fff;border-bottom: 1px solid #dddddd">
+    <div class="guider" v-show="isShowGuider">
+      <guider></guider>
+    </div>
+    <div style="background:#fff;border-bottom: 1px solid #dddddd" v-show="!isShowGuider">
       <div class="myhead">
         <my-header></my-header>
       </div>
     </div>
-    <div class="mybody">
+    <div class="mybody" v-show="!isShowGuider">
       <transition name="notify-fade" mode="out-in">
         <div class="notification" v-show="isShowNotification===true">
           <success-notify>
@@ -40,6 +43,7 @@ import Header from './components/common/Header'
 import modal from './components/common/modal'
 import successNotify from './components/notification/successNotify'
 import loading from './components/loading/loading'
+import guider from './components/guider/guider'
 
 export default {
   name: 'app',
@@ -47,6 +51,7 @@ export default {
     return {
       uid: '',
       token: '',
+      firstLogin: '',    // 第一次登录为0 后面为1
       imgBaseUrl: imageBaseUrl,
     }
   },
@@ -55,10 +60,11 @@ export default {
     modal,
     successNotify,
     loading,
+    guider,
   },
   computed: {
     ...mapState([
-        'isShowNotification','isShowLoading','loadingText','showNotificationText'
+        'isShowNotification','isShowLoading','loadingText','showNotificationText','isShowGuider'
       ]),
   },
   created () {
@@ -68,6 +74,10 @@ export default {
 
     this.uid = getStore('uid')
     this.token = getStore('token')
+    this.firstLogin = getStore('state')
+    if(this.firstLogin == 0) {
+      this.TOGGLE_GUIDER()
+    }
     this.SAVE_USERINFO({uid:this.uid, token: this.token})
     
     this.SET_LOGO(getStore('logo'))
@@ -78,13 +88,14 @@ export default {
   },
   methods: {
     ...mapMutations([
-        'SAVE_USERINFO','SET_LOGO','SET_AVATAR',
+        'SAVE_USERINFO','SET_LOGO','SET_AVATAR','TOGGLE_GUIDER'
       ])
   }
 }
 </script>
 
 <style>
+
 #app {
   font-family: '微软雅黑', Helvetica, Arial, sans-serif;
   background: #e8e9ef;
@@ -105,6 +116,22 @@ export default {
   top: 0px;
   left: calc( 50vw - 140px );
   z-index: 11;
+}
+.guider {
+ /* position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index:999;*/
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index:999;
+  /*background: rgba(0,0,0,0.82);*/
 }
 /*transition的动画*/
 .router-fade-enter-active, .router-fade-leave-active {

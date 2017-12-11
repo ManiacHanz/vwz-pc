@@ -334,10 +334,18 @@ export default {
 					type: 'a',
 				}
 				if(this.modalCfg.modalFor == 'logo') {
-					this.logoBack = Object.assign({},{backgroundImage: 'url('+this.imgBaseUrl+this.logoUrl+')'})
+					this.logoBack = Object.assign({},{backgroundImage: 'url('+this.imgBaseUrl+getStore("logo")+')'})
+					// let baseReg = /base64/
+
+					// if(baseReg.test(this.logoUrl)){
+					// 	this.logoBack = Object.assign({},{backgroundImage: 'url('+this.logoUrl+')'})
+					// }
+					// else {
+					// 	this.logoBack = Object.assign({},{backgroundImage: 'url('+this.imgBaseUrl+this.logoUrl+')'})
+					// }
 				}
 				if(this.modalCfg.modalFor == 'avatar') {
-					this.avatarBack = Object.assign({},{backgroundImage: 'url('+this.imgBaseUrl+this.avatarUrl+')'})
+					this.avatarBack = Object.assign({},{backgroundImage: 'url('+this.imgBaseUrl+getStore("headimg")+')'})
 				}
   			if(this.modalCfg.modalFor == 'plateIcon') {
 					__getImgUrl(data)
@@ -410,6 +418,7 @@ export default {
   				this._getArticleData(data)
   			}
   		}
+  	
   	}
 
   },

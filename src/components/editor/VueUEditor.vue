@@ -131,6 +131,7 @@ export default {
     },
     editorReady (editorInstance) {
       let that = this
+      // console.log(that.editorContent)
       editorInstance.setContent(that.editorContent);
       // editorInstance.addListener('contentChange', () => {
       //   console.log('编辑器内容发生了变化：', editorInstance.getContent());

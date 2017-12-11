@@ -35,3 +35,6 @@ export const __delArticle = (data) => fetch('/site/del_article' ,data, 'POST')
 
 // 编辑文章
 export const __editArticle = (data) => fetch('/site/add_article', data, 'POST')
+
+//删除图片
+export const __delImg = (data) => fetch('/site/del_img', data, 'POST')

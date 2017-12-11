@@ -2,7 +2,7 @@
 	<div class="right-content">
 		<div class="topbar">
 			<div class="title">{{contentType}}</div>
-			<div class="instruction">使用说明
+			<div class="instruction" @click="_openGuider">使用说明
 				<span></span>
 			</div>
 		</div>
@@ -15,13 +15,28 @@
 
 
 <script type="text/javascript">
-	import ContentBody from '../../page/MicroHome/subpage/subIndex'
-	export default {
-		components: {
-			ContentBody
-		},
-		props:["contentType"]
+import {mapMutations} from 'vuex'
+import ContentBody from '../../page/MicroHome/subpage/subIndex'
+
+export default {
+	data () {
+		return {
+
+		}
+	},
+	components: {
+		ContentBody
+	},
+	props:["contentType"],
+	methods: {
+		...mapMutations([
+				'TOGGLE_GUIDER'
+			]),
+		_openGuider () {
+			this.TOGGLE_GUIDER()
+		}
 	}
+}
 </script>
 
 <style lang="less" scoped>
@@ -38,6 +53,9 @@
 	}
 	.topbar .title {
 		font-size: 16px;
+	}
+	.instruction {
+		cursor: pointer;
 	}
 	.topbar .instruction span {
 		display: inline-block;

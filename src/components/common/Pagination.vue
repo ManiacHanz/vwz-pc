@@ -49,7 +49,10 @@ export default {
   		this.getPageNum(this.nowPage)
   	},
   	skipPage () {
-  		//跳转页数 
+  		//跳转页数 		排除0 和空
+  		if(!!this.goToPage) {
+  			return false
+  		}
   		this.nowPage = this.goToPage *1
   		this.getPageNum(this.goToPage)
   	},

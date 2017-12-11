@@ -27,6 +27,7 @@ import {
 	SAVE_TEMPORARYLIST,
 	TOGGLE_LISTDATAUPDATE,
 	SET_SHOWREDDOT,
+	TOGGLE_GUIDER,
 } from './mutation-types.js'
 
 export default {
@@ -164,5 +165,9 @@ export default {
 		else {
 			state.showRedDot = false
 		}
+	},
+	// 控制引导页开关
+	[TOGGLE_GUIDER] (state) {
+		state.isShowGuider = !state.isShowGuider
 	}
 }

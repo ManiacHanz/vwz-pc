@@ -2,17 +2,17 @@
 	<div class="header">
 		<div class="inner-box">
 			<div class="img" @click="changeLogo" title="点击可以切换Logo图">
-				<img :src="[logoUrl==''?'/static/img/logo.png':imgBaseUrl+logoUrl]">
+				<img :src="[!logo?'/static/img/logo.png':imgBaseUrl+logo]">
 			</div>
 			<div class="account" :class="[hasNew?'getnew':'']">
-				<img class="avatar " :src="[avatarUrl?imgBaseUrl+avatarUrl:'/static/img/avatar.png']">
-				<div class="red-dot" v-show="showRedDot"></div>
+				<img class="avatar " :src="[!avatar?'/static/img/avatar.png':imgBaseUrl+avatar]">
+				<!-- <div class="red-dot" v-show="showRedDot"></div> -->
 				<ul>
-					<li class="check" @click="checkQrCode">
+					<!-- <li class="check" @click="checkQrCode">
 						<div class="red-dot" v-show="showRedDot"></div>
 						<span></span>
 						查看效果
-					</li>
+					</li> -->
 					<li class="modify-psw" @click="modifyPsw">
 						<span></span>
 						修改密码
@@ -31,6 +31,11 @@
 					</li>
 				</ul>
 			</div>
+			<div class="check-result" @click="checkQrCode">
+				<div class="red-dot" v-show="showRedDot"></div>
+				查看效果
+			</div>
+
 			<ul class="route-tabs">
 				<li v-for="(item,index) in list" @click="toggleTabs(index)" :class="{active:index==nowIndex}">
 					<router-link :to=" item.hash ">{{ item.title }}</router-link>
@@ -43,9 +48,9 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import {__loginOut, __modifyPsw, __sendBase64, __modifyProjectName} from 'service/sendData'
+import {__loginOut, __modifyPsw, __sendBase64, __modifyProjectName,__delImg} from 'service/sendData'
 import {imageBaseUrl} from 'config/env'
-import {setStore} from 'config/mUtils'
+import {setStore,getStore} from 'config/mUtils'
 export default {
 	data: function () {
 		return {
@@ -80,6 +85,8 @@ export default {
 	},
 	mounted () {
 		//这里要初始化读取 LOGO地址 头像地址等等 ，写入 这里的属性 
+		this.logo = getStore('logo')
+		this.avatar = getStore('headimg')
 	},
 	methods: {
 		...mapMutations([
@@ -115,7 +122,8 @@ export default {
 								alert(res.message)
 								return false
 							}
-							that.logo = imageBaseUrl + res.data
+							
+							that.logo = res.data
 							setStore('logo',res.data)
 							that.SET_LOGO(res.data)
 							that.OPEN_NOTIFICATION('修改成功')
@@ -152,7 +160,7 @@ export default {
 								alert(res.message)
 								return false
 							}
-							that.avatar = imageBaseUrl + res.data
+							that.avatar = res.data
 							setStore('headimg',res.data)
 							that.SET_AVATAR(res.data)
 							that.OPEN_NOTIFICATION('修改成功')
@@ -433,7 +441,29 @@ export default {
 	 	}
  	}
 }
-
+.check-result {
+	color: #00acee;
+	height: 24px;
+	line-height: 24px;
+	border-bottom: 1px solid #00acee;
+	float: right;
+	margin-right: 18px;
+	margin-top: 16px;
+	cursor:pointer;
+	position: relative;
+	&:hover {
+		color: #008ec4;
+	}
+	.red-dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background:#f00;
+		position: absolute;
+		right: -2px;
+		top: -2px;
+	}
+}
 a {
 	padding: 0 20px;
 	display: inline-block;

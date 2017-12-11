@@ -127,7 +127,7 @@ import Pagination from '../../../components/common/Pagination'
 		},
 		methods: {
 			...mapMutations([
-					'OPEN_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION','CLOSE_MODAL','TOGGLE_LISTDATAUPDATE','userInfo'
+					'OPEN_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION','CLOSE_MODAL','TOGGLE_LISTDATAUPDATE'
 				]),
 			goEdit() {
 				if(!this.userInfo.uid && !this.userInfo.token) {

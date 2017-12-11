@@ -124,7 +124,7 @@ import { mapState, mapMutations } from 'vuex'
 import {imageBaseUrl} from 'config/env'
 
 import {u_viewPick, u_getDate, jsonStringify, getInputLen} from 'config/mUtils'
-import {__sendHomePanel, __sendListPanel, __sendUserPanel, __sendBase64} from 'service/sendData.js'
+import {__sendHomePanel, __sendListPanel, __sendUserPanel, __sendBase64,__delImg} from 'service/sendData.js'
 import {__getArtList} from 'service/getData'
 
 export default {
@@ -143,6 +143,8 @@ export default {
     	iconValue:'',					//图标显示的绑定值
     	backValue: '',				// temp_3 的背景图值
       typeValue: '',        //  给面板菜单按钮专门用的 判断是不是默认按钮
+      delListImg: [],       //   删除的list页面里面图的图片数组
+      delBannerImg: [],     //  删除的banner图片数组
     }
   },
   // props:['formTitle', 'removeMenu', 'addMenu'],
@@ -520,6 +522,11 @@ export default {
                   alert(res.message)
                   return false
                 }
+                /*
+                __delImg({
+                  ...that.userInfo,
+                  url:
+                })*/
                 that.OPEN_NOTIFICATION('删除成功')
                 that.CLEAR_FORMCFG()        //清除右边表单配置
                 that.SET_MOBILE_ACTIVE('')  //清除左边手机面板配置
@@ -823,7 +830,7 @@ export default {
       // linkValue的三个匹配值 分别给网页 http:// https://  素材库新增文章ARTI  默认文章moren..
       const urlReg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+/
       const artReg = /^(ARTI)\w{8}$/
-      const defaultReg = /^(morenGEvd8TWd)|(morenv7XZazgx)|(morenqcs2itbp)$/
+      const defaultReg = /^(moren)\w{8}$/
   		if( !this.formCfg || this.formCfg.formFor == '') {
         alert('请选择修改板块')
   			return false
