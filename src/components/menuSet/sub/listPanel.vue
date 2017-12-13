@@ -22,6 +22,8 @@
 				</li>
 			</ul>
 		</section>
+		<section class="mask" v-show="!homePanelList.button[1].display"></section>
+
 	</div>
 </template>
 
@@ -41,6 +43,8 @@ import {jsonParse} from 'config/mUtils'
 // 模拟手机首页配置数据 
 // import { mobileListCfg } from '../../../../static/data/mobileListCfg.js'
 
+const totalHeight = ''
+
 export default {
 
   name: 'listPanel',
@@ -56,11 +60,13 @@ export default {
   },
   computed: {
   	...mapState([
-  			'mobileColorStyle','mobileActive','listPanelList','userInfo'
+  			'mobileColorStyle','mobileActive','listPanelList','userInfo','homePanelList'
   		]),
   },
   created () {
-  	__getListPanel({...this.userInfo})
+  	// 这里加了判定避免重复请求，不知道需不需要
+  	if(!this.listPanelList) {
+  		__getListPanel({...this.userInfo})
   		.then( res => {
   			// console.log(res.home.data)
   			if (!res.result) {
@@ -70,9 +76,7 @@ export default {
 	  			let jres = jsonParse(res.data)
   			this.SAVE_LISTPANELLIST(jres)
   		})
-  	//这里假数据的更换
-    // console.log(mobileHomeCfg)
-		// this.mobileCfg = mobileListCfg
+  	}
   },
   mounted () {
 		// 初始化轮播 
@@ -89,7 +93,27 @@ export default {
 					swiper.reLoop();  
 				}
     })
+    this.$nextTick( function() {
+  		
+	  	let mask = document.querySelector('.mask')
+	  	let banner = document.querySelector('.banner')
+	  	let detail = document.querySelector('.detail')
+	  	console.log('mounted...')
+	  	mask.style.height = banner.scrollHeight + detail.scrollHeight  -4 +'px'
+    })
+
   },
+  updated () {
+  	this.$nextTick( function() {
+  		
+	  	let mask = document.querySelector('.mask')
+	  	let banner = document.querySelector('.banner')
+	  	let detail = document.querySelector('.detail')
+	  	console.log('updated...')
+	  	mask.style.height = banner.scrollHeight + detail.scrollHeight  -4 +'px'
+    })
+  },
+
   methods: {
   	...mapMutations([
   			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG','SAVE_LISTPANELLIST'
@@ -214,6 +238,17 @@ export default {
 	height: 448px;
 	overflow-y: auto;
 	overflow-x: hidden;
+	position: relative;
+}
+.mask {
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.6);
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	// display: block;
 }
 .banner {
 	width: 310px;

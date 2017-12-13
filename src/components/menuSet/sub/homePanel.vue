@@ -1,6 +1,7 @@
 <template>
 	<!-- <div class="home-panel" :class="mobileColorStyle" v-if="homePanelList && !homePanelList.button[0].link"> -->
 	<div class="home-panel" :class="mobileColorStyle" v-if="homePanelList">
+		<section class="mask" v-show="!homePanelList.button[0].display"></section>
 		<section class="banner swiper-container" :class="[mobileActive==='homebanner'?'active':'']" id="Swiper1"
 		@click.left="setUpModule('','homebanner')">
       <ul class="swiper-wrapper">
@@ -62,9 +63,11 @@ export default {
   		]),
   },
   created () {
-  	// if(!this.homePanelList) {//这里可能不需要这个
+  	
   	// console.log({...this.userInfo})
-			__getHomePanel({...this.userInfo})
+  	// 这里加了判定避免重复请求，不知道需不需要
+  	if (!this.homePanelList) {
+  		__getHomePanel({...this.userInfo})
   			.then( res => {
   			// console.log(res.data)
 	  			if (!res.result) {
@@ -77,6 +80,8 @@ export default {
   				this.SET_MENUBTN_STYLE()
   				this.homePanelLink = this.homePanelList.button[0].link
   		})
+  	}
+			
   },
   mounted () {
 		// 初始化轮播 
@@ -268,6 +273,16 @@ export default {
 .home-panel {
 	height: 448px;
 	overflow: hidden;
+	position: relative;
+}
+.mask {
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.6);
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10;
 }
 .banner {
 	width: 316px;

@@ -8,6 +8,8 @@
 				<div>
 					<span class="remove" v-if="formCfg.removeMenu" @click="_removeDataList">删除菜单</span>
 					<span class="add" v-if="formCfg.addMenu" @click="_addDataList">添加菜单</span>
+          <span class="toggle-display" :class="[showMenuValue? 'show' : 'hide']" v-if="formCfg.formFor=='menubtn'" @click="_showMenu">  {{showMenuValue?'隐藏菜单':'显示菜单'}}
+          </span>
 				</div>			
 			</section>
 			<section class="panel">
@@ -18,7 +20,7 @@
 						</div>
 						<div>
               <!-- @input="_changeLength($event, 8)" -->
-							<input type="text" name="" v-model="titleValue" >
+							<input type="text" name="" v-model="titleValue" :readonly="(formCfg.formFor == 'menubtn' && !formCfg.inputList[4].value)">
 							<p class="alert"></p>
 							<div class="tip">输入字数不超过4个汉字或8个英文</div>
 						</div>
@@ -143,6 +145,7 @@ export default {
     	iconValue:'',					//图标显示的绑定值
     	backValue: '',				// temp_3 的背景图值
       typeValue: '',        //  给面板菜单按钮专门用的 判断是不是默认按钮
+      showMenuValue: '',     // 控制面板菜单的显示隐藏
       delListImg: [],       //   删除的list页面里面图的图片数组
       delBannerImg: [],     //  删除的banner图片数组
     }
@@ -218,6 +221,7 @@ export default {
         this.linkValue = this._getInputVal(val.inputList, 'type', 'setLink', 'value') || ''
         this.iconValue = this._getInputVal(val.inputList, 'type', 'setIcon', 'value') || ''
         this.typeValue = this._getInputVal(val.inputList, 'type', 'setType', 'value') || ''
+        this.showMenuValue = this._getInputVal(val.inputList, 'type', 'setDisplay', 'value') || ''
       }
   	},
   	selectedIndex: function(val) {
@@ -344,6 +348,7 @@ export default {
               alert(res.message)
               return false
             }
+            e.target.value = ''
             that.backValue = res.data
           })
       })
@@ -395,6 +400,8 @@ export default {
               alert(res.message)
               return false
             }
+            e.target.value = ''
+
             newFormCfg.inputList[0].imglist.push(res.data)    // 这里因为上面标签里已经用了imgbaseurl了
             // newFormCfg.inputList[0].imglist.push(base64)
             newFormCfg.inputList[1].value.push('')
@@ -487,6 +494,10 @@ export default {
       }
     },
     _removeDataList() {
+      if (!this.formCfg.inputList) {
+        alert('请选择要操作的模块')
+        return false
+      }
       if (this.formCfg.formFor ==='contentlist'){
         if(this.listPanelList.content.length> 1) {
           const index = this.formCfg.inputList[0].key.substring(11)
@@ -545,7 +556,7 @@ export default {
       }
       else if(this.formCfg.formFor ==='userlist'){
         if(this.userPanelList.content.length> 1) {
-          const index = this.formCfg.inputList[0].key.substring(11)
+          const index = this.formCfg.inputList[0].key.substring(8)
           let that = this
           let modalOption = { 
             modalFor: 'delList',
@@ -776,6 +787,52 @@ export default {
       }
       
     },
+
+    // 控制菜单的显示隐藏
+    _showMenu (e) {
+      let showingMenuLength = 0     // 判断显示的菜单的长度  不能三个同时隐藏
+      this.homePanelList.button.forEach((item) => {
+        if (item.display) {
+          showingMenuLength += 1
+        }
+      })
+      if(e.target.classList.contains('show') && showingMenuLength === 1) {
+        alert('至少显示一个菜单，不能三个同时隐藏')
+        return false
+      }
+      this.showMenuValue == 1 ? this.showMenuValue = 0 : this.showMenuValue = 1
+      let newFormCfg = Object.assign({},this.formCfg)
+      /*防止改了输入框的值以后点显示隐藏造成表单数据错乱*/
+      newFormCfg.inputList[4].value = this.showMenuValue
+      newFormCfg.inputList[0].value = this.titleValue
+      newFormCfg.inputList[1].value = this.iconValue
+      newFormCfg.inputList[2].value = this.linkValue
+      this.UPDATE_FORMCFG(newFormCfg)
+
+      let button = [...this.homePanelList.button]
+      let index = this.formCfg.inputList[0].key.substring(7)
+      let temporaryObj = {
+        icon:this.iconValue,
+        link: this.linkValue,
+        title: this.titleValue,
+        type: this.typeValue,
+        display: this.showMenuValue,
+      }
+      button.splice(index, 1, temporaryObj)
+      
+      let payload = {
+        _interface: 'home',
+        obj:{
+          ...this.userInfo,
+          button:button
+        }
+      }
+      this.SAVE_TEMPORARYLIST(payload)
+
+      this.SAVE_HOMEPANELLIST(this.temporaryPanelList)
+
+
+    },
   	// list列表的缩略图修改
   	_listPicAdd (e) {
   		let that = this
@@ -801,6 +858,8 @@ export default {
               alert(res.message)
               return false
             }
+            e.target.value = ''
+
             newFormCfg.inputList[1].imglist.push(res.data)    // 这里因为上面标签里已经用了imgbaseurl了
             // newFormCfg.inputList[1].imglist.push(base64)
           })
@@ -1340,6 +1399,7 @@ export default {
             link: this.linkValue,
             title: this.titleValue,
             type: this.typeValue,
+            display: this.showMenuValue,
           }
           button.splice(index, 1, temporaryObj)
           // {button:button}
@@ -1392,7 +1452,7 @@ export default {
 	border-bottom: 1px solid @borderGrey;
 	display: flex;
 	justify-content: space-between;
-	.remove, .add {
+	.remove, .add, .toggle-display {
 		padding-left: 26px;
 		cursor: pointer;
     display: inline-block;
@@ -1408,6 +1468,12 @@ export default {
     background-size: 16px;
 		// background-position: -102px -932px;
 	}
+  .toggle-display.show {
+    background: url('/static/img/show.png') no-repeat left center;
+  }
+  .toggle-display.hide {
+    background: url('/static/img/hide.png') no-repeat left center;
+  }
 }
 
 .input-box {

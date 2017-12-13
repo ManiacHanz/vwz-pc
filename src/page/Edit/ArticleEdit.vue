@@ -217,6 +217,7 @@ export default {
         }
         __sendBase64(data)
           .then( res => {
+            e.target.value = ''
             that.SET_LOADING()
             that.coverSrc = res.data
           })

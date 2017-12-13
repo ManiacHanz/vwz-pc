@@ -1,5 +1,6 @@
 <template>
 	<div class="user-panel" :class="mobileColorStyle">
+		<section class="mask" v-show="!homePanelList.button[2].display"></section>
 		<section class="top">
 			<img src="/static/img/ad_01.jpg">
 		</section>
@@ -37,11 +38,12 @@ export default {
   },
   computed: {
   	...mapState([
-  			'mobileColorStyle','mobileActive','userPanelList','userInfo'
+  			'mobileColorStyle','mobileActive','userPanelList','userInfo','homePanelList'
   		]),
   },
    created () {
-  	__getUserPanel({...this.userInfo})
+   	if(!this.userPanelList) {
+   		__getUserPanel({...this.userInfo})
 			.then( res => {
 			  console.log(res.data)
   			if (!res.result) {
@@ -53,12 +55,27 @@ export default {
 				this.SAVE_USERPANELLIST(jres)
 				this.SET_MENUBTN_STYLE()
   		})
-  	//这里假数据的更换
-    // console.log(mobileHomeCfg)
-		// this.mobileCfg = mobileListCfg
+   	}
   },
   mounted () {
-
+	  this.$nextTick( function() {
+  		
+	  	let mask = document.querySelector('.mask')
+	  	let top = document.querySelector('.top')
+	  	let ctrlist = document.querySelector('.ctr-list')
+	  	console.log('mounted...')
+	  	mask.style.height = top.scrollHeight + ctrlist.scrollHeight -4 +'px'
+    })
+  },
+  updated () {
+  	this.$nextTick( function() {
+  		
+	  	let mask = document.querySelector('.mask')
+	  	let top = document.querySelector('.top')
+	  	let ctrlist = document.querySelector('.ctr-list')
+	  	console.log('updated...')
+	  	mask.style.height = top.scrollHeight + ctrlist.scrollHeight  -4 +'px'
+    })
   },
   methods: {
   	...mapMutations([
@@ -133,6 +150,15 @@ export default {
 	height: 448px;
 	// overflow: hidden;
 	overflow-y: auto;
+	position: relative;
+}
+.mask {
+	width: 100%;
+	background: rgba(255, 255, 255, 0.6);
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10;
 }
 .top {
 	height: 90px;

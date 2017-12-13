@@ -11,6 +11,7 @@
 					<li :class="[mobileActive==='menubtn'+index?'active':'', item.icon==''?mobileColorStyle: '']" 
 						v-for="(item, index) in homePanelList.button" 
 						@click="switchPanel(item, index)">
+						<div class="mask" v-show="!item.display"></div>
 						<div class="icon">
 							<img v-show="item.icon != ''" :src="imgBaseUrl + item.icon"></img>
 						</div>
@@ -117,9 +118,13 @@ export default {
   	// 	}
   	// }
   },
+  beforeDestroy () {
+  	this.SET_MOBILE_ACTIVE('')
+  	this.CLEAR_FORMCFG()
+  },
   methods: {
   	...mapMutations([
-  			'SET_SHOWPANEL','SET_MOBILE_COLOR','UPDATE_FORMCFG','SET_MOBILE_ACTIVE','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE','SET_LOADING','OPEN_NOTIFICATION'
+  			'SET_SHOWPANEL','SET_MOBILE_COLOR','UPDATE_FORMCFG','SET_MOBILE_ACTIVE','SAVE_HOMEPANELLIST','SET_MENUBTN_STYLE','SET_LOADING','OPEN_NOTIFICATION','CLEAR_FORMCFG'
   		]),
   	
   	//初始化菜单配置的样式 这里要通过数组的长度来判断  有3个按钮就传4位
@@ -203,6 +208,7 @@ export default {
 	  				{type:'setIcon', key:'menubtn'+index, value: item.icon},
 	  				{type:'setLink', key:'menubtn'+index, value: item.link},
 	  				{type:'setType', key:'menubtn'+index, value: item.type},
+	  				{type:'setDisplay', key:'menubtn'+index, value: item.display},
   				],
 	  			pickFromLib: false
   			}
@@ -411,6 +417,14 @@ export default {
 		li {
 			width: 63px;
 		}
+	}
+	.mask {
+		width: 100%;
+		height: 100%;
+		background: rgba(255,255,255,0.6);
+		position: absolute;
+		left: 0;
+		top: 0;
 	}
 }
 .theme {

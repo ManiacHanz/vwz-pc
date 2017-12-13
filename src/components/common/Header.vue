@@ -122,14 +122,12 @@ export default {
 								alert(res.message)
 								return false
 							}
-							
 							that.logo = res.data
 							setStore('logo',res.data)
 							that.SET_LOGO(res.data)
 							that.OPEN_NOTIFICATION('修改成功')
 							that.CLOSE_MODAL()
 						})
-					// that.logo = that.logoUrl
 				}
 			}
 			this.SET_MODALCFG(modalOption)

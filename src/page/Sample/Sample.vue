@@ -115,7 +115,7 @@ export default {
 .copy-right {
   color: #999;
   text-align: center;
-  margin-top: 60px;
-  padding-bottom: 40px;
+  margin-top: 30px;
+  padding-bottom: 20px;
 }
 </style>

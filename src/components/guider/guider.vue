@@ -12,7 +12,7 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
-import {getStore,setStore} from 'mUtils'
+import {getStore,setStore} from 'config/mUtils'
 export default {
 
   name: 'guider',

@@ -496,6 +496,7 @@ export default {
   							alert(res.message)
   							return false
   						}
+  						e.target.value = ''
   						that.plateIconList.push(imageBaseUrl + res.data)
   					})
   		})
@@ -523,6 +524,7 @@ export default {
   							alert(res.message)
   							return false
   						}
+  						e.target.value = ''
   						that.userIconList.push(imageBaseUrl + res.data)
   					})
   		})
@@ -550,6 +552,7 @@ export default {
   							alert(res.message)
   							return false
   						}
+  						e.target.value = ''
   						that.menuIconList.push(imageBaseUrl + res.data)
   					})
   		})
@@ -572,7 +575,8 @@ export default {
 				that.logoBack = Object.assign({}, that.logoBack, {
   				backgroundImage: 'url('+base64+')'
   			})
-  		
+  			e.target.value = ''
+  			
   			// }
   			that.SET_LOGO(base64)
   			// console.table(rst)
@@ -598,7 +602,7 @@ export default {
   			that.avatarBack = Object.assign({}, that.avatarBack, {
   				backgroundImage: 'url('+base64+')'
   			})
-  		
+  			e.target.value = ''
   			that.SET_AVATAR(base64)
   			// console.table(rst)
   		})
