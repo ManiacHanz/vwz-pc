@@ -20,7 +20,7 @@
 						</div>
 						<div>
               <!-- @input="_changeLength($event, 8)" -->
-							<input type="text" name="" v-model="titleValue" :readonly="(formCfg.formFor == 'menubtn' && !formCfg.inputList[4].value)">
+							<input type="text" name="" v-model="titleValue" :disabled="(formCfg.formFor == 'menubtn' && !formCfg.inputList[4].value)">
 							<p class="alert"></p>
 							<div class="tip">输入字数不超过4个汉字或8个英文</div>
 						</div>
@@ -30,7 +30,7 @@
 							页面地址
 						</div>
 						<div>
-							<input type="text" name="" maxlength="" v-model="linkValue" @blur="_linkBlur" @input="linkTypeValue = 0" id="linkInput" placeholder="第三方网站请输入完整的网页地址  http://www...">
+							<input type="text" name="" maxlength="" v-model="linkValue" @blur="_linkBlur" @input="linkTypeValue = 0" id="linkInput" placeholder="第三方网站请输入完整的网页地址  http://www..." :disabled="(formCfg.formFor == 'menubtn' && !formCfg.inputList[4].value)">
 							<p class="alert"></p>
 							<div class="tip">
 								<div>输入第三方跳转网页</div>
@@ -45,7 +45,7 @@
 						</div>
 						<div @click="_setIcon">
 							<img :src="imgBaseUrl+iconValue" v-show="iconValue">
-							<span class="btn">上传图标</span>
+							<span class="btn" :class="(formCfg.formFor == 'menubtn' && !formCfg.inputList[4].value)? 'disabled': ''">上传图标</span>
 						</div>
 					</div>
 					<div class="back-input" v-if="item.type==='setBack'">
@@ -272,6 +272,10 @@ export default {
   	},
   	//上传图片 上传图标
   	_setIcon () {
+      if( this.formCfg.formFor == 'menubtn' && !this.formCfg.inputList[4].value ) {
+        alert('隐藏菜单不可进行配置，请显示菜单后再进行配置')
+        return false
+      }
   		// this.selectedIndex = 0
 			this.OPEN_MODAL()
 			let that = this
@@ -1538,6 +1542,9 @@ export default {
 		border: 1px solid @borderGrey;
 		background: #ffffff;
 		cursor: pointer;
+    &.disabled {
+      background: #EBEBE4;
+    }
 		&:hover {
 			border-color: @borderActiveGrey;
 		}

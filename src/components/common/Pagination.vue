@@ -4,7 +4,7 @@
 		<div class="page-num">{{nowPage}} / {{this.$props.totalPage}}</div>
 		<div class="btn next" v-show="this.nowPage != this.totalPage" @click="changePage(+1)"></div>
 		<div class="skip-page">
-			<input type="tel" min="1" step="0" v-model="goToPage">
+			<input type="tel" min="1" step="0" v-model="goToPage" @keyup="_checkZero">
 			<a @click="skipPage()">跳转</a>
 		</div>
 	</div>
@@ -49,13 +49,20 @@ export default {
   		this.getPageNum(this.nowPage)
   	},
   	skipPage () {
-  		//跳转页数 		排除0 和空
-  		if(!!this.goToPage) {
+  		//跳转页数 		排除0 和空  
+  		// console.log(!this.goToPage)
+  		if(!this.goToPage) {
   			return false
   		}
   		this.nowPage = this.goToPage *1
   		this.getPageNum(this.goToPage)
   	},
+  	_checkZero () {
+  		// 排除全部输入0的情况
+  		if(this.goToPage != '' && /^0*$/.test(this.goToPage) ) {
+  			this.goToPage = ''
+  		}
+  	}
   }
 };
 </script>

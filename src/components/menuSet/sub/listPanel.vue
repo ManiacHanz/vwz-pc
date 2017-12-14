@@ -79,6 +79,7 @@ export default {
   	}
   },
   mounted () {
+
 		// 初始化轮播 
   	new Swiper('#Swiper2', {
         pagination: '#SPagination_2',
@@ -98,22 +99,30 @@ export default {
 	  	let mask = document.querySelector('.mask')
 	  	let banner = document.querySelector('.banner')
 	  	let detail = document.querySelector('.detail')
-	  	console.log('mounted...')
+	  	// console.log('mounted...')
 	  	mask.style.height = banner.scrollHeight + detail.scrollHeight  -4 +'px'
     })
 
   },
   updated () {
   	this.$nextTick( function() {
-  		
-	  	let mask = document.querySelector('.mask')
-	  	let banner = document.querySelector('.banner')
-	  	let detail = document.querySelector('.detail')
-	  	console.log('updated...')
-	  	mask.style.height = banner.scrollHeight + detail.scrollHeight  -4 +'px'
+  		console.log('list updated...')
+  		console.log(this._isDestroyed)
+  		if( document.querySelector('.banner') && document.querySelector('.detail')) {
+  			let mask = document.querySelector('.mask')
+		  	let banner = document.querySelector('.banner')
+		  	let detail = document.querySelector('.detail')
+		  	// console.log('updated...','mask:',mask,'banner:',banner,'detail:',detail)
+		  	mask.style.height = banner.scrollHeight + detail.scrollHeight  -4 +'px'
+  		}
+  	
+	  	
     })
   },
-
+  destroyed () {
+  	console.log('list destroyed...')
+  	console.log(this._isDestroyed)
+  },
   methods: {
   	...mapMutations([
   			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG','SAVE_LISTPANELLIST'

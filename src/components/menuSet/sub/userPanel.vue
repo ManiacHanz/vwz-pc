@@ -63,18 +63,19 @@ export default {
 	  	let mask = document.querySelector('.mask')
 	  	let top = document.querySelector('.top')
 	  	let ctrlist = document.querySelector('.ctr-list')
-	  	console.log('mounted...')
+	  	// console.log('mounted...')
 	  	mask.style.height = top.scrollHeight + ctrlist.scrollHeight -4 +'px'
     })
   },
   updated () {
   	this.$nextTick( function() {
-  		
-	  	let mask = document.querySelector('.mask')
-	  	let top = document.querySelector('.top')
-	  	let ctrlist = document.querySelector('.ctr-list')
-	  	console.log('updated...')
-	  	mask.style.height = top.scrollHeight + ctrlist.scrollHeight  -4 +'px'
+  		if(document.querySelector('.top')&&document.querySelector('.ctr-list')){
+  			let mask = document.querySelector('.mask')
+		  	let top = document.querySelector('.top')
+		  	let ctrlist = document.querySelector('.ctr-list')
+		  	// console.log('updated...')
+		  	mask.style.height = top.scrollHeight + ctrlist.scrollHeight  -4 +'px'
+  		}
     })
   },
   methods: {
