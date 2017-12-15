@@ -46,6 +46,7 @@ img {
 		height: 38px;
 		overflow-y: hidden;
 		margin-bottom: 2px;
+		word-break: break-all;
 	}
 	.time {
 		font-size: 12px;

@@ -136,10 +136,17 @@ export default {
       // editorInstance.addListener('contentChange', () => {
       //   console.log('编辑器内容发生了变化：', editorInstance.getContent());
       // });
-      
+      let newContent
       editorInstance.addListener('blur', () => {
         // console.log('编辑器失焦：', editorInstance.getContent());
         that.SET_EDITORCONTENT(editorInstance.getContent())
+        const imgReg = /<img /
+        if (imgReg.test(editorInstance.getContent())) {
+          newContent = editorInstance.getContent().replace('<img','<img style="max-width:100%;"')
+          that.SET_EDITORCONTENT(newContent)
+        }
+        // console.log('编辑器失焦2：', newContent);
+
       });
     }
   },

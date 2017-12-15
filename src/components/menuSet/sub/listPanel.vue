@@ -68,7 +68,6 @@ export default {
   	if(!this.listPanelList) {
   		__getListPanel({...this.userInfo})
   		.then( res => {
-  			console.log(res.home.data)
   			if (!res.result) {
   				alert(res.message)
   				return false

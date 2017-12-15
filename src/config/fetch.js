@@ -1,5 +1,6 @@
 import {
-	baseUrl
+	baseUrl,
+	loginUrl,
 } from './env'
 import qs from 'querystring'
 
@@ -46,11 +47,12 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 			const response = await fetch(url, requestConfig);
 
 			const responseJson = await response.json();
-			// if(response.loginState == 0) {
-			// 	alert('请重新登录')
-			// 	window.location.href="http://login.com"
-			// 	return
-			// }
+			// console.log('fetch:',responseJson)
+			if (responseJson.statusCode==202) {
+				alert('登录信息失效，点击返回登录页面重新登录')
+				window.location = loginUrl
+				return false
+			}
 			return responseJson
 		} catch (error) {
 			alert('网络请求错误，请检查网络或稍后再试')

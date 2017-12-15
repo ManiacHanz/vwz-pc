@@ -73,7 +73,7 @@ export default {
   		])
   },
   created () {
-  	console.log({...this.userInfo})
+  	// console.log({...this.userInfo})
   	__getHomePanel({...this.userInfo})
   		.then( res => {
   			// console.log(jsonParse(res.data))

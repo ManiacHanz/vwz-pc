@@ -7,7 +7,6 @@ import WifiPortal from '../page/WifiPortal'
 import ArticleEdit from '../page/Edit/ArticleEdit'
 import Sample from '../page/Sample/Sample'
 
-import Hello from '../components/Hello'
 
 import {__checkLogin} from 'service/sendData'
 import {getStore} from 'config/mUtils.js'

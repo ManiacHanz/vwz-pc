@@ -23764,7 +23764,7 @@ UE.plugin.register('autoupload', function (){
         };
 
         if (filetype == 'image') {
-            loadingHtml = '<img class="loadingclass" id="' + loadingId + '" src="' +
+            loadingHtml = '<img style="max-width:100%;" class="loadingclass" id="' + loadingId + '" src="' +
                 me.options.themePath + me.options.theme +
                 '/images/spacer.gif" title="' + (me.getLang('autoupload.loading') || '') + '" >';
             successHandler = function(data) {
@@ -23781,7 +23781,7 @@ UE.plugin.register('autoupload', function (){
             };
         } else {
             loadingHtml = '<p>' +
-                '<img class="loadingclass" id="' + loadingId + '" src="' +
+                '<img style="max-width:100%;" class="loadingclass" id="' + loadingId + '" src="' +
                 me.options.themePath + me.options.theme +
                 '/images/spacer.gif" title="' + (me.getLang('autoupload.loading') || '') + '" >' +
                 '</p>';
