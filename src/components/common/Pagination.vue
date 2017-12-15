@@ -1,8 +1,8 @@
 <template>
 	<div class="pagination">
-		<div class="btn prev" v-show="this.nowPage != 1" @click="changePage(-1)"></div>
+		<div class="btn prev" v-show="this.nowPage > 1" @click="changePage(-1)"></div>
 		<div class="page-num">{{nowPage}} / {{this.$props.totalPage}}</div>
-		<div class="btn next" v-show="this.nowPage != this.totalPage" @click="changePage(+1)"></div>
+		<div class="btn next" v-show="this.nowPage < this.totalPage" @click="changePage(+1)"></div>
 		<div class="skip-page">
 			<input type="tel" min="1" step="0" v-model="goToPage" @keyup="_checkZero">
 			<a @click="skipPage()">跳转</a>
@@ -21,7 +21,7 @@ export default {
     	goToPage: '',    //输入框要跳转的页数
     }
   },
-  props: ["getPageNum","totalPage"],		//传的函数
+  props: ["getPageNum","totalPage","initNowPage"],		//传的函数
   mounted () {
   	this.init()
   },
@@ -36,6 +36,10 @@ export default {
 				 return this.goToPage = this.totalPage
 			}
 			
+  	},
+  	initNowPage: function(newVal) {
+  		// 父组件点搜索的时候会让这个Prop变化 这是 就把当前页改成1
+  		this.nowPage = 1
   	}
   },
   methods: {

@@ -48,6 +48,20 @@
 						<p>确认隐藏后，在文章选择列表中将被隐藏！</p>
 					</div>
 				</section>
+				<section class="del-article" v-if="modalCfg.modalFor==='showMenu'">
+					<div class="alert"></div>
+					<div class="tip">
+						<p>显示菜单确认</p>
+						<p>确认显示后，此菜单全部内容将可以编辑，手机端将显示出来</p>
+					</div>
+				</section>
+				<section class="del-article" v-if="modalCfg.modalFor==='hideMenu'">
+					<div class="alert"></div>
+					<div class="tip">
+						<p>隐藏菜单确认</p>
+						<p>确认隐藏后，此菜单全部内容将无法编辑，手机端无法显示</p>
+					</div>
+				</section>
 				<section class="del-article" v-if="modalCfg.modalFor==='delArticle'">
 					<div class="alert"></div>
 					<div class="tip">
@@ -167,7 +181,7 @@
 						<span>新密码：</span>
 						<input type="password" name="newPassword" v-model="modifyPswNew" maxlength="12">
 						<p class="alert" v-show="newPasswordAlert2">新密码不能和旧密码相同</p>
-						<p class="alert" v-show="newPasswordAlert">新密码少于6位/新密码不能包含特殊字符/新密码多于12位</p>
+						<p class="alert" v-show="newPasswordAlert">新密码不能少于6位</p>
 						<p>密码为6-12位，必须为数字或大小写字母及其组合</p>
 					</div>
 					<div>
@@ -208,7 +222,7 @@
 						</div>
 					</div>
 					<div class="pagination">
-						<pagination :getPageNum="getPageNum" :totalPage="totalPage"></pagination>
+						<pagination :getPageNum="getPageNum" :totalPage="totalPage" :initNowPage="initPageNum"></pagination>
 					</div>
 				</section>
 				<section class="QR-code" v-if="modalCfg.modalFor==='QRcode'">
@@ -280,7 +294,7 @@ export default {
     	totalPage: '',
 			search: '',
 			nowPage: '',
-
+			initPageNum: 1,					//用来控制子组件初始化nowPage
     	//修改密码
     	modifyPswOld: '',
   		modifyPswNew:'',
@@ -450,6 +464,7 @@ export default {
 					}
 					this.articleList = res.data.data
 					this.totalPage = res.data.totalpage
+					this.initPageNum ++
 				})
   	},
   	_searchArticle () {						//搜索

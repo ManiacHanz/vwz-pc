@@ -101,7 +101,7 @@ export default {
       hoverName: '',   //表单鼠标悬停时的样式名称
       liActiveName: '',
       liHoverName: '',
-      params:'',        // 通过get参数获取文章的id
+      query:'',        // 通过get参数获取文章的id
       coverSrc: '',       //封面图
       titleValue: '',    //标题输入框的值
       authorValue: '',    //作者输入框的值
@@ -122,12 +122,12 @@ export default {
     // console.log('fa-created...')
     this.init()
       // 要用id来请求 是编辑还是新建
-      if(this.params == '') {
+      if(this.query == '') {
         return 
       }
       let data = {
         ...this.userInfo,
-        id: this.params,
+        id: this.query,
       }
       const that = this
       __getArticalDetail(data)
@@ -168,12 +168,13 @@ export default {
         'SET_LOADING','SET_EDITORCONTENT','SWITCH_MENUTYPE','TOGGLE_LISTDATAUPDATE'
       ]),
     init() {
+
       //初始化时要判断是新建进来的还是编辑进来的 从而判断输入框里是否传值
-      if (this.$route.params.id){
-        this.params = this.$route.params.id
+      if (this.$route.query.id){
+        this.query = this.$route.query.id
       }
       else {
-        this.params = ''
+        this.query = ''
       }
     },
     historyBack () {
@@ -258,7 +259,7 @@ export default {
       let content = this.editorContent
       let copyright = this.copyValue
       let cover = this.coverSrc
-      let id = this.params
+      let id = this.query
       let data = {
         ...this.userInfo,
         title,

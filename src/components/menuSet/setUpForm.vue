@@ -804,38 +804,65 @@ export default {
         alert('至少显示一个菜单，不能三个同时隐藏')
         return false
       }
-      this.showMenuValue == 1 ? this.showMenuValue = 0 : this.showMenuValue = 1
-      let newFormCfg = Object.assign({},this.formCfg)
+      let that = this
+      if( this.showMenuValue == 1) {
+        // 目前是显示 点击弹隐藏框
+        let modalOption = { 
+          modalFor: 'hideMenu',
+          title: '温馨提示',
+          onSuccess: function() {
+            that._subShowMenu(that)
+            that.CLOSE_MODAL()
+          }
+        }
+        this.SET_MODALCFG(modalOption)
+        this.OPEN_MODAL()
+      }
+      else {
+        let modalOption = { 
+          modalFor: 'showMenu',
+          title: '温馨提示',
+          onSuccess: function() {
+            that._subShowMenu(that)
+            that.CLOSE_MODAL()
+          }
+        }
+        this.SET_MODALCFG(modalOption)
+        this.OPEN_MODAL()
+      }
+    },
+    _subShowMenu(_this) {
+      // 为showMenu方法封装的子方法
+      _this.showMenuValue == 1 ? _this.showMenuValue = 0 : _this.showMenuValue = 1
+      let newFormCfg = Object.assign({},_this.formCfg)
       /*防止改了输入框的值以后点显示隐藏造成表单数据错乱*/
-      newFormCfg.inputList[4].value = this.showMenuValue
-      newFormCfg.inputList[0].value = this.titleValue
-      newFormCfg.inputList[1].value = this.iconValue
-      newFormCfg.inputList[2].value = this.linkValue
-      this.UPDATE_FORMCFG(newFormCfg)
+      newFormCfg.inputList[4].value = _this.showMenuValue
+      newFormCfg.inputList[0].value = _this.titleValue
+      newFormCfg.inputList[1].value = _this.iconValue
+      newFormCfg.inputList[2].value = _this.linkValue
+      _this.UPDATE_FORMCFG(newFormCfg)
 
-      let button = [...this.homePanelList.button]
-      let index = this.formCfg.inputList[0].key.substring(7)
+      let button = [..._this.homePanelList.button]
+      let index = _this.formCfg.inputList[0].key.substring(7)
       let temporaryObj = {
-        icon:this.iconValue,
-        link: this.linkValue,
-        title: this.titleValue,
-        type: this.typeValue,
-        display: this.showMenuValue,
+        icon:_this.iconValue,
+        link: _this.linkValue,
+        title: _this.titleValue,
+        type: _this.typeValue,
+        display: _this.showMenuValue,
       }
       button.splice(index, 1, temporaryObj)
       
       let payload = {
         _interface: 'home',
         obj:{
-          ...this.userInfo,
+          ..._this.userInfo,
           button:button
         }
       }
-      this.SAVE_TEMPORARYLIST(payload)
+      _this.SAVE_TEMPORARYLIST(payload)
 
-      this.SAVE_HOMEPANELLIST(this.temporaryPanelList)
-
-
+      _this.SAVE_HOMEPANELLIST(_this.temporaryPanelList)
     },
   	// list列表的缩略图修改
   	_listPicAdd (e) {
@@ -1389,7 +1416,7 @@ export default {
             }
           }
           if( this.linkValue ) {
-            if( !urlReg.test(this.linkValue) && !artReg.test(this.linkValue) && !defaultReg.test(this.linkValue)) {
+            if( !urlReg.test(this.linkValue) ) {
               alert('配置第三方网页请输入正确的http/https开头的网址')
               return false
             }

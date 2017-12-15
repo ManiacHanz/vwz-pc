@@ -12,7 +12,7 @@
 				<material-table :listData="listData" :toggleDisplay="_toggleDisplay" :delArticle="_delArticle"></material-table>	
 			</div>
 			<div class="page" v-if="listData">
-				<pagination :getPageNum="getPageNum" :totalPage="totalPage"></pagination>
+				<pagination :getPageNum="getPageNum" :totalPage="totalPage" :initNowPage="initPageNum"></pagination>
 			</div>
 			<div class="noData" v-if="!listData.length">
 				<p>暂时还没有文章素材，快来新建吧！</p>
@@ -44,7 +44,8 @@ import Pagination from '../../../components/common/Pagination'
 				totalPage: '',
 				search: '',
 				nowPage: '',
-				listData: []
+				listData: [],
+				initPageNum: 1,    // 在某些情况，如搜索，要初始化翻页组件的nowPage
 				// 这里tabs应该要改成对象的数组，没方便选择的时候发送标记，或者选择下标发送
 				// tabs: [
 				// 	{
@@ -130,10 +131,6 @@ import Pagination from '../../../components/common/Pagination'
 					'OPEN_MODAL','SET_MODALCFG','SET_LOADING','OPEN_NOTIFICATION','CLOSE_MODAL','TOGGLE_LISTDATAUPDATE'
 				]),
 			goEdit() {
-				if(!this.userInfo.uid && !this.userInfo.token) {
-					alert('登录错误，请返回登录页面重新登录')
-					return false
-				}
 				this.$router.push('/artedit')
 			},
 			getPageNum ( pagenum ) {
@@ -159,6 +156,9 @@ import Pagination from '../../../components/common/Pagination'
 						}
 						this.listData = res.data.data
 						this.totalPage = res.data.totalpage
+						if(this.totalPage == 0) {
+							this.totalPage = 1
+						}
 					})
 			},
 			getListData () {
@@ -185,6 +185,11 @@ import Pagination from '../../../components/common/Pagination'
 						}
 						this.listData = res.data.data
 						this.totalPage = res.data.totalpage
+
+						if(this.totalPage == 0) {
+							this.totalPage = 1
+						}
+						this.initPageNum ++		//  变化 让翻页组件监测到 从而调用初始化子组件nowPage
 					})
 			},
 			_toggleDisplay (id, index) {
@@ -294,6 +299,9 @@ import Pagination from '../../../components/common/Pagination'
 										}
 										that.listData = res.data.data
 										that.totalPage = res.data.totalpage
+										if(that.totalPage == 0) {
+											that.totalPage = 1
+										}
 									})
 							})
 					}

@@ -58,7 +58,7 @@ export default {
   methods: {
     // 点击编辑 进路由 传入参数
     _goEdit(id) {
-      this.$router.push( {name:'ArticleEdit', params:{id} } )
+      this.$router.push( {name:'ArticleEdit', query:{id} } )
       // let data = {
       //   ...this.userInfo,
       //   id
@@ -137,6 +137,7 @@ export default {
     font-size: 14px;
     color: #999999;
     height: 40px;
+    line-height: 1.4em;
     overflow: hidden;
     word-break: break-all;
   }

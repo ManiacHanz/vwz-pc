@@ -15,21 +15,12 @@ const imageBaseUrl = 'http://120.26.59.145:8080/micweb';
 
 const localUrl = 'http://192.168.100.24:12345/#/home'
 
-let routerMode = 'history';
-// let imgBaseUrl = 'http://images.cangdu.org/';
+const loginUrl = 'http://vwz.ctibet.cn:8080/micportal/login/page/login.html'
 
-
-if (process.env.NODE_ENV == 'development') {
-
-}else if(process.env.NODE_ENV == 'production'){
-
-	// baseUrl = 'http://cangdu.org:8001';
-}
 
 export {
 	baseUrl,
 	imageBaseUrl,
 	localUrl,
-	routerMode,
-	imgBaseUrl,
+	loginUrl,
 }

@@ -115,8 +115,6 @@ export default {
 		  	// console.log('updated...','mask:',mask,'banner:',banner,'detail:',detail)
 		  	mask.style.height = banner.scrollHeight + detail.scrollHeight  -4 +'px'
   		}
-  	
-	  	
     })
   },
   destroyed () {

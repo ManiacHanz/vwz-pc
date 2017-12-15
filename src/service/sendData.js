@@ -1,6 +1,6 @@
 import fetch from '../config/fetch'
 
-
+import {getStore} from '../config/mUtils.js'
 
 //通用图片、图标上传   头像图标上传域名/site/upload_headimg
 // export const __sendBase64 = (data) => fetch('/site/upload_headimg',	data,	'POST')
@@ -38,3 +38,6 @@ export const __editArticle = (data) => fetch('/site/add_article', data, 'POST')
 
 //删除图片
 export const __delImg = (data) => fetch('/site/del_img', data, 'POST')
+
+// 通用 验证登录信息的拦截器
+export const __checkLogin = (data) => fetch('/site/verify_login', {uid: getStore('uid'), token: getStore('token'), mobile: getStore('mobile')}, 'POST') 

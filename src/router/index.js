@@ -9,9 +9,13 @@ import Sample from '../page/Sample/Sample'
 
 import Hello from '../components/Hello'
 
+import {__checkLogin} from 'service/sendData'
+import {getStore} from 'config/mUtils.js'
+import {loginUrl} from 'config/env.js'
+
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
   	{
   		path:'/',
@@ -62,3 +66,27 @@ export default new Router({
 
   ]
 })
+
+router.beforeEach( (to, from, next) =>{
+  console.log('everybefore..')
+  if ( getStore('uid') && getStore('token') && getStore('mobile')) {
+    __checkLogin()
+      .then(res => {
+        console.log(res)
+        if(res.statusCode == 404) {
+          alert('请从登陆页面登陆进入，点击进入登录页')
+          // sessionStorage.clear()
+          // location.href = loginUrl
+          // return false 
+        }
+        next()
+      })
+  }
+  else {
+    alert('请从登陆页面登陆进入，点击进入登录页')
+    // sessionStorage.clear()
+    // location.href = loginUrl
+  }
+})
+
+export default router
