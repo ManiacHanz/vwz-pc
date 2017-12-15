@@ -79,10 +79,10 @@ import Pagination from '../../../components/common/Pagination'
 				page: 1,
 				search: '',
 			}
-			console.log(data)
+			// console.log(data)
 			__getArticalList(data)
 				.then( res => {
-					console.log(res)
+					// console.log(res)
 					if(!res) {
 						alert('网络请求失败，请检查网络或稍后重试')
 						return false
@@ -110,7 +110,7 @@ import Pagination from '../../../components/common/Pagination'
 					// console.log(data)
 					__getArticalList(data)
 						.then( res => {
-							console.log(res)
+							// console.log(res)
 							if(!res) {
 								alert('网络请求失败，请检查网络或稍后重试')
 								return false
@@ -135,7 +135,7 @@ import Pagination from '../../../components/common/Pagination'
 			},
 			getPageNum ( pagenum ) {
 				//获取页码数据  应该作为props传给子组件 这里的参数就是分页的插件穿回来的页码数 在这里进行请求数据 然后敷给listData
-				console.log(pagenum)
+				// console.log(pagenum)
 				this.nowPage = pagenum
 				let data = {
 					...this.userInfo,
@@ -145,7 +145,7 @@ import Pagination from '../../../components/common/Pagination'
 				// console.log(data)
 				__getArticalList(data)
 					.then( res => {
-						console.log(res)
+						// console.log(res)
 						if(!res) {
 							alert('网络请求失败，请检查网络或稍后重试')
 							return false
@@ -174,7 +174,7 @@ import Pagination from '../../../components/common/Pagination'
 				__getArticalList(data)
 					.then( res => {
 						this.SET_LOADING()
-						console.log(res)
+						// console.log(res)
 						if(!res) {
 							alert('网络请求失败，请检查网络或稍后重试')
 							return false
@@ -213,7 +213,7 @@ import Pagination from '../../../components/common/Pagination'
 							__modifyDisplay(data)
 								.then( res => {
 									that.SET_LOADING()
-									console.log(res)
+									// console.log(res)
 									if(!res.result) {
 										alert(res.message)
 										return false
@@ -244,7 +244,7 @@ import Pagination from '../../../components/common/Pagination'
 							__modifyDisplay(data)
 								.then( res => {
 									that.SET_LOADING()
-									console.log(res)
+									// console.log(res)
 									if(!res.result) {
 										alert(res.message)
 										return false
@@ -273,7 +273,7 @@ import Pagination from '../../../components/common/Pagination'
 						__delArticle(data)
 							.then(res => {
 								that.SET_LOADING()
-								console.log(res)
+								// console.log(res)
 								if(!res.result) {
 									alert(res.message)
 									return false

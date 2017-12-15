@@ -58,34 +58,29 @@ const router = new Router({
       name: 'Sample',
       component: Sample
     },
-    {
-      path: '/hello',
-      name: 'hello',
-      component: Hello
-    }
-
+    
   ]
 })
 
 router.beforeEach( (to, from, next) =>{
-  console.log('everybefore..')
+  // console.log('everybefore..')
   if ( getStore('uid') && getStore('token') && getStore('mobile')) {
     __checkLogin()
       .then(res => {
-        console.log(res)
+        // console.log(res)
         if(res.statusCode == 404) {
           alert('请从登陆页面登陆进入，点击进入登录页')
-          // sessionStorage.clear()
-          // location.href = loginUrl
-          // return false 
+          sessionStorage.clear()
+          location.href = loginUrl
+          return false 
         }
         next()
       })
   }
   else {
     alert('请从登陆页面登陆进入，点击进入登录页')
-    // sessionStorage.clear()
-    // location.href = loginUrl
+    sessionStorage.clear()
+    location.href = loginUrl
   }
 })
 

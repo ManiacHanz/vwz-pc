@@ -121,7 +121,7 @@ export default {
           });
           this.instance.addListener('afterSetContent', () => {
             if(this.editorContent && !this.instance.getContent()){
-              console.log('set失败.')
+              // console.log('set失败.')
 
               // this.instance.setContent(that.editorContent);
             }

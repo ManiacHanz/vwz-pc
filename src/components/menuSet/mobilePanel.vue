@@ -73,10 +73,10 @@ export default {
   		])
   },
   created () {
-  	// console.log({...this.userInfo})
+  	console.log({...this.userInfo})
   	__getHomePanel({...this.userInfo})
   		.then( res => {
-  			console.log(jsonParse(res.data))
+  			// console.log(jsonParse(res.data))
   			if (!res) {
   				alert('网络请求失败，请检查网络后刷新页面')
   				return false
@@ -177,7 +177,7 @@ export default {
 			__sendTheme(data)
 				.then( res => {
   				this.SET_LOADING()
-					console.log(res)
+					// console.log(res)
 					if(!res.result) {
 						alert(res.message)
 						return false

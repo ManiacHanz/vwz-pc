@@ -68,7 +68,7 @@ export default {
   	if(!this.listPanelList) {
   		__getListPanel({...this.userInfo})
   		.then( res => {
-  			// console.log(res.home.data)
+  			console.log(res.home.data)
   			if (!res.result) {
   				alert(res.message)
   				return false
@@ -106,8 +106,8 @@ export default {
   },
   updated () {
   	this.$nextTick( function() {
-  		console.log('list updated...')
-  		console.log(this._isDestroyed)
+  		// console.log('list updated...')
+  		// console.log(this._isDestroyed)
   		if( document.querySelector('.banner') && document.querySelector('.detail')) {
   			let mask = document.querySelector('.mask')
 		  	let banner = document.querySelector('.banner')
@@ -118,8 +118,8 @@ export default {
     })
   },
   destroyed () {
-  	console.log('list destroyed...')
-  	console.log(this._isDestroyed)
+  	// console.log('list destroyed...')
+  	// console.log(this._isDestroyed)
   },
   methods: {
   	...mapMutations([

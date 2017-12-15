@@ -452,7 +452,7 @@ export default {
   		this.SET_LOADING()
   		__getArtList(data)
 				.then( res => {
-					console.log(res)
+					// console.log(res)
   				this.SET_LOADING()
 					if(!res) {
 						alert('网络请求失败，请检查网络或稍后重试')
@@ -501,7 +501,7 @@ export default {
   				}
   				__sendBase64(data)
   					.then( res => {
-  						console.log(res)
+  						// console.log(res)
   						that.SET_LOADING()
   						if(!res) {
   							alert('网络错误，请检查网络或稍后再试')
@@ -529,7 +529,7 @@ export default {
   				}
   				__sendBase64(data)
   					.then( res => {
-  						console.log(res)
+  						// console.log(res)
   						that.SET_LOADING()
   						if(!res) {
   							alert('网络错误，请检查网络或稍后再试')
@@ -557,7 +557,7 @@ export default {
   				}
   				__sendBase64(data)
   					.then( res => {
-  						console.log(res)
+  						// console.log(res)
   						that.SET_LOADING()
   						if(!res) {
   							alert('网络错误，请检查网络或稍后再试')
@@ -632,7 +632,7 @@ export default {
   	},
   	getPageNum ( pagenum ) {
 			//获取页码数据  应该作为props传给子组件 这里的参数就是分页的插件穿回来的页码数 在这里进行请求数据 然后敷给listData
-			console.log(pagenum)
+			// console.log(pagenum)
 			this.nowPage = pagenum
 			let data = {
 				...this.userInfo,
@@ -642,7 +642,7 @@ export default {
 			// console.log(data)
 			__getArtList(data)
 				.then( res => {
-					console.log(res)
+					// console.log(res)
 					if(!res) {
 						alert('网络请求失败，请检查网络或稍后重试')
 						return false

@@ -45,7 +45,7 @@ export default {
    	if(!this.userPanelList) {
    		__getUserPanel({...this.userInfo})
 			.then( res => {
-			  console.log(res.data)
+			  // console.log(res.data)
   			if (!res.result) {
   				alert(res.message)
   				return false

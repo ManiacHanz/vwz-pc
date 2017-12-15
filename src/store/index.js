@@ -79,7 +79,7 @@ const state = {
 	shouldListUpdate: false,						// 文章管理列表是否需要更新
 	showRedDot: false,         //是否显示表示更新的圆点
 	isShowGuider: false,				// 是否显示引导层
-	test:'1',		//测试用
+
 }
 
 export default new Vuex.Store({

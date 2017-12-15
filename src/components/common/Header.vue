@@ -113,7 +113,7 @@ export default {
 					__sendBase64(data,'/site/upload_headimg')
 						.then( res => {
 							that.SET_LOADING()
-							console.log(res)
+							// console.log(res)
 							if(!res) {
 								alert('上传失败，请稍后再试')
 								return false
@@ -149,7 +149,7 @@ export default {
 					__sendBase64(data,'/site/upload_headimg')
 						.then( res => {
 							that.SET_LOADING()
-							console.log(res)
+							// console.log(res)
 							if(!res) {
 								alert('上传失败，请稍后再试')
 								return false
@@ -198,10 +198,10 @@ export default {
 					}
 					that.SET_LOADING()
 					let data = {...that.userInfo,password: _this.modifyPswOld, password1: _this.modifyPswNew}
-					console.log(data)
+					// console.log(data)
 					__modifyPsw(data).then( res => {
 						that.SET_LOADING()
-						console.log(res)
+						// console.log(res)
 						if(!res.result) {
 							alert(res.message)
 						}
@@ -235,7 +235,7 @@ export default {
 						.then( res => {
 
 							that.SET_LOADING()
-							console.log(res)
+							// console.log(res)
 							if(!res.result) {
 								alert(res.message)
 								return false
@@ -282,7 +282,7 @@ export default {
 						that.CLOSE_MODAL()
 						alert('退出登录成功')
 						location.href = '../login/page/login.html'
-						console.log(res)
+						// console.log(res)
 					})
 				}
 			}

@@ -132,7 +132,7 @@ export default {
       const that = this
       __getArticalDetail(data)
         .then( res => {
-          console.log(res)
+          // console.log(res)
           that.coverSrc = res.data.cover
           that.titleValue = res.data.title
           that.authorValue = res.data.author
@@ -275,10 +275,10 @@ export default {
           enumerable: true
         }) 
       }
-      console.log(data)
+      // console.log(data)
       __editArticle(data)
         .then(res => {
-          console.log(res)
+          // console.log(res)
           if(!res.result) {
             alert(res.message)
             return false

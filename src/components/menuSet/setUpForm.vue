@@ -395,7 +395,7 @@ export default {
         __sendBase64(data)
           .then( res => {
             that.SET_LOADING()
-            console.log(res)
+            // console.log(res)
             if(!res){
               alert('网络错误，请检查网络或稍后再试')
               return false
@@ -527,7 +527,7 @@ export default {
               that.SAVE_TEMPORARYLIST(payload)
               // console.log(that.temporaryPanelList)
               __sendListPanel(jsonStringify(that.temporaryPanelList)).then( res =>{
-                console.log(res)
+                // console.log(res)
                 that.SET_LOADING()
                 if(!res){
                   alert('网络错误，请检查网络或稍后再试')
@@ -579,7 +579,7 @@ export default {
               }
               that.SAVE_TEMPORARYLIST(payload)
               __sendUserPanel(jsonStringify(that.temporaryPanelList)).then( res =>{
-                console.log(res)
+                // console.log(res)
                 that.SET_LOADING()
                 if(!res){
                   alert('网络错误，请检查网络或稍后再试')
@@ -880,7 +880,7 @@ export default {
         __sendBase64(data)
           .then( res => {
             // that.SET_LOADING()
-            console.log(res)
+            // console.log(res)
             if(!res){
               alert('网络错误，请检查网络或稍后再试')
               return false
@@ -1209,7 +1209,7 @@ export default {
             link: this.linkValue
   				}
   				content = [...this.homePanelList.content]
-  				console.log(content)
+  				// console.log(content)
   				content.splice(3, 1, tempObj)
   				payload = {
   					_interface: 'home',
@@ -1384,7 +1384,7 @@ export default {
             }
           }
           this.SAVE_TEMPORARYLIST(payload)
-          console.log(jsonStringify(that.temporaryPanelList))
+          // console.log(jsonStringify(that.temporaryPanelList))
           __sendUserPanel(jsonStringify(that.temporaryPanelList))
             .then( res => {
               that.SET_LOADING()
