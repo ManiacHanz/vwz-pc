@@ -77,9 +77,8 @@ import Pagination from '../../../components/common/Pagination'
 			let data = {
 				...this.userInfo,
 				page: 1,
-				search: '',
+				search: this.search.trim(),
 			}
-			// console.log(data)
 			__getArticalList(data)
 				.then( res => {
 					// console.log(res)
@@ -99,15 +98,20 @@ import Pagination from '../../../components/common/Pagination'
 			// this.listData = materialArticleData()
 			
 		},
+		beforeDestroy() {
+			// console.log('beforeDestroy...')
+			this.search = ''
+		},
+		
 		watch: {
 			shouldListUpdate: function(newVal){
+				this.search = ''
 				if(newVal){
 					let data = {
 						...this.userInfo,
 						page: 1,
-						// search: '',
+						search: this.search.trim(),
 					}
-					// console.log(data)
 					__getArticalList(data)
 						.then( res => {
 							// console.log(res)
@@ -121,6 +125,7 @@ import Pagination from '../../../components/common/Pagination'
 							}
 							this.listData = res.data.data
 							this.totalPage = res.data.totalpage
+							this.initPageNum ++
 						})
 					this.TOGGLE_LISTDATAUPDATE()
 				}
@@ -140,7 +145,7 @@ import Pagination from '../../../components/common/Pagination'
 				let data = {
 					...this.userInfo,
 					page: pagenum,
-					// search: '',
+					search: this.search.trim(),
 				}
 				// console.log(data)
 				__getArticalList(data)
@@ -265,14 +270,14 @@ import Pagination from '../../../components/common/Pagination'
 					modalFor: 'delArticle',				//模态框用来做什么  参考modal.vue
 					title: '温馨提示',					//模态框的标题
 					onSuccess: function(){		//点击确认的逻辑
-						that.SET_LOADING()
+						// that.SET_LOADING()
 						let data = {
 							...that.userInfo,
 							ids: id,
 						}
 						__delArticle(data)
 							.then(res => {
-								that.SET_LOADING()
+								// that.SET_LOADING()
 								// console.log(res)
 								if(!res.result) {
 									alert(res.message)
@@ -285,7 +290,11 @@ import Pagination from '../../../components/common/Pagination'
 								let data = {
 									...that.userInfo,
 									page: that.nowPage,
-									search: '',
+									search: that.search.trim(),
+								}
+								// console.log(that.listData)
+								if (that.listData.length === 1) {
+									data.page = that.nowPage - 1
 								}
 								__getArticalList(data)
 									.then( res => {

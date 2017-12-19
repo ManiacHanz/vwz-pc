@@ -186,14 +186,14 @@
 					</div>
 					<div>
 						<span>确认新密码：</span>
-						<input type="password" name="confirmPassword" v-model="modifyPswConfirm" maxlength="12">
-						<p class="alert" v-show="modifyPswConfirm!=modifyPswNew">两次输入密码不一致</p>
+						<input type="password" name="confirmPassword" v-model="modifyPswConfirm" maxlength="12" @blur="_checkPsw">
+						<p class="alert" v-show="defferentPassword">两次输入密码不一致</p>
 					</div>
 				</section>
 				<section class="modify-project-name" v-if="modalCfg.modalFor==='projectName'">
 					<div>
-						<input type="text" v-model="projectNameInput" maxlength="12" placeholder="在此输入新的项目名称">
-						<p>项目名称不超过12个字</p>
+						<input type="text" v-model="projectNameInput" placeholder="在此输入新的项目名称">
+						<p>项目名称不超过12个汉字或24个英文或阿拉伯字母</p>
 					</div>
 				</section>
 				<section class="pick-article" v-if="modalCfg.modalFor==='pickArticle'">
@@ -268,7 +268,7 @@ Vue.use(VueClipboard)
 
 import { mapState, mapMutations } from 'vuex'
 import {__getArtList} from 'service/getData'
-import {getStore} from 'config/mUtils'
+import {getStore, getInputLen} from 'config/mUtils'
 
 import Pagination from './Pagination'
 
@@ -302,6 +302,7 @@ export default {
     	oldPasswordAlert: false,
     	newPasswordAlert: false,
     	newPasswordAlert2: false,
+    	defferentPassword: false,
     	//项目名称
     	projectNameInput: '',
 
@@ -339,8 +340,23 @@ export default {
   			this.newPasswordAlert = false
   		}
   	},
+  	// 项目名称字数控制
+  	projectNameInput: function(newValue,oldValue) {
+  		if(this.projectNameInput) {
+      	getInputLen(newValue,oldValue,24,'projectNameInput',this)
+  		}
+    },
   	isShowModal: function(newVal) {
   		this.selectedIcon = ''
+  		this.search = ''
+  		// 清空密码列表的所有选项
+  		this.modifyPswOld = ''
+  		this.modifyPswNew = ''
+  		this.modifyPswConfirm = ''
+  		this.oldPasswordAlert = false
+  		this.newPasswordAlert2 = false
+  		this.newPasswordAlert = false
+  		this.defferentPassword = false
   		let that = this
   		if(newVal) {//确保是打开的时候
   			let data = {
@@ -427,7 +443,7 @@ export default {
   				let data = {
 						...this.userInfo,
 						page: 1,
-						search: '',
+						search: this.search.trim(),
 					}
   				this._getArticleData(data)
   			}
@@ -514,6 +530,8 @@ export default {
   						e.target.value = ''
   						that.plateIconList.push(imageBaseUrl + res.data)
   					})
+  		}, (error) => {
+  			alert(error)
   		})
   	},
   	_userIconChange (e) {
@@ -542,6 +560,8 @@ export default {
   						e.target.value = ''
   						that.userIconList.push(imageBaseUrl + res.data)
   					})
+  		}, (error) => {
+  			alert(error)
   		})
   	},
   	_menuIconChange (e) {
@@ -570,7 +590,18 @@ export default {
   						e.target.value = ''
   						that.menuIconList.push(imageBaseUrl + res.data)
   					})
+  		}, (error) => {
+  			alert(error)
   		})
+  	},
+  	// 修改密码
+  	_checkPsw () {
+  		if( this.modifyPswConfirm != this.modifyPswNew ) {
+  			this.defferentPassword = true
+  		}
+  		else {
+  			this.defferentPassword = false
+  		}
   	},
   	//LOGO修改
   	logoChange (e) {
@@ -595,6 +626,8 @@ export default {
   			// }
   			that.SET_LOGO(base64)
   			// console.table(rst)
+  		}, (error) => {
+  			alert(error)
   		})
   		
   		// let file = e.target.files[0]
@@ -620,6 +653,8 @@ export default {
   			e.target.value = ''
   			that.SET_AVATAR(base64)
   			// console.table(rst)
+  		}, (error) => {
+  			alert(error)
   		})
   	},
   	// 剪贴板回调
@@ -637,7 +672,7 @@ export default {
 			let data = {
 				...this.userInfo,
 				page: pagenum,
-				// search: '',
+				search: this.search.trim(),
 			}
 			// console.log(data)
 			__getArtList(data)
@@ -666,6 +701,11 @@ export default {
 <style lang="less" scoped>
 @import '../../style/variety.less';
 @import '../../style/common.less';
+
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{box-shadow: inset 0 0 6px rgba(0,0,0,1);}
+::-webkit-scrollbar-thumb{border-radius: 10px; background: #666}
+
 
 .modal {
 	width: 100%;
@@ -771,6 +811,8 @@ export default {
 			}
 		}
 		.down {
+			height: 396px;
+			overflow-y: auto;
 			ul {
 				display: flex;
 				flex-wrap: wrap;

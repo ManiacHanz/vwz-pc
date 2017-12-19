@@ -275,6 +275,8 @@ export default {
 <style lang="less" scoped>
 @import '../../style/variety.less';
 
+
+
 /*transition的动画*/
 .panel-fade-enter-active, .panel-fade-leave-active {
     transition: opacity .3s;

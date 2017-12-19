@@ -49,7 +49,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import {__loginOut, __modifyPsw, __sendBase64, __modifyProjectName,__delImg} from 'service/sendData'
-import {imageBaseUrl} from 'config/env'
+import {imageBaseUrl, loginUrl} from 'config/env'
 import {setStore,getStore} from 'config/mUtils'
 export default {
 	data: function () {
@@ -206,9 +206,12 @@ export default {
 							alert(res.message)
 						}
 						else {
-							that.OPEN_NOTIFICATION('修改成功')
+							that.OPEN_NOTIFICATION('修改成功，请重新登录')
 							that.CLOSE_MODAL()
-							// alert(res.message)
+							setTimeout( function() {
+								sessionStorage.clear()
+								location.href = loginUrl
+							}, 3000)
 						}
 					})
 				}

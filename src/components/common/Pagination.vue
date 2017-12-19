@@ -35,7 +35,12 @@ export default {
   		if(this.goToPage> this.totalPage) {
 				 return this.goToPage = this.totalPage
 			}
-			
+  	},
+  	totalPage: function(newVal) {
+  		// console.log(this.nowPage, newVal)
+  		if (this.nowPage > newVal) {
+  			this.nowPage = newVal
+  		}
   	},
   	initNowPage: function(newVal) {
   		// 父组件点搜索的时候会让这个Prop变化 这是 就把当前页改成1
@@ -54,8 +59,12 @@ export default {
   	},
   	skipPage () {
   		//跳转页数 		排除0 和空  
-  		// console.log(!this.goToPage)
+  		console.log(!this.goToPage)
   		if(!this.goToPage) {
+  			return false
+  		}
+  		if(this.goToPage == 0) {
+  			this.goToPage = ''
   			return false
   		}
   		this.nowPage = this.goToPage *1

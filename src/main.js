@@ -4,9 +4,14 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
-
+import {banBackSpace} from 'config/mUtils.js'
 
 Vue.config.productionTip = false
+
+//禁止后退键 作用于Firefox、Opera 
+document.onkeypress=banBackSpace; 
+//禁止后退键 作用于IE、Chrome 
+document.onkeydown=banBackSpace; 
 
 /* eslint-disable no-new */
 new Vue({

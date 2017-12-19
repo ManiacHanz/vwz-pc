@@ -285,7 +285,7 @@ export default {
 					title: '请选择以下图标',					//模态框的标题
 					onSuccess: function(_this){		//选择图标的路径
 						// alert(_this.plateIconList[_this.selectedIcon])
-            if(_this.selectedIcon==undefined) {
+            if(_this.selectedIcon==undefined || _this.selectedIcon == ''  && _this.selectedIcon != '0') {
               alert('请选择图标')
               return
             }
@@ -301,11 +301,12 @@ export default {
 					title: '请选择以下图标',					//模态框的标题
 					onSuccess: function(_this){		//选择图标的路径
 						//alert(_this.userIconList[_this.selectedIcon])
-						that.iconValue = _this.userIconList[_this.selectedIcon].replace(that.imgBaseUrl, '')
-            if(_this.selectedIcon==undefined) {
+            if(_this.selectedIcon==undefined || _this.selectedIcon == '' && _this.selectedIcon != '0') {
               alert('请选择图标')
               return
-            }
+            }    
+						that.iconValue = _this.userIconList[_this.selectedIcon].replace(that.imgBaseUrl, '')
+            
             that.formCfg.inputList[1].value = that.iconValue
             that.CLOSE_MODAL()
 					}
@@ -318,11 +319,13 @@ export default {
           title: '请选择以下图标',         //模态框的标题
           onSuccess: function(_this){   //选择图标的路径
             // alert(_this.menuIconList[_this.selectedIcon])
-            that.iconValue = _this.menuIconList[_this.selectedIcon].replace(that.imgBaseUrl, '')
-            if(_this.selectedIcon==undefined) {
-              alert('请选择图标')
+            if( _this.selectedIcon == ''  && _this.selectedIcon != '0') {   //可以不选
+              that.iconValue = ''
+              that.formCfg.inputList[1].value = that.iconValue
+              that.CLOSE_MODAL()
               return
             }
+            that.iconValue = _this.menuIconList[_this.selectedIcon].replace(that.imgBaseUrl, '')
             that.formCfg.inputList[1].value = that.iconValue
             that.CLOSE_MODAL()
           }
@@ -355,6 +358,8 @@ export default {
             e.target.value = ''
             that.backValue = res.data
           })
+      }, (error) => {
+        alert(error)
       })
 		},
     //清空背景图
@@ -414,6 +419,8 @@ export default {
             that.selectedIndex = newFormCfg.inputList[0].imglist.length -1
           })
         
+      }, (error) => {
+        alert(error)
       })
   	},
   	_bannerDel (index) {
@@ -896,6 +903,8 @@ export default {
           })
         that.UPDATE_FORMCFG(newFormCfg)
         that.selectedIndex = newFormCfg.inputList[0].imglist.length -1
+      }, (error) => {
+        alert(error)
       })
   	},
   	_listPicDel (index) {
