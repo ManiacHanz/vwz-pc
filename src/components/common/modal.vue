@@ -357,6 +357,8 @@ export default {
   		this.newPasswordAlert2 = false
   		this.newPasswordAlert = false
   		this.defferentPassword = false
+  		// 清空素材选择库
+  		this.articlePicked = ''
   		let that = this
   		if(newVal) {//确保是打开的时候
   			let data = {

@@ -68,18 +68,18 @@ router.beforeEach( (to, from, next) =>{
       .then(res => {
         // console.log(res)
         if(res.statusCode == 404) {
-          alert('请从登陆页面登陆进入，点击进入登录页')
-          sessionStorage.clear()
-          location.href = loginUrl
-          return false 
+          // alert('请从登陆页面登陆进入，点击进入登录页')
+          // sessionStorage.clear()
+          // location.href = loginUrl
+          // return false 
         }
         next()
       })
   }
   else {
-    alert('请从登陆页面登陆进入，点击进入登录页')
-    sessionStorage.clear()
-    location.href = loginUrl
+    // alert('请从登陆页面登陆进入，点击进入登录页')
+    // sessionStorage.clear()
+    // location.href = loginUrl
   }
 })
 

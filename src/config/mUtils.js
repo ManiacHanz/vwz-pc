@@ -218,12 +218,12 @@ export const banBackSpace = (e) => {
     vReadOnly = (vReadOnly == null) ? false : vReadOnly; 
     vEnabled = (vEnabled == null) ? true : vEnabled; 
 
-    //当敲Backspace键时，事件源类型为密码或单行、多行文本的， 
+    //当敲Backspace键时，事件源类型为密码、电话或单行、多行文本的， 
     //并且readonly属性为true或enabled属性为false的，则退格键失效 
-    var flag1=(ev.keyCode == 8 && (t=="password" || t=="text" || t=="textarea") && (vReadOnly==true || vEnabled!=true))?true:false; 
+    var flag1=(ev.keyCode == 8 && (t=="password" || t=="text" || t=="textarea" || t=="tel") && (vReadOnly==true || vEnabled!=true))?true:false; 
 
     //当敲Backspace键时，事件源类型非密码或单行、多行文本的，则退格键失效 
-    var flag2=(ev.keyCode == 8 && t != "password" && t != "text" && t != "textarea") ?true:false; 
+    var flag2=(ev.keyCode == 8 && t != "password" && t != "text" && t != "textarea" && t !="tel") ?true:false; 
 
     //判断 
     if(flag2){ 

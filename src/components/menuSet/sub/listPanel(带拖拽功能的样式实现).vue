@@ -14,19 +14,34 @@
 		</section>
 		<section class="detail">
 			<ul >
-				<li v-for="(item, index) in listPanelList.content" :key="index" 
-				:class="[mobileActive==='contentlist'+index?'active':'']"
-				@click.left="setUpModule(item.link,'contentlist'+index)">
-					<type-a v-if="item.imglist.length===3" :content="item" :colorStyle="mobileColorStyle"></type-a>
-					<type-b v-else :content="item" :colorStyle="mobileColorStyle"></type-b>
-				</li>
+
+				<draggable class="list-group" v-model="panelList" :move="onMove" @start="isDragging=true" @end="isDragging=false">
+      		<transition-group type="transition" :name="'flip-list'">
+		
+						<li v-for="(item, index) in panelList" :key="index" 
+						:class="[mobileActive==='contentlist'+index?'active':'']"
+						@click.left="setUpModule(item.link,'contentlist'+index)">
+							<type-a v-if="item.imglist.length===3" :content="item" :colorStyle="mobileColorStyle"></type-a>
+							<type-b v-else :content="item" :colorStyle="mobileColorStyle"></type-b>
+						</li>
+
+
+     			</transition-group>
+				</draggable>
+
+				
 			</ul>
 		</section>
 		<section class="mask" v-show="!homePanelList.button[1].display"></section>
+
 	</div>
 </template>
 
 <script>
+
+import draggable from 'vuedraggable'
+
+
 import '../../../../static/plugin/swiper.min.css'
 import '../../../../static/plugin/swiper.min.js'
 
@@ -48,6 +63,9 @@ export default {
 
   name: 'listPanel',
   components: {
+
+  	draggable,
+
   	typeA,
   	typeB,
   },
@@ -55,12 +73,29 @@ export default {
     return {
 			mobileCfg:'',    //手机配置,
     	imgBaseUrl: imageBaseUrl,
+
+    	isDragging: false,
+    	panelList: [{"title":"321","imglist":["/fileresource/imgs/USERjAOu9UQV/1513322314474.png","/fileresource/imgs/USERjAOu9UQV/1513322317671.png","/fileresource/imgs/USERjAOu9UQV/1513322316012.png"],"time":"2017-12-15 15:18","link":"ARTIp8YZ9yMx","linkType":1},{"title":"在拉萨，如果只剩10块钱，你可以……","imglist":["/fileresource/imgs/system/banner/neir7.png","/fileresource/imgs/system/banner/neir6.png","/fileresource/imgs/system/banner/neir1.png"],"time":"2017-12-15 16:26","link":"morenW4S68uKn","linkType":0},{"title":"四次进藏的点滴记事","imglist":["/fileresource/imgs/system/banner/neir2.png"],"time":"2017-12-15 15:18","link":"morenW4S68uKn","linkType":0},{"title":"天上西藏云山林芝","imglist":["/fileresource/imgs/system/banner/neir3.png"],"time":"2016-09-30 09:15","link":"morenW4S68uKn","linkType":0},{"title":"仰望星空，青春之旅","imglist":["/fileresource/imgs/system/banner/neir4.png"],"time":"2016-09-30 09:30","link":"morenW4S68uKn","linkType":0}],
     }
   },
   computed: {
   	...mapState([
   			'mobileColorStyle','mobileActive','listPanelList','userInfo','homePanelList'
   		]),
+
+
+
+  },
+  watch : {
+  	isDragging (newValue) {
+      if (newValue){
+        this.delayedDragging= true
+        return
+      }
+      this.$nextTick( () =>{
+           this.delayedDragging =false
+      })
+    }
   },
   created () {
   	// 这里加了判定避免重复请求，不知道需不需要
@@ -123,6 +158,11 @@ export default {
   	...mapMutations([
   			'SET_MOBILE_ACTIVE','UPDATE_FORMCFG','SAVE_LISTPANELLIST'
   		]),
+  	onMove ({relatedContext, draggedContext}) {
+      const relatedElement = relatedContext.element;
+      const draggedElement = draggedContext.element;
+      return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
+    },
   	setUpModule (link, dom) {
   		// 改变激活状态
   		this.SET_MOBILE_ACTIVE(dom)
@@ -218,6 +258,14 @@ export default {
 
 <style lang="less" scoped>
 @import '../../../style/variety.less';
+
+.flip-list-move {
+  transition: transform 0.5s;
+}
+.no-move {
+  transition: transform 0s;
+}
+
 
 ::-webkit-scrollbar {
 	width: 6px;

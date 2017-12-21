@@ -376,6 +376,10 @@ export default {
 				modalFor: 'pickArticle',				//模态框用来做什么  参考modal.vue
 				title: '选择文章',					//模态框的标题
 				onSuccess: function(_this){		//点击确认的逻辑
+          if(_this.articlePicked == '') {
+            alert('请选择素材文章或取消')
+            return false
+          }
 					that.linkValue = _this.articlePicked
           that._linkBlur()        // 直接选择不会触发失焦事件 所以这里要手动触发一个
           that.linkTypeValue = 1
