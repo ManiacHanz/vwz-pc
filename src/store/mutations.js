@@ -113,6 +113,7 @@ export default {
 	},
 	// 清空表单配置
 	[CLEAR_FORMCFG] (state) {
+		state.formCfg.formFor = ''
 		state.formCfg.inputList = null
 		//state.formCfg = null
 	},

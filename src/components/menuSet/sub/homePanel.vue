@@ -400,6 +400,7 @@ export default {
 	}
 	
 	.plate-name {
+		word-break: break-all;
 		color: #ffffff;
 		position: absolute;
 		bottom: 6px;
@@ -413,6 +414,7 @@ export default {
 	.describe {
 		color: #ffffff;
 		padding: 6px;
+		word-break: break-all;
 	}
 	.temp_0 {
 		width: 96px;
@@ -454,6 +456,7 @@ export default {
 		top: 108px;
 		left: 114px;
 		p {
+			word-break: break-all;
 			position:absolute;
 			z-index:5;
 		}

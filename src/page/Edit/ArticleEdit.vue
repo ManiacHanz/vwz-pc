@@ -229,6 +229,8 @@ export default {
           // that.coverSrc = rst
         // }
         // console.table(rst)
+      }, (error) => {
+        alert(error)
       })
     },
     //保存发布文章
